@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(CMakeSFMLProject LANGUAGES CXX)
+project(ShakEngine LANGUAGES CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
@@ -13,4 +13,11 @@ FetchContent_Declare(SFML
 FetchContent_MakeAvailable(SFML)
 
 add_executable(main src/main.cpp)
-target_link_libraries(main PRIVATE SFML::Graphics)
+target_link_libraries(main PRIVATE 
+    SFML::Graphics
+    SFML::Window
+    SFML::System
+    SFML::Audio
+    SFML::Network
+    opengl32
+    )
