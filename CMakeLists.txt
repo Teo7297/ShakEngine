@@ -12,7 +12,10 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(main src/main.cpp)
+# Include all .cpp and .h files in src directory
+file(GLOB_RECURSE SOURCES src/*.cpp src/*.h)
+
+add_executable(main ${SOURCES})
 target_link_libraries(main PRIVATE 
     SFML::Graphics
     SFML::Window
@@ -20,4 +23,4 @@ target_link_libraries(main PRIVATE
     SFML::Audio
     SFML::Network
     opengl32
-    )
+)
