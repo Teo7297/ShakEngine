@@ -38,7 +38,6 @@ namespace shak
             for (auto& gameObject : m_gameObjects)
             {
                 m_drawables.emplace_back(gameObject, nullptr);
-                gameObject->Render(m_drawables);
             }
             m_renderer->PushToRenderQueue(m_drawables);
         }

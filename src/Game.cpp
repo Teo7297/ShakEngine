@@ -1,77 +1,42 @@
-#include "EngineDefines.h"
+#include "ShakEngine.h"
 
-#include "Renderer.h"
-#include "Scene.h"
-
+#include "Player.h"
 int main()
 {
-    auto renderer = std::make_shared<shak::Renderer>();
-    auto window = renderer->CreateSFWindow("GAME");
-    renderer->Start();
-    window->setFramerateLimit(170);
+    ShakEngine engine;
+    auto rm = engine.GetResourceManager();
+    auto bricksTxt = rm.LoadTexture("textures/bricks.jpg", "bricks", true, true);
 
-    shak::Scene scene(renderer);
+    auto triangle = std::make_shared<sf::VertexArray>(sf::PrimitiveType::Triangles, 3);
+    (*triangle)[0].position = sf::Vector2f(0.f, 0.f);
+    (*triangle)[1].position = sf::Vector2f(100.f, 0.f);
+    (*triangle)[2].position = sf::Vector2f(100.f, 100.f);
+    (*triangle)[0].color = sf::Color::Red;
+    (*triangle)[1].color = sf::Color::Green;
+    (*triangle)[2].color = sf::Color::Blue;
+    (*triangle)[0].texCoords = sf::Vector2f(0.f, 0.f);
+    (*triangle)[1].texCoords = sf::Vector2f(4096.f, 0.f);
+    (*triangle)[2].texCoords = sf::Vector2f(4096.f, 4096.f);
 
-    // Create a clock to measure deltaTime
-    sf::Clock clock;
+    auto triangle2 = std::make_shared<sf::VertexArray>(sf::PrimitiveType::Triangles, 3);
+    (*triangle2)[0].position = sf::Vector2f(0.f, 0.f);
+    (*triangle2)[1].position = sf::Vector2f(100.f, 0.f);
+    (*triangle2)[2].position = sf::Vector2f(100.f, 100.f);
+    (*triangle2)[0].color = sf::Color::Red;
+    (*triangle2)[1].color = sf::Color::Green;
+    (*triangle2)[2].color = sf::Color::Blue;
 
-    sf::VertexArray triangle(sf::PrimitiveType::Triangles, 3);
+    auto g1 = std::make_shared<Player>(triangle, bricksTxt);
+    g1->setOrigin({ 50.f, 50.f });
+    g1->move({ 100, 100 });
+    g1->rotate(sf::degrees(45));
+    g1->scale({ 2.f, 2.f });
+    engine.AddGameObject(g1);
 
-    // define the position of the triangle's points
-    triangle[0].position = sf::Vector2f(10.f, 10.f);
-    triangle[1].position = sf::Vector2f(100.f, 10.f);
-    triangle[2].position = sf::Vector2f(100.f, 100.f);
+    auto g2 = std::make_shared<shak::GameObject>(triangle2);
+    g2->move({ 200, 200 });
+    g1->AddChild(g2);
 
-    // define the color of the triangle's points
-    triangle[0].color = sf::Color::Red;
-    triangle[1].color = sf::Color::Blue;
-    triangle[2].color = sf::Color::Green;
-
-    auto g1 = std::make_shared<shak::GameObject>(triangle);
-    auto g2 = std::make_shared<shak::GameObject>(triangle);
-    g1->setPosition({ 100.f, 100.f });
-    g1->setScale({ 8.f, 8.f });
-    // g1->setPosition({ 100.f, 100.f });
-    g2->setScale({ 4.f, 4.f });
-
-    std::filesystem::path vs = "shaders/test.vs";
-    std::filesystem::path fs = "shaders/test.fs";
-    auto shader = std::make_shared<sf::Shader>(vs, fs);
-    g1->SetShader(shader);
-    g2->SetShader(shader);
-    scene.AddGameObject(g1);
-    scene.AddGameObject(g2);
-
-    auto mousePosPixel = sf::Vector2f{};
-
-    // Movement
-    while (window->isOpen())
-    {
-        while (const std::optional event = window->pollEvent())
-        {
-            if (event->is<sf::Event::Closed>())
-            {
-                renderer->Stop();
-                exit(0);
-            }
-            else if (event->is<sf::Event::MouseMoved>())
-            {
-                mousePosPixel = { (float)sf::Mouse::getPosition(*window).x, DEFAULT_APP_HEIGHT - (float)sf::Mouse::getPosition(*window).y };
-                // mousePosWorld = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
-                shader->setUniform("mouse", mousePosPixel);
-            }
-
-            scene.HandleInput(event.value());
-        }
-
-        // Calculate delta time
-        float dt = clock.restart().asSeconds();
-
-        // Update the active scene
-        scene.Update(dt);
-
-        scene.Render();
-    }
-
+    engine.Start();
     return 0;
 }

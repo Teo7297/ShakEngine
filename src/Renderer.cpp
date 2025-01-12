@@ -64,7 +64,7 @@ namespace shak
             std::unique_lock<std::mutex> lock(m_renderQueueMutex);
 
             // Wait for items to draw or for the application to close
-            m_stopCondition.wait(lock, [=] { return !m_renderQueue.empty() || !m_isRunning; });
+            m_stopCondition.wait(lock, [this] { return !m_renderQueue.empty() || !m_isRunning; });
 
             m_window->clear({ 2, 38, 46 });
             while (!m_renderQueue.empty())

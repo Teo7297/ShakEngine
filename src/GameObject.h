@@ -16,16 +16,24 @@ namespace shak
     class GameObject : public sf::Transformable, public sf::Drawable
     {
     public:
-        GameObject(sf::VertexArray va);
+        GameObject(std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture = nullptr);
         virtual ~GameObject() = default;
 
         void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const override;
 
-        void Render(std::vector<shak::Drawable>& drawables);
+        void move(sf::Vector2f offset);
 
-        void AddChild();
+        void rotate(sf::Angle angle);
+
+        void scale(sf::Vector2f factor);
+
+        void AddChild(std::shared_ptr<GameObject> child);
 
         void RemoveChild(std::shared_ptr<GameObject> child);
+
+        /// @brief Obtain a copy of the children vector of this GameObject
+        /// @return std::vector<std::shared_ptr<GameObject>>
+        std::vector<std::shared_ptr<GameObject>> GetChildren() const;
 
         void SetShader(const std::shared_ptr<sf::Shader> shader);
 
@@ -34,9 +42,10 @@ namespace shak
         virtual void HandleInput(const sf::Event& event);
 
     private:
-        sf::VertexArray m_vertices;
-        sf::Texture m_texture;
+        std::shared_ptr<sf::VertexArray> m_vertices;
+        std::shared_ptr<sf::Texture> m_texture;
         std::shared_ptr<sf::Shader> m_shader = nullptr;
         std::vector<std::shared_ptr<GameObject>> m_children;
+        mutable std::mutex m_mutex;
     };
 }

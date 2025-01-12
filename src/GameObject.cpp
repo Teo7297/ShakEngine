@@ -2,45 +2,90 @@
 
 namespace shak
 {
-    GameObject::GameObject(sf::VertexArray va)
-        : m_vertices(va)
+    GameObject::GameObject(std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture)
+        : m_vertices(va), m_texture(texture)
     {
-        if (!m_texture.loadFromFile("textures/bricks.jpg"))
-        {
-            std::cerr << "Failed to load texture" << std::endl;
-        }
+
     }
 
     void GameObject::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         states.transform *= this->getTransform();
-        states.texture = &m_texture;
-        states.shader = m_shader.get();
-        target.draw(m_vertices, states);
+        if (m_texture)
+            states.texture = m_texture.get();
+        if (m_shader)
+            states.shader = m_shader.get();
+        target.draw(*m_vertices, states);
 
+        std::lock_guard<std::mutex> lock(m_mutex);
         for (const auto& child : m_children)
         {
-            child->draw(target, states);
+            child->draw(target, sf::RenderStates::Default);
         }
     }
 
-    void GameObject::Render(std::vector<shak::Drawable>& drawables)
+    void GameObject::move(sf::Vector2f offset)
     {
-        for (auto& child : m_children)
+        std::lock_guard<std::mutex> lock(m_mutex);
+
+        Transformable::move(offset);
+        for (const auto& child : m_children)
         {
-            drawables.emplace_back(child, nullptr);
-            child->Render(drawables);
+            child->move(offset);
         }
     }
 
-    void GameObject::AddChild()
+    void GameObject::rotate(sf::Angle angle)
     {
-        m_children.push_back(std::make_shared<GameObject>(sf::VertexArray()));
+        std::lock_guard<std::mutex> lock(m_mutex);
+
+        Transformable::rotate(angle);
+        for (const auto& child : m_children)
+        {
+            sf::Vector2f relativePos = child->getPosition() - this->getPosition();
+
+            // Calculate the new position after rotation (remember, we are using global coordinates, with global axis for translation!)
+            float radians = angle.asDegrees() * (3.14159265f / 180.f);
+            float cosAngle = std::cos(radians);
+            float sinAngle = std::sin(radians);
+            sf::Vector2f rotatedPos(
+                relativePos.x * cosAngle - relativePos.y * sinAngle,
+                relativePos.x * sinAngle + relativePos.y * cosAngle
+            );
+
+            child->setPosition(this->getPosition() + rotatedPos);
+            child->rotate(angle);
+        }
+
+    }
+
+    void GameObject::scale(sf::Vector2f factor)
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+
+        Transformable::scale(factor);
+        for (const auto& child : m_children)
+        {
+            child->scale(factor);
+        }
+    }
+
+    void GameObject::AddChild(std::shared_ptr<GameObject> child)
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_children.push_back(child);
     }
 
     void GameObject::RemoveChild(std::shared_ptr<GameObject> child)
     {
+        std::lock_guard<std::mutex> lock(m_mutex);
         m_children.erase(std::remove(m_children.begin(), m_children.end(), child), m_children.end());
+    }
+
+    std::vector<std::shared_ptr<GameObject>> GameObject::GetChildren() const
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        return std::vector<std::shared_ptr<GameObject>>(m_children);
     }
 
     void GameObject::SetShader(const std::shared_ptr<sf::Shader> shader)
@@ -50,6 +95,7 @@ namespace shak
 
     void GameObject::Update(float dt)
     {
+        std::lock_guard<std::mutex> lock(m_mutex);
         for (const auto& child : m_children)
         {
             child->Update(dt);
@@ -58,6 +104,7 @@ namespace shak
 
     void GameObject::HandleInput(const sf::Event& event)
     {
+        std::lock_guard<std::mutex> lock(m_mutex);
         for (const auto& child : m_children)
         {
             child->HandleInput(event);
