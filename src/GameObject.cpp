@@ -10,6 +10,7 @@ namespace shak
 
     void GameObject::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
+        std::lock_guard<std::mutex> lock(m_mutex);
         states.transform *= this->getTransform();
         if (m_texture)
             states.texture = m_texture.get();
@@ -17,7 +18,6 @@ namespace shak
             states.shader = m_shader.get();
         target.draw(*m_vertices, states);
 
-        std::lock_guard<std::mutex> lock(m_mutex);
         for (const auto& child : m_children)
         {
             child->draw(target, sf::RenderStates::Default);
@@ -76,10 +76,10 @@ namespace shak
         m_children.push_back(child);
     }
 
-    void GameObject::RemoveChild(std::shared_ptr<GameObject> child)
+    void GameObject::RemoveChild(int id)
     {
         std::lock_guard<std::mutex> lock(m_mutex);
-        m_children.erase(std::remove(m_children.begin(), m_children.end(), child), m_children.end());
+        m_children.erase(m_children.cbegin() + id);
     }
 
     std::vector<std::shared_ptr<GameObject>> GameObject::GetChildren() const

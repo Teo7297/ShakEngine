@@ -9,46 +9,18 @@ namespace shak
     class Scene
     {
     public:
-        Scene(std::shared_ptr<shak::Renderer> renderer) : m_renderer(renderer)
-        {
-        }
+        Scene(std::shared_ptr<shak::Renderer> renderer) : m_renderer(renderer) {}
         virtual ~Scene() = default;
 
-        void AddGameObject(std::shared_ptr<GameObject> gameObject)
-        {
-            m_gameObjects.push_back(gameObject);
-        }
+        void AddGameObject(std::shared_ptr<GameObject> gameObject);
 
-        void RemoveGameObject(std::shared_ptr<GameObject> gameObject)
-        {
-            m_gameObjects.erase(std::remove(m_gameObjects.begin(), m_gameObjects.end(), gameObject), m_gameObjects.end());
-        }
+        void RemoveGameObject(std::shared_ptr<GameObject> gameObject);
 
-        void Update(float dt)
-        {
-            for (auto& gameObject : m_gameObjects)
-            {
-                gameObject->Update(dt);
-            }
-        }
+        void Update(float dt);
 
-        void Render()
-        {
-            m_drawables.clear();
-            for (auto& gameObject : m_gameObjects)
-            {
-                m_drawables.emplace_back(gameObject, nullptr);
-            }
-            m_renderer->PushToRenderQueue(m_drawables);
-        }
+        void Render();
 
-        void HandleInput(const sf::Event& event)
-        {
-            for (auto& gameObject : m_gameObjects)
-            {
-                gameObject->HandleInput(event);
-            }
-        }
+        void HandleInput(const sf::Event& event);
 
     private:
         std::vector<std::shared_ptr<GameObject>> m_gameObjects;

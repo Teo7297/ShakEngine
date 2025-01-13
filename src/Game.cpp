@@ -1,42 +1,39 @@
 #include "ShakEngine.h"
 
 #include "Player.h"
+#include "Camera.h"
 int main()
 {
-    ShakEngine engine;
-    auto rm = engine.GetResourceManager();
-    auto bricksTxt = rm.LoadTexture("textures/bricks.jpg", "bricks", true, true);
+    auto engine = std::make_shared<ShakEngine>();
 
-    auto triangle = std::make_shared<sf::VertexArray>(sf::PrimitiveType::Triangles, 3);
-    (*triangle)[0].position = sf::Vector2f(0.f, 0.f);
-    (*triangle)[1].position = sf::Vector2f(100.f, 0.f);
-    (*triangle)[2].position = sf::Vector2f(100.f, 100.f);
-    (*triangle)[0].color = sf::Color::Red;
-    (*triangle)[1].color = sf::Color::Green;
-    (*triangle)[2].color = sf::Color::Blue;
-    (*triangle)[0].texCoords = sf::Vector2f(0.f, 0.f);
-    (*triangle)[1].texCoords = sf::Vector2f(4096.f, 0.f);
-    (*triangle)[2].texCoords = sf::Vector2f(4096.f, 4096.f);
+    {
+        auto& rm = engine->GetResourceManager();
+        auto bricks = rm.LoadTexture("../../../textures/bricks.jpg", "bricks");
 
-    auto triangle2 = std::make_shared<sf::VertexArray>(sf::PrimitiveType::Triangles, 3);
-    (*triangle2)[0].position = sf::Vector2f(0.f, 0.f);
-    (*triangle2)[1].position = sf::Vector2f(100.f, 0.f);
-    (*triangle2)[2].position = sf::Vector2f(100.f, 100.f);
-    (*triangle2)[0].color = sf::Color::Red;
-    (*triangle2)[1].color = sf::Color::Green;
-    (*triangle2)[2].color = sf::Color::Blue;
+        auto camera1 = std::make_shared<shak::Camera>(sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
+        engine->AddCamera("camera1", camera1);
 
-    auto g1 = std::make_shared<Player>(triangle, bricksTxt);
-    g1->setOrigin({ 50.f, 50.f });
-    g1->move({ 100, 100 });
-    g1->rotate(sf::degrees(45));
-    g1->scale({ 2.f, 2.f });
-    engine.AddGameObject(g1);
+        auto quad = std::make_shared<sf::VertexArray>(sf::PrimitiveType::TriangleStrip, 4);
+        (*quad)[0].position = sf::Vector2f(0.f, 0.f);
+        (*quad)[1].position = sf::Vector2f(0.f, 100.f);
+        (*quad)[2].position = sf::Vector2f(100.f, 0.f);
+        (*quad)[3].position = sf::Vector2f(100.f, 100.f);
+        (*quad)[0].color = sf::Color::White;
+        (*quad)[1].color = sf::Color::White;
+        (*quad)[2].color = sf::Color::White;
+        (*quad)[3].color = sf::Color::White;
+        (*quad)[0].texCoords = sf::Vector2f(0.f, 0.f);
+        (*quad)[1].texCoords = sf::Vector2f(0.f, 4096.f);
+        (*quad)[2].texCoords = sf::Vector2f(4096.f, 0.f);
+        (*quad)[3].texCoords = sf::Vector2f(4096.f, 4096.f);
 
-    auto g2 = std::make_shared<shak::GameObject>(triangle2);
-    g2->move({ 200, 200 });
-    g1->AddChild(g2);
+        auto player = std::make_shared<Player>(engine, quad, bricks);
+        // player->AddChild(camera1);
 
-    engine.Start();
+        engine->AddGameObject(player);
+
+    }
+
+    engine->Start();
     return 0;
 }

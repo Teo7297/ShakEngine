@@ -21,7 +21,7 @@ namespace shak
 
         void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const override;
 
-        void move(sf::Vector2f offset);
+        virtual void move(sf::Vector2f offset);
 
         void rotate(sf::Angle angle);
 
@@ -29,7 +29,7 @@ namespace shak
 
         void AddChild(std::shared_ptr<GameObject> child);
 
-        void RemoveChild(std::shared_ptr<GameObject> child);
+        void RemoveChild(int id);
 
         /// @brief Obtain a copy of the children vector of this GameObject
         /// @return std::vector<std::shared_ptr<GameObject>>
@@ -41,7 +41,7 @@ namespace shak
 
         virtual void HandleInput(const sf::Event& event);
 
-    private:
+    protected:
         std::shared_ptr<sf::VertexArray> m_vertices;
         std::shared_ptr<sf::Texture> m_texture;
         std::shared_ptr<sf::Shader> m_shader = nullptr;

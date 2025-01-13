@@ -5,8 +5,8 @@
 class Player : public shak::GameObject
 {
 public:
-    Player(std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture = nullptr)
-        : GameObject(va, texture)
+    Player(std::shared_ptr<ShakEngine> engine, std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture = nullptr)
+        : GameObject(va, texture), m_engine(engine)
     {
     }
     ~Player() = default;
@@ -27,14 +27,17 @@ public:
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
             this->move({ m_speed * dt, 0 });
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q))
-            this->rotate(sf::degrees(90 * dt));
+            this->rotate(sf::degrees(-200 * dt));
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E))
-            this->rotate(sf::degrees(-90 * dt));
+            this->rotate(sf::degrees(200 * dt));
+        
+        // m_shader->setUniform("mouse", m_engine->GetMousePixelPos());
 
         GameObject::Update(dt);
     }
 
 private:
-    float m_speed = 100.f;
+    float m_speed = 1000.f;
     sf::Vector2f m_direction;
+    std::shared_ptr<ShakEngine> m_engine;
 };

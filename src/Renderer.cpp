@@ -32,6 +32,16 @@ namespace shak
         m_stopCondition.notify_one(); // Notify the rendering thread
     }
 
+    void Renderer::AddCamera(const std::string& name, std::shared_ptr<sf::View> camera)
+    {
+        m_cameras[name] = camera;
+    }
+
+    void Renderer::RemoveCamera(const std::string& name)
+    {
+        m_cameras.erase(name);
+    }
+
     void Renderer::Start()
     {
         if (!m_window)
@@ -66,15 +76,32 @@ namespace shak
             // Wait for items to draw or for the application to close
             m_stopCondition.wait(lock, [this] { return !m_renderQueue.empty() || !m_isRunning; });
 
-            m_window->clear({ 2, 38, 46 });
+            m_window->clear(m_clearColor);
             while (!m_renderQueue.empty())
             {
                 const auto [drawable, renderStates] = m_renderQueue.front();
                 m_renderQueue.pop();
-                if (!renderStates)
-                    m_window->draw(*drawable);
+
+                if (m_cameras.empty())
+                {
+                    // Render on default view
+                    if (!renderStates)
+                        m_window->draw(*drawable);
+                    else
+                        m_window->draw(*drawable, *renderStates);
+                }
                 else
-                    m_window->draw(*drawable, *renderStates);
+                {
+                    // Render on each camera
+                    for (auto& [_, camera] : m_cameras)
+                    {
+                        m_window->setView(*camera);
+                        if (!renderStates)
+                            m_window->draw(*drawable);
+                        else
+                            m_window->draw(*drawable, *renderStates);
+                    }
+                }
             }
 
             m_window->display();
