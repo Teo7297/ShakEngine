@@ -54,7 +54,7 @@ public:
             // Direction vector perpendicular to the segment
             const sf::Vector2f& prevPos = trailPoints[i - 1].position;
             const sf::Vector2f& nextPos = trailPoints[i + 1].position;
-
+            if (prevPos == nextPos) continue;
             sf::Vector2f direction = nextPos - prevPos;
             sf::Vector2f perpendicular(-direction.y, direction.x);
             float length = std::sqrt(perpendicular.x * perpendicular.x + perpendicular.y * perpendicular.y);
@@ -124,8 +124,7 @@ int StripTrailExample() {
         object.setPosition(objectPosition - sf::Vector2f(10.f, 10.f));
 
         // Update the trail with the new position
-        if (oldPos != object.getPosition())
-            trailRenderer.addPoint(objectPosition);
+        trailRenderer.addPoint(objectPosition);
         trailRenderer.update(deltaTime);
 
         // Clear the window
