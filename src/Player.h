@@ -25,20 +25,29 @@ public:
         {
             auto mousePos = m_engine->GetMouseWorldPos();
             auto shipPos = getPosition();
-            bool shouldMove = !this->IsPointInside(mousePos - shipPos + m_bbSize / 2.f);
 
-            if (shouldMove)
-            {
-                m_direction = mousePos - shipPos;
-                m_direction = m_direction.normalized();
+            bool updateDestination = !this->IsPointInside(mousePos - shipPos + m_bbSize / 2.f);
 
-                this->move(m_direction * m_speed * dt);
-                auto coords = m_atlas->GetTextureCoords(GetTextureByDirection());
-                (*m_vertices)[0].texCoords = coords.topLeft;
-                (*m_vertices)[1].texCoords = coords.bottomLeft;
-                (*m_vertices)[2].texCoords = coords.topRight;
-                (*m_vertices)[3].texCoords = coords.bottomRight;
-            }
+            if (updateDestination)
+                m_destination = mousePos;
+
+
+        }
+
+        if ((getPosition() - m_destination).lengthSquared() > 10.f)
+        {
+            // Move
+            m_direction = m_destination - getPosition();
+            m_direction = m_direction.normalized();
+            this->move(m_direction * m_speed * dt);
+
+            // Update texture
+            auto coords = m_atlas->GetTextureCoords(GetTextureByDirection());
+            (*m_vertices)[0].texCoords = coords.topLeft;
+            (*m_vertices)[1].texCoords = coords.bottomLeft;
+            (*m_vertices)[2].texCoords = coords.topRight;
+            (*m_vertices)[3].texCoords = coords.bottomRight;
+
         }
 
         GameObject::Update(dt);
@@ -57,6 +66,7 @@ private:
 private:
     float m_speed = 1000.f;
     sf::Vector2f m_direction;
+    sf::Vector2f m_destination;
     std::shared_ptr<ShakEngine> m_engine;
 
     sf::Vector2f m_bbSize;

@@ -16,9 +16,9 @@ int main()
         auto coords = goliathPlus->GetTextureCoords(1);
         auto quad = std::make_shared<sf::VertexArray>(sf::PrimitiveType::TriangleStrip, 4);
         (*quad)[0].position = sf::Vector2f(0.f, 0.f);
-        (*quad)[1].position = sf::Vector2f(0.f, 100.f);
-        (*quad)[2].position = sf::Vector2f(100.f, 0.f);
-        (*quad)[3].position = sf::Vector2f(100.f, 100.f);
+        (*quad)[1].position = sf::Vector2f(0.f, 250.f);
+        (*quad)[2].position = sf::Vector2f(250.f, 0.f);
+        (*quad)[3].position = sf::Vector2f(250.f, 250.f);
         (*quad)[0].color = sf::Color::White;
         (*quad)[1].color = sf::Color::White;
         (*quad)[2].color = sf::Color::White;
