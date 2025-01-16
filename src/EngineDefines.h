@@ -26,6 +26,7 @@
 #include <fstream>
 #include <sstream>
 #include <filesystem>
+namespace fs = std::filesystem;
 
 
 #define DEFAULT_APP_WIDTH 1920U

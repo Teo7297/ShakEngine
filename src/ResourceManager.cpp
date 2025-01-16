@@ -39,4 +39,27 @@ namespace shak
             return m_loadedTextures.at(name);
         return nullptr;
     }
+
+    std::shared_ptr<TextureAtlas> ResourceManager::LoadTextureAtlas(const std::string& path, const std::string& name)
+    {
+        if (m_loadedAtlases.find(name) != m_loadedAtlases.end())
+            return m_loadedAtlases[name];
+
+        auto atlas = std::make_shared<TextureAtlas>(path);
+        m_loadedAtlases[name] = atlas;
+        return atlas;
+    }
+
+    void ResourceManager::UnloadTextureAtlas(const std::string& name)
+    {
+        if (m_loadedAtlases.find(name) != m_loadedAtlases.end())
+            m_loadedAtlases.erase(name);
+    }
+
+    std::shared_ptr<TextureAtlas> ResourceManager::GetTextureAtlas(const std::string& name) const
+    {
+        if (m_loadedAtlases.find(name) != m_loadedAtlases.end())
+            return m_loadedAtlases.at(name);
+        return nullptr;
+    }
 }

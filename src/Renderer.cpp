@@ -77,6 +77,9 @@ namespace shak
             m_stopCondition.wait(lock, [this] { return !m_renderQueue.empty() || !m_isRunning; });
 
             m_window->clear(m_clearColor);
+
+            // glDisable(GL_BLEND);
+
             while (!m_renderQueue.empty())
             {
                 const auto [drawable, renderStates] = m_renderQueue.front();

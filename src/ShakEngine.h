@@ -28,6 +28,7 @@ public:
     void RemoveCamera(std::string name);
 
     sf::Vector2f GetMousePixelPos() const;
+    sf::Vector2f GetMouseWorldPos() const;
 
     void Start();
 

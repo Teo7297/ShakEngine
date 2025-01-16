@@ -52,6 +52,11 @@ sf::Vector2f ShakEngine::GetMousePixelPos() const
     return { (float)sf::Mouse::getPosition(*m_window).x, m_window->getSize().y - (float)sf::Mouse::getPosition(*m_window).y };
 }
 
+sf::Vector2f ShakEngine::GetMouseWorldPos() const
+{
+    return m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window));
+}
+
 void ShakEngine::Start()
 {
     while (m_window->isOpen())

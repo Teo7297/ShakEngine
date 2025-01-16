@@ -1,6 +1,6 @@
-// #include "EngineDefines.h"
+#include "EngineDefines.h"
 
-// #include "Renderer.h"
+#include "Renderer.h"
 
 
 // int main_example()
@@ -16,7 +16,7 @@
 
 //     sf::Shader triangleShader;
 //     bool loaded = triangleShader.loadFromFile("shaders/test.vs", "shaders/test.fs");
-    
+
 //     sf::View camera(sf::FloatRect({200.f, 200.f}, {300.f, 200.f}));
 //     // camera.setViewport(sf::FloatRect({0.25f, 0.25}, {0.5f, 0.5f}));
 
@@ -75,7 +75,7 @@
 //                 mousePosWorld = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
 //             }
 //         }
-        
+
 //         // Camera Movement
 //         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
 //             camera.setCenter({camera.getCenter().x, camera.getCenter().y - 20});

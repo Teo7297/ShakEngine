@@ -88,11 +88,6 @@ namespace shak
         return std::vector<std::shared_ptr<GameObject>>(m_children);
     }
 
-    void GameObject::SetShader(const std::shared_ptr<sf::Shader> shader)
-    {
-        m_shader = shader;
-    }
-
     void GameObject::Update(float dt)
     {
         std::lock_guard<std::mutex> lock(m_mutex);
@@ -109,5 +104,9 @@ namespace shak
         {
             child->HandleInput(event);
         }
+    }
+    bool GameObject::IsPointInside(const sf::Vector2f& point) const
+    {
+        return m_vertices->getBounds().contains(point);
     }
 }

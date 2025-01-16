@@ -35,11 +35,16 @@ namespace shak
         /// @return std::vector<std::shared_ptr<GameObject>>
         std::vector<std::shared_ptr<GameObject>> GetChildren() const;
 
-        void SetShader(const std::shared_ptr<sf::Shader> shader);
+        inline void SetShader(const std::shared_ptr<sf::Shader> shader) { m_shader = shader; }
+
+        inline std::shared_ptr<sf::VertexArray> GetVertexArray() { return m_vertices; }
 
         virtual void Update(float dt);
 
         virtual void HandleInput(const sf::Event& event);
+
+        // Physics
+        bool IsPointInside(const sf::Vector2f& point) const;
 
     protected:
         std::shared_ptr<sf::VertexArray> m_vertices;

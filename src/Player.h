@@ -5,9 +5,11 @@
 class Player : public shak::GameObject
 {
 public:
-    Player(std::shared_ptr<ShakEngine> engine, std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture = nullptr)
-        : GameObject(va, texture), m_engine(engine)
+    Player(std::shared_ptr<ShakEngine> engine, std::shared_ptr<sf::VertexArray> va, std::shared_ptr<shak::TextureAtlas> atlas)
+        : GameObject(va, atlas->GetAtlasTexture()), m_engine(engine), m_atlas(atlas), m_atlasTexturesCount(atlas->GetCount())
     {
+        m_bbSize = va->getBounds().size;
+        this->setOrigin(va->getBounds().getCenter());
     }
     ~Player() = default;
 
@@ -18,26 +20,47 @@ public:
 
     void Update(float dt) override
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
-            this->move({ 0, -m_speed * dt });
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
-            this->move({ 0, m_speed * dt });
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-            this->move({ -m_speed * dt, 0 });
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-            this->move({ m_speed * dt, 0 });
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q))
-            this->rotate(sf::degrees(-200 * dt));
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E))
-            this->rotate(sf::degrees(200 * dt));
-        
-        // m_shader->setUniform("mouse", m_engine->GetMousePixelPos());
+        static int c = 0;
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+        {
+            auto mousePos = m_engine->GetMouseWorldPos();
+            auto shipPos = getPosition();
+            bool shouldMove = !this->IsPointInside(mousePos - shipPos + m_bbSize / 2.f);
+
+            if (shouldMove)
+            {
+                m_direction = mousePos - shipPos;
+                m_direction = m_direction.normalized();
+
+                this->move(m_direction * m_speed * dt);
+                auto coords = m_atlas->GetTextureCoords(GetTextureByDirection());
+                (*m_vertices)[0].texCoords = coords.topLeft;
+                (*m_vertices)[1].texCoords = coords.bottomLeft;
+                (*m_vertices)[2].texCoords = coords.topRight;
+                (*m_vertices)[3].texCoords = coords.bottomRight;
+            }
+        }
 
         GameObject::Update(dt);
+    }
+
+private:
+    int GetTextureByDirection() const
+    {
+        const auto directionAngle = m_direction.angleTo({ 1.f, 0.f }); // Distance from right dir (aka 0 degrees)
+        float signedAngle = (directionAngle.asRadians() / (2.f * 3.14159265f));
+        if (signedAngle < 0.f)
+            signedAngle += 1.f;
+        return static_cast<int>(signedAngle * m_atlasTexturesCount) % m_atlasTexturesCount;
     }
 
 private:
     float m_speed = 1000.f;
     sf::Vector2f m_direction;
     std::shared_ptr<ShakEngine> m_engine;
+
+    sf::Vector2f m_bbSize;
+
+    std::shared_ptr<shak::TextureAtlas> m_atlas;
+    int m_atlasTexturesCount;
 };
