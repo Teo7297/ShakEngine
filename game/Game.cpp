@@ -1,14 +1,14 @@
 #include "ShakEngine.h"
 
 #include "Player.h"
-#include "Camera.h"
+
 int main()
 {
     auto engine = std::make_shared<ShakEngine>();
 
     {
         auto& rm = engine->GetResourceManager();
-        auto goliathPlus = rm.LoadTextureAtlas("textures/New_Goliath_plus/ship106.atlas", "goliathPlus");
+        auto goliathPlus = rm.LoadTextureAtlas("assets/textures/New_Goliath_plus/ship106.atlas", "goliathPlus");
 
         auto camera1 = std::make_shared<shak::Camera>(sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
         engine->AddCamera("camera1", camera1);
