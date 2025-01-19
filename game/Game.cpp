@@ -1,6 +1,8 @@
 #include "ShakEngine.h"
 
 #include "Player.h"
+#include "ParticleSystem.h"
+#include "Background.h"
 
 int main()
 {
@@ -29,11 +31,22 @@ int main()
         (*quad)[3].texCoords = coords.bottomRight;
 
         auto player = std::make_shared<Player>(engine, quad, goliathPlus);
+        player->move({ 1920 / 2, 1080 / 2 });
+        player->AddChild(camera1);
+        auto bg = std::make_shared<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
+        camera1->SetBackground(bg);
+
+        engine->AddGameObject(bg);
 
         engine->AddGameObject(player);
 
-        camera1->move({ -1920 / 2, -1080 / 2 });
+        // camera1->move({ -1920 / 2, -1080 / 2 });
 
+        auto bricks = rm.LoadTexture("assets/textures/Bricks.jpg", "bricks");
+        auto ps = std::make_shared<shak::ParticleSystem>(500, 0.f, 2.f, 3.f, 2.f, 15.f, sf::Vector2(-200.f, -200.f), sf::Vector2f(200.f, 200.f), sf::Color::Blue, sf::Color::Green, bricks);
+
+        ps->setPosition(player->getPosition());
+        player->AddChild(ps);
     }
 
     engine->Start();

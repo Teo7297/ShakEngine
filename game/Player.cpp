@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "DamageNumber.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 Player::Player(std::shared_ptr<ShakEngine> engine, std::shared_ptr<sf::VertexArray> va, std::shared_ptr<shak::TextureAtlas> atlas)
     : GameObject(va, atlas->GetAtlasTexture()), m_engine(engine), m_atlas(atlas), m_atlasTexturesCount(atlas->GetCount())
@@ -35,9 +37,9 @@ void Player::Update(float dt)
 
         // Click valid only if inside window
         auto windowSize = m_engine->GetWindowSize();
-        auto mousePosePixel = m_engine->GetMousePixelPos();
-        updateDestination &= mousePosePixel.x >= 0 && mousePosePixel.x <= windowSize.x;
-        updateDestination &= mousePosePixel.y >= 0 && mousePosePixel.y <= windowSize.y;
+        auto mousePosPixel = m_engine->GetMousePixelPos();
+        updateDestination &= mousePosPixel.x >= 0 && mousePosPixel.x <= windowSize.x;
+        updateDestination &= mousePosPixel.y >= 0 && mousePosPixel.y <= windowSize.y;
 
         if (updateDestination)
             m_destination = mousePos;
@@ -64,8 +66,8 @@ void Player::Update(float dt)
 
 int Player::GetTextureByDirection() const
 {
-    const auto directionAngle = m_direction.angleTo({ 1.f, 0.f }); // Distance from right dir (aka 0 degrees)
-    float signedAngle = (directionAngle.asRadians() / (2.f * 3.14159265f));
+    const float directionAngle = m_direction.angleTo({ 1.f, 0.f }).asRadians(); // Distance from right dir (aka 0 degrees)
+    float signedAngle = directionAngle / (2.0f * M_PI);
     if (signedAngle < 0.f)
         signedAngle += 1.f;
     return static_cast<int>(signedAngle * m_atlasTexturesCount) % m_atlasTexturesCount;
