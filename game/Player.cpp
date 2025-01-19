@@ -11,11 +11,12 @@ Player::Player(std::shared_ptr<ShakEngine> engine, std::shared_ptr<sf::VertexArr
 
 void Player::HandleInput(const sf::Event& event)
 {
-    if(auto key = event.getIf<sf::Event::KeyPressed>())
+    if (auto key = event.getIf<sf::Event::KeyPressed>())
     {
-        if(key->code == sf::Keyboard::Key::Space)
+        if (key->code == sf::Keyboard::Key::Space)
         {
-            auto damageNumber = std::make_shared<DamageNumber>(100, getPosition(), sf::Vector2f(0.f, -100.f));
+            auto damageNumber = m_damageNumberPool.Get();
+            damageNumber->Reset(100, this->getPosition(), { 0.f, -100.f });
             this->AddChild(damageNumber);
         }
     }

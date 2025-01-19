@@ -1,6 +1,9 @@
 #pragma once
 
 #include "ShakEngine.h"
+#include "GameObjectPool.h"
+
+#include "DamageNumber.h"
 
 class Player : public shak::GameObject
 {
@@ -25,4 +28,6 @@ private:
 
     std::shared_ptr<shak::TextureAtlas> m_atlas;
     int m_atlasTexturesCount;
+
+    shak::GameObjectPool<DamageNumber> m_damageNumberPool;
 };

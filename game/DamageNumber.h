@@ -1,24 +1,18 @@
+#pragma once
+
 #include "ShakEngine.h"
 
 class DamageNumber : public shak::GameObject
 {
 public:
-    DamageNumber(int damage, sf::Vector2f position, sf::Vector2f velocity)
-        : m_damage(damage), m_text(m_font), m_position(position), m_velocity(velocity), m_lifeTime(1.f), m_elapsedTime(0.f), m_isAlive(true)
+    DamageNumber()
+        : m_font("assets/fonts/Roboto/static/Roboto-Black.ttf"), m_text(m_font)
     {
-        m_font = sf::Font("assets/fonts/Roboto/static/Roboto-Black.ttf");
-        m_text.setFont(m_font);
-        m_text.setString(std::to_string(m_damage));
-        m_text.setCharacterSize(20);
-        m_text.setFillColor(sf::Color::Red);
-        m_text.setPosition(m_position);
     }
     ~DamageNumber() {}
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        if (!m_isAlive) return;
-
         states.transform *= this->getTransform();
         target.draw(m_text, states);
     }
@@ -27,30 +21,32 @@ public:
     {
         GameObject::Update(dt);
 
-        if (m_isAlive)
-        {
-            m_elapsedTime += dt;
-            m_text.move(m_velocity * dt);
+        m_elapsedTime += dt;
+        m_text.move(m_velocity * dt);
 
-            if (m_elapsedTime >= m_lifeTime)
-                m_isAlive = false;
-        }
+        if (m_elapsedTime >= m_lifeTime)
+            this->SetActive(false);
     }
 
-    void Reset()
+    void Reset(int damage, sf::Vector2f position, sf::Vector2f velocity)
     {
-        m_isAlive = true;
+        this->setPosition({ 0.f, 0.f }); // Needed because we update the text position not the GameObject position. Hence if this gets deactivated and reactivated, the text will be in the wrong position because the GameObject position does not get updated while inactive.
+        m_text.setPosition(position);
+        m_text.setString(std::to_string(damage));
+        m_text.setCharacterSize(20);
+        m_text.setFillColor(sf::Color::Red);
+        m_velocity = velocity;
+
+        this->SetActive(true);
         m_elapsedTime = 0.f;
+        m_lifeTime = 1.f;
     }
 
 private:
-    int m_damage;
     sf::Text m_text;
     sf::Font m_font;
-    sf::Vector2f m_position;
     sf::Vector2f m_velocity;
     float m_lifeTime;
     float m_elapsedTime;
-    bool m_isAlive;
 };
 

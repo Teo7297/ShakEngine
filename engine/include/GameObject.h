@@ -32,13 +32,21 @@ namespace shak
 
         void RemoveChild(int id);
 
+        inline void SetActive(bool active) { m_active = active; }
+        inline bool IsActive() const { return m_active; }
+
         /// @brief Obtain a copy of the children vector of this GameObject
         /// @return std::vector<std::shared_ptr<GameObject>>
         std::vector<std::shared_ptr<GameObject>> GetChildren() const;
 
         inline void SetShader(const std::shared_ptr<sf::Shader> shader) { m_shader = shader; }
+        inline std::shared_ptr<sf::Shader> GetShader() { return m_shader; }
 
+        inline void SetVertexArray(const std::shared_ptr<sf::VertexArray> va) { m_vertices = va; }
         inline std::shared_ptr<sf::VertexArray> GetVertexArray() { return m_vertices; }
+
+        inline void SetTexture(const std::shared_ptr<sf::Texture> texture) { m_texture = texture; }
+        inline std::shared_ptr<sf::Texture> GetTexture() { return m_texture; }
 
         virtual void Update(float dt);
 
@@ -52,6 +60,7 @@ namespace shak
         std::shared_ptr<sf::Texture> m_texture = nullptr;
         std::shared_ptr<sf::Shader> m_shader = nullptr;
         std::vector<std::shared_ptr<GameObject>> m_children;
+        bool m_active = true;
         mutable std::mutex m_mutex;
     };
 }

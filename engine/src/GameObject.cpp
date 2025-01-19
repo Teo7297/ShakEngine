@@ -19,7 +19,8 @@ namespace shak
 
         for (const auto& child : m_children)
         {
-            child->draw(target, sf::RenderStates::Default);
+            if (child->IsActive())
+                child->draw(target, sf::RenderStates::Default);
         }
     }
 
@@ -72,6 +73,11 @@ namespace shak
     void GameObject::AddChild(std::shared_ptr<GameObject> child)
     {
         std::lock_guard<std::mutex> lock(m_mutex);
+        for (auto& c : m_children)
+        {
+            if (c == child)
+                return;
+        }
         m_children.push_back(child);
     }
 
@@ -92,7 +98,8 @@ namespace shak
         std::lock_guard<std::mutex> lock(m_mutex);
         for (const auto& child : m_children)
         {
-            child->Update(dt);
+            if (child->IsActive())
+                child->Update(dt);
         }
     }
 

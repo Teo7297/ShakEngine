@@ -14,7 +14,8 @@ void shak::Scene::Update(float dt)
 {
     for (auto& gameObject : m_gameObjects)
     {
-        gameObject->Update(dt);
+        if (gameObject->IsActive())
+            gameObject->Update(dt);
     }
 }
 
@@ -23,7 +24,8 @@ void shak::Scene::Render()
     m_drawables.clear();
     for (auto& gameObject : m_gameObjects)
     {
-        m_drawables.emplace_back(gameObject, nullptr);
+        if (gameObject->IsActive())
+            m_drawables.emplace_back(gameObject, nullptr);
     }
     m_renderer->PushToRenderQueue(m_drawables);
 }
