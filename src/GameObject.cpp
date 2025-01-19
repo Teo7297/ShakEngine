@@ -5,7 +5,6 @@ namespace shak
     GameObject::GameObject(std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture)
         : m_vertices(va), m_texture(texture)
     {
-
     }
 
     void GameObject::draw(sf::RenderTarget& target, sf::RenderStates states) const

@@ -24,7 +24,7 @@ namespace shak
         }
 
         // Hack. We like the camera being a GameObj so we can set it as child of other gameObj. But we don't want the draw function to do anything, so this is an empty function.
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override
         {
         }
 

@@ -1,5 +1,5 @@
 #include "Player.h"
-
+#include "DamageNumber.h"
 
 
 Player::Player(std::shared_ptr<ShakEngine> engine, std::shared_ptr<sf::VertexArray> va, std::shared_ptr<shak::TextureAtlas> atlas)
@@ -11,6 +11,14 @@ Player::Player(std::shared_ptr<ShakEngine> engine, std::shared_ptr<sf::VertexArr
 
 void Player::HandleInput(const sf::Event& event)
 {
+    if(auto key = event.getIf<sf::Event::KeyPressed>())
+    {
+        if(key->code == sf::Keyboard::Key::Space)
+        {
+            auto damageNumber = std::make_shared<DamageNumber>(100, getPosition(), sf::Vector2f(0.f, -100.f));
+            this->AddChild(damageNumber);
+        }
+    }
     GameObject::HandleInput(event);
 }
 
