@@ -29,6 +29,7 @@ public:
 
     sf::Vector2f GetMousePixelPos() const;
     sf::Vector2f GetMouseWorldPos() const;
+    sf::Vector2f GetWindowSize() const;
 
     void Start();
 
