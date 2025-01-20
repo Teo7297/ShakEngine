@@ -21,8 +21,6 @@ namespace shak
 
     void ParticleSystem::Update(float dt)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
-
         m_spawnTimer += dt;
         if (m_spawnTimer >= m_spawnRate)
         {
@@ -46,7 +44,6 @@ namespace shak
 
     void ParticleSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
         states.transform *= this->getTransform();
         for (const auto& child : m_children)
         {
@@ -57,7 +54,6 @@ namespace shak
 
     void ParticleSystem::move(sf::Vector2f offset)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
         Transformable::move(offset);
     }
 

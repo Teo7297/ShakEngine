@@ -13,23 +13,14 @@ namespace shak
     std::shared_ptr<sf::RenderWindow> Renderer::CreateSFWindow(const std::string& title)
     {
         m_window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ DEFAULT_APP_WIDTH, DEFAULT_APP_HEIGHT }), title);
+        if (!m_window->setActive(true))
+            std::cerr << "[Render thread] OpenGL context could not be activated" << std::endl;
         return m_window;
     }
 
-    void Renderer::PushToRenderQueue(const std::vector<shak::Drawable>& drawables)
+    void Renderer::CloseWindow()
     {
-        std::lock_guard<std::mutex> lock(m_renderQueueMutex);
-        for (const auto& drawable : drawables)
-            m_renderQueue.push(drawable);
-        m_stopCondition.notify_one(); // Notify the rendering thread
-    }
-
-    void Renderer::ClearRenderQueue()
-    {
-        std::lock_guard<std::mutex> lock(m_renderQueueMutex);
-        while (!m_renderQueue.empty())
-            m_renderQueue.pop();
-        m_stopCondition.notify_one(); // Notify the rendering thread
+        m_window->close();
     }
 
     void Renderer::AddCamera(const std::string& name, std::shared_ptr<sf::View> camera)
@@ -42,75 +33,34 @@ namespace shak
         m_cameras.erase(name);
     }
 
-    void Renderer::Start()
+    void Renderer::Render(const std::vector<Drawable>& drawables)
     {
-        if (!m_window)
-            std::cerr << "[Renderer - Main Thread] No window to render to" << std::endl;
+        m_window->clear(m_clearColor);
 
-        // deactivate its OpenGL context in this thread, we are going to enable it in the render-thread
-        if (!m_window->setActive(false))
-            std::cerr << "[Renderer - Main Thread] OpenGL context could not be deactivated" << std::endl;
-        m_renderThread = std::thread(&Renderer::RenderLoop, this);
-    }
+        // glDisable(GL_BLEND);
 
-    void Renderer::Stop()
-    {
-        ClearRenderQueue();
-        m_isRunning = false;
-        m_stopCondition.notify_all();
-        m_renderThread.join();
-    }
-
-    void Renderer::RenderLoop()
-    {
-        // activate the window's context
-        if (!m_window->setActive(true))
-            std::cerr << "[Render thread] OpenGL context could not be activated" << std::endl;
-
-
-        // the rendering loop
-        while (m_isRunning)
+        if (!m_cameras.empty())
         {
-            std::unique_lock<std::mutex> lock(m_renderQueueMutex);
-
-            // Wait for items to draw or for the application to close
-            m_stopCondition.wait(lock, [this] { return !m_renderQueue.empty() || !m_isRunning; });
-
-            m_window->clear(m_clearColor);
-
-            // glDisable(GL_BLEND);
-
-            while (!m_renderQueue.empty())
+            for (const auto& camera : m_cameras)
             {
-                const auto [drawable, renderStates] = m_renderQueue.front();
-                m_renderQueue.pop();
-
-                if (m_cameras.empty())
-                {
-                    // Render on default view
-                    if (!renderStates)
-                        m_window->draw(*drawable);
-                    else
-                        m_window->draw(*drawable, *renderStates);
-                }
-                else
-                {
-                    // Render on each camera
-                    for (auto& [_, camera] : m_cameras)
-                    {
-                        m_window->setView(*camera);
-                        if (!renderStates)
-                            m_window->draw(*drawable);
-                        else
-                            m_window->draw(*drawable, *renderStates);
-                    }
-                }
+                m_window->setView(*camera.second);
+                Draw(drawables);
             }
-
-            m_window->display();
         }
+        else
+            Draw(drawables);
 
-        // The render thread has the authority over the window, we could also deactivate it here and close it from the main thread I guess...
-        m_window->close();
+        m_window->display();
+    }
+
+    void Renderer::Draw(const std::vector<Drawable>& drawables)
+    {
+        for (const auto& drawable : drawables)
+        {
+            if (drawable.renderStates)
+                m_window->draw(*drawable.drawable, *drawable.renderStates);
+            else
+                m_window->draw(*drawable.drawable);
+        }
     }
 }

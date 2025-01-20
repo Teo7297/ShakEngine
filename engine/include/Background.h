@@ -8,12 +8,15 @@ namespace shak
     class Background : public GameObject
     {
     public:
-        Background(std::shared_ptr<sf::Texture> texture, sf::Vector2f screenSize);
+        Background(const std::shared_ptr<sf::Texture> texture, const sf::Vector2f& screenSize);
         ~Background();
 
-        void SetScreenCoords(sf::FloatRect coords) { m_screenCoords = coords; }
+        inline void SetScreenCoords(const sf::FloatRect& coords) { m_screenCoords = coords; }
+        void SetScreenSize(const sf::Vector2f& size);
+        void SetColor(const sf::Color& color);
 
         void Update(float dt) override;
+
     private:
         sf::FloatRect m_screenCoords;
         sf::Vector2f m_screenSize;

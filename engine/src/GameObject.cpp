@@ -9,7 +9,6 @@ namespace shak
 
     void GameObject::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
         states.transform *= this->getTransform();
         if (m_texture)
             states.texture = m_texture.get();
@@ -26,8 +25,6 @@ namespace shak
 
     void GameObject::move(sf::Vector2f offset)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
-
         Transformable::move(offset);
         for (const auto& child : m_children)
         {
@@ -37,8 +34,6 @@ namespace shak
 
     void GameObject::rotate(sf::Angle angle)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
-
         Transformable::rotate(angle);
         for (const auto& child : m_children)
         {
@@ -61,8 +56,6 @@ namespace shak
 
     void GameObject::scale(sf::Vector2f factor)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
-
         Transformable::scale(factor);
         for (const auto& child : m_children)
         {
@@ -72,7 +65,6 @@ namespace shak
 
     void GameObject::AddChild(std::shared_ptr<GameObject> child)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
         for (auto& c : m_children)
         {
             if (c == child)
@@ -83,19 +75,16 @@ namespace shak
 
     void GameObject::RemoveChild(int id)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
         m_children.erase(m_children.cbegin() + id);
     }
 
     std::vector<std::shared_ptr<GameObject>> GameObject::GetChildren() const
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
         return std::vector<std::shared_ptr<GameObject>>(m_children);
     }
 
     void GameObject::Update(float dt)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
         for (const auto& child : m_children)
         {
             if (child->IsActive())
@@ -105,7 +94,6 @@ namespace shak
 
     void GameObject::HandleInput(const sf::Event& event)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
         for (const auto& child : m_children)
         {
             child->HandleInput(event);

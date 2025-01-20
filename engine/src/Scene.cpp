@@ -27,7 +27,7 @@ void shak::Scene::Render()
         if (gameObject->IsActive())
             m_drawables.emplace_back(gameObject, nullptr);
     }
-    m_renderer->PushToRenderQueue(m_drawables);
+    m_renderer->Render(m_drawables);
 }
 
 void shak::Scene::HandleInput(const sf::Event& event)

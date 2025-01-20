@@ -12,21 +12,18 @@ namespace shak
         ~Renderer();
 
         std::shared_ptr<sf::RenderWindow> CreateSFWindow(const std::string& title);
-        void PushToRenderQueue(const std::vector<shak::Drawable>& drawables);
-        void ClearRenderQueue();
+        void CloseWindow();
+
         void AddCamera(const std::string& name, std::shared_ptr<sf::View> camera);
         void RemoveCamera(const std::string& name);
-        void Start();
-        void Stop();
+
         inline void SetClearColor(sf::Color color) { m_clearColor = color; }
 
+        void Render(const std::vector<Drawable>& drawables);
     private:
-        void RenderLoop();
+        void Draw(const std::vector<Drawable>& drawables);
 
     private:
-        std::queue<shak::Drawable> m_renderQueue;
-        std::mutex m_renderQueueMutex;
-        std::condition_variable m_stopCondition;
         bool m_isRunning = true;
         std::shared_ptr<sf::RenderWindow> m_window = nullptr;
         std::thread m_renderThread;

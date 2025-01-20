@@ -17,7 +17,6 @@ namespace shak
 
         void move(sf::Vector2f offset) override
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
             m_view->move(offset);
         }
 
@@ -26,13 +25,17 @@ namespace shak
             return m_view;
         }
 
+        void SetSize(const sf::Vector2f& size)
+        {
+            m_view->setSize(size);
+            m_bg->SetScreenSize(size);
+        }
+
         inline void SetBackground(const std::shared_ptr<Background>& bg) { m_bg = bg; }
 
         void Update(float dt) override
         {
             GameObject::Update(dt);
-            std::lock_guard<std::mutex> lock(m_mutex);
-
             if (m_bg)
             {
                 sf::Vector2f camPos = { m_view->getCenter().x - m_view->getSize().x / 2, m_view->getCenter().y - m_view->getSize().y / 2 };

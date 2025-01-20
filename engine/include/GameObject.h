@@ -61,6 +61,5 @@ namespace shak
         std::shared_ptr<sf::Shader> m_shader = nullptr;
         std::vector<std::shared_ptr<GameObject>> m_children;
         bool m_active = true;
-        mutable std::mutex m_mutex;
     };
 }

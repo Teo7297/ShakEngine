@@ -9,7 +9,6 @@ ShakEngine::ShakEngine()
     m_cameras{}
 {
     m_window = m_renderer->CreateSFWindow("GAME");
-    m_renderer->Start();
     m_window->setFramerateLimit(170);
 }
 
@@ -70,7 +69,7 @@ void ShakEngine::Start()
         {
             if (event->is<sf::Event::Closed>())
             {
-                m_renderer->Stop();
+                m_renderer->CloseWindow();
                 exit(0);
             }
             else if (event->is<sf::Event::Resized>())
@@ -79,7 +78,7 @@ void ShakEngine::Start()
                 for (auto& [name, camera] : m_cameras)
                 {
                     //TODO: make this more flexible, this now only works with horizontal split screen
-                    camera->GetView()->setSize({ (float)val->size.x / m_cameras.size(), (float)val->size.y });
+                    camera->SetSize({ (float)val->size.x / m_cameras.size(), (float)val->size.y });
                 }
             }
 
