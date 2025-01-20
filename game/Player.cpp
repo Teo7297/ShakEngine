@@ -42,23 +42,21 @@ void Player::Update(float dt)
         updateDestination &= mousePosPixel.y >= 0 && mousePosPixel.y <= windowSize.y;
 
         if (updateDestination)
+        {
             m_destination = mousePos;
+            m_direction = m_destination - getPosition();
+            m_direction = m_direction.normalized();
+            auto coords = m_atlas->GetTextureCoords(GetTextureByDirection());
+            (*m_vertices)[0].texCoords = coords.topLeft;
+            (*m_vertices)[1].texCoords = coords.bottomLeft;
+            (*m_vertices)[2].texCoords = coords.topRight;
+            (*m_vertices)[3].texCoords = coords.bottomRight;
+        }
     }
 
     if ((getPosition() - m_destination).lengthSquared() > 10.f)
     {
-        // Move
-        m_direction = m_destination - getPosition();
-        m_direction = m_direction.normalized();
         this->move(m_direction * m_speed * dt);
-
-        // Update texture
-        auto coords = m_atlas->GetTextureCoords(GetTextureByDirection());
-        (*m_vertices)[0].texCoords = coords.topLeft;
-        (*m_vertices)[1].texCoords = coords.bottomLeft;
-        (*m_vertices)[2].texCoords = coords.topRight;
-        (*m_vertices)[3].texCoords = coords.bottomRight;
-
     }
 
     GameObject::Update(dt);
