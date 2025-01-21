@@ -15,6 +15,8 @@ namespace shak
         m_window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ DEFAULT_APP_WIDTH, DEFAULT_APP_HEIGHT }), title);
         if (!m_window->setActive(true))
             std::cerr << "[Render thread] OpenGL context could not be activated" << std::endl;
+        m_window->setVerticalSyncEnabled(false);
+        m_window->setFramerateLimit(170);
         return m_window;
     }
 

@@ -25,6 +25,7 @@
 #include <chrono>
 #include <fstream>
 #include <sstream>
+#include <cmath>
 #include <filesystem>
 namespace fs = std::filesystem;
 

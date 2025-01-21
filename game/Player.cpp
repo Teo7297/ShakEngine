@@ -18,7 +18,7 @@ void Player::HandleInput(const sf::Event& event)
         if (key->code == sf::Keyboard::Key::Space)
         {
             auto damageNumber = m_damageNumberPool.Get();
-            damageNumber->Reset(100, this->getPosition(), { 0.f, -100.f });
+            damageNumber->Reset(100, this->getPosition());
             this->AddChild(damageNumber);
         }
     }

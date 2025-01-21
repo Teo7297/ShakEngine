@@ -9,7 +9,6 @@ ShakEngine::ShakEngine()
     m_cameras{}
 {
     m_window = m_renderer->CreateSFWindow("GAME");
-    m_window->setFramerateLimit(170);
 }
 
 void ShakEngine::AddGameObject(std::shared_ptr<shak::GameObject> gameObject)
