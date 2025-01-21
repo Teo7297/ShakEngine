@@ -60,8 +60,10 @@ public:
         m_text.setPosition(position);
         m_text.setScale({ 1.f, 1.f });
         m_text.setString(std::to_string(damage));
-        m_text.setCharacterSize(20);
+        m_text.setCharacterSize(15);
         m_text.setFillColor(sf::Color::Red);
+        m_text.setOutlineThickness(1.f);
+        m_text.setOutlineColor(sf::Color::Black);
 
         // random direction
         m_dir = sf::Vector2f{ static_cast<float>(rand() % 100 - 50), static_cast<float>(rand() % 100 - 50) };

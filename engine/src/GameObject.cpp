@@ -99,8 +99,13 @@ namespace shak
             child->HandleInput(event);
         }
     }
-    bool GameObject::IsPointInside(const sf::Vector2f& point) const
+
+    bool GameObject::IsPointInside(const sf::Vector2f& worldPoint) const
     {
-        return m_vertices->getBounds().contains(point);
+        const auto bounds = m_vertices->getBounds();
+        const auto center = bounds.size * 0.5f; // size / 2
+        const auto zeroPosition = worldPoint - this->getPosition();
+
+        return m_vertices->getBounds().contains(zeroPosition + center);
     }
 }

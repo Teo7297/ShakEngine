@@ -53,7 +53,8 @@ namespace shak
         virtual void HandleInput(const sf::Event& event);
 
         // Physics
-        bool IsPointInside(const sf::Vector2f& point) const;
+        // Check if a point in world coordinates is inside the object bounding box
+        bool IsPointInside(const sf::Vector2f& worldPoint) const;
 
     protected:
         std::shared_ptr<sf::VertexArray> m_vertices = nullptr;
