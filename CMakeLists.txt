@@ -18,11 +18,11 @@ FetchContent_MakeAvailable(SFML)
 # Include all .cpp and .h files in src directory
 file(GLOB_RECURSE SOURCES engine/src/*.cpp game/*.cpp)
 
-add_executable(main ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_include_directories(main PRIVATE engine/include game)
+target_include_directories(${PROJECT_NAME} PRIVATE engine/include game)
 
-target_link_libraries(main PRIVATE 
+target_link_libraries(${PROJECT_NAME} PRIVATE 
     SFML::Graphics
     SFML::Window
     SFML::System
