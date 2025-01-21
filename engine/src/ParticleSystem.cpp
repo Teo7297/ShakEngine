@@ -47,8 +47,15 @@ namespace shak
         states.transform *= this->getTransform();
         for (const auto& child : m_children)
         {
-            if (child->IsActive())
-                child->draw(target, sf::RenderStates::Default);
+            auto particle = std::dynamic_pointer_cast<Particle>(child);
+            if (particle->IsActive())
+            {
+                auto states = sf::RenderStates::Default;
+                if (particle->texture)
+                    states.texture = particle->texture.get();
+
+                child->draw(target, states);
+            }
         }
     }
 
@@ -76,6 +83,9 @@ namespace shak
             static_cast<unsigned char>(m_startColor.g + (rand() % static_cast<int>(m_endColor.g - m_startColor.g + 1))),
             static_cast<unsigned char>(m_startColor.b + (rand() % static_cast<int>(m_endColor.b - m_startColor.b + 1)))
         };
+
+        if (m_particleTexture)
+            p->SetTexture(m_particleTexture);
 
         p->SetActive(activate);
     }

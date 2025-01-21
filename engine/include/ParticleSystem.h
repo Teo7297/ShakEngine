@@ -34,6 +34,16 @@ namespace shak
             (*m_vertices)[3].position = sf::Vector2f(size, size);
         }
 
+        void SetTexture(std::shared_ptr<sf::Texture> t)
+        {
+            texture = t;
+            auto size = texture->getSize();
+            (*m_vertices)[0].texCoords = { 0.f, 0.f };
+            (*m_vertices)[1].texCoords = { 0.f, static_cast<float>(size.y) };
+            (*m_vertices)[2].texCoords = { static_cast<float>(size.x), 0.f };
+            (*m_vertices)[3].texCoords = { static_cast<float>(size.x), static_cast<float>(size.y) };
+        }
+
         void Update(float dt) override
         {
             lifeTime += dt;
@@ -51,6 +61,7 @@ namespace shak
             (*m_vertices)[3].color = startColor;
         }
 
+        std::shared_ptr<sf::Texture> texture;
         sf::Vector2f velocity;
         float lifeTime;
         float maxLifeTime;
