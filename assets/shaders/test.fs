@@ -1,14 +1,14 @@
-uniform sampler2D texture;
-uniform vec2 mouse;
+uniform sampler2D u_texture;
+uniform vec2 u_mouse;
 
 void main()
 {
     // lookup the pixel in the texture
-    vec4 pixel = texture2D(texture, gl_TexCoord[0].xy);
+    vec4 pixel = texture2D(u_texture, gl_TexCoord[0].xy);
 
     // calculate the distance from the current pixel to the mouse position
     vec2 pixelPos = gl_FragCoord.xy;
-    float distance = length(pixelPos - mouse);
+    float distance = length(pixelPos - u_mouse);
 
     // if the pixel is near the mouse, color it blue
     if (distance <= 10.0)

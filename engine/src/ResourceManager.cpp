@@ -62,4 +62,38 @@ namespace shak
             return m_loadedAtlases.at(name);
         return nullptr;
     }
+
+    std::shared_ptr<sf::Shader> ResourceManager::LoadShader(const fs::path& vpath, const fs::path& fpath, const std::string& name)
+    {
+        if (m_loadedShaders.find(name) != m_loadedShaders.end())
+            return m_loadedShaders[name];
+
+        auto shader = std::make_shared<sf::Shader>();
+        bool success = false;
+
+        if (vpath == "")
+            success = shader->loadFromFile(fpath, sf::Shader::Type::Fragment);
+        else if (fpath == "")
+            success = shader->loadFromFile(vpath, sf::Shader::Type::Vertex);
+        else
+            success = shader->loadFromFile(vpath, fpath);
+
+        if (!success)
+        {
+            std::cerr << "Failed to load shader [" << name << "] at location: " << vpath << ", " << fpath << std::endl;
+            return nullptr;
+        }
+
+        m_loadedShaders[name] = shader;
+        return shader;
+    }
+
+    void ResourceManager::UnloadShader(const std::string& name)
+    {
+    }
+
+    std::shared_ptr<sf::Shader> ResourceManager::GetShader(const std::string& name) const
+    {
+        return std::shared_ptr<sf::Shader>();
+    }
 }

@@ -29,7 +29,8 @@ namespace shak
         void SetSize(const sf::Vector2f& size)
         {
             m_view->setSize(size);
-            m_bg->SetScreenSize(size);
+            if (m_bg)
+                m_bg->SetScreenSize(size);
         }
 
         inline void SetBackground(const std::shared_ptr<Background>& bg) { m_bg = bg; }
