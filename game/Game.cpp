@@ -51,8 +51,7 @@ int main()
         ps->setPosition({ 0.f, 0.f });
         // engine->AddGameObject(ps);
 
-        auto shaderHelper = std::make_shared<ShaderDevHelper>("particle");
-        shaderHelper->SetTexture(chicken);
+        auto shaderHelper = std::make_shared<ShaderDevHelper>("particle", chicken);
         engine->AddGameObject(shaderHelper);
     }
 
