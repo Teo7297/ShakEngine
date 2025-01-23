@@ -4,6 +4,8 @@
 #include "ParticleSystem.h"
 #include "Background.h"
 
+#include "ShaderDevHelper.h"
+
 int main()
 {
     auto engine = std::make_shared<ShakEngine>();
@@ -27,7 +29,7 @@ int main()
 
         // engine->AddGameObject(player);
 
-        camera1->move({ -1920 / 2, -1080 / 2 });
+        // camera1->move({ -1920 / 2, -1080 / 2 });
 
         // auto bricks = rm.LoadTexture("assets/textures/Bricks.jpg", "bricks");
         auto chicken = rm.LoadTexture("assets/textures/laser.png", "chicken");
@@ -47,8 +49,11 @@ int main()
             shak::Particle::Type::Quad, chicken);           // type and texture
         ps->SetShader(psShader);
         ps->setPosition({ 0.f, 0.f });
-        engine->AddGameObject(ps);
-        // player->AddChild(ps);
+        // engine->AddGameObject(ps);
+
+        auto shaderHelper = std::make_shared<ShaderDevHelper>("particle");
+        shaderHelper->SetTexture(chicken);
+        engine->AddGameObject(shaderHelper);
     }
 
     engine->Start();
