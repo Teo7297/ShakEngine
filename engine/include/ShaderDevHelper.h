@@ -36,7 +36,7 @@ public:
     {
         m_time += dt;
         auto newShader = std::make_shared<sf::Shader>();
-        if (newShader->loadFromFile("assets/shaders/particle.vs", "assets/shaders/particle.fs"))
+        if (newShader->loadFromFile("assets/shaders/particle.fs", sf::Shader::Type::Fragment))
         {
             m_shader = newShader;
             m_shader->setUniform("u_texture", *m_texture);

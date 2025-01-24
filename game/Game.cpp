@@ -32,9 +32,9 @@ int main()
         // camera1->move({ -1920 / 2, -1080 / 2 });
 
         // auto bricks = rm.LoadTexture("assets/textures/Bricks.jpg", "bricks");
-        auto chicken = rm.LoadTexture("assets/textures/abstract1.png", "chicken", true, true);
+        auto chicken = rm.LoadTexture("assets/textures/goliathplusargon.png", "chicken", true, true);
 
-        auto psShader = rm.LoadShader("assets/shaders/particle.vs", "assets/shaders/particle.fs", "particle");
+        auto psShader = rm.LoadShader("", "assets/shaders/particle.fs", "particle");
         psShader->setUniform("u_texture", *chicken);
         psShader->setUniform("u_resolution", sf::Glsl::Vec2{ engine->GetWindowSize().x, engine->GetWindowSize().y });
 
