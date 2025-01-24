@@ -32,7 +32,7 @@ int main()
         // camera1->move({ -1920 / 2, -1080 / 2 });
 
         // auto bricks = rm.LoadTexture("assets/textures/Bricks.jpg", "bricks");
-        auto chicken = rm.LoadTexture("assets/textures/laser.png", "chicken");
+        auto chicken = rm.LoadTexture("assets/textures/abstract1.png", "chicken", true, true);
 
         auto psShader = rm.LoadShader("assets/shaders/particle.vs", "assets/shaders/particle.fs", "particle");
         psShader->setUniform("u_texture", *chicken);
