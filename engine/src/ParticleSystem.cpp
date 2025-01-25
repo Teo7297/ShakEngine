@@ -43,12 +43,18 @@ namespace shak
     void ParticleSystem::Update(float dt)
     {
         m_spawnTimer += dt;
-        m_shader->setUniform("u_time", m_spawnTimer);
+        if (m_shader)
+            m_shader->setUniform("u_time", m_spawnTimer);
 
         for (std::size_t i = 0; i < m_particles.size(); i++)
         {
             Particle& p = m_particles[i];
+            p.lifeTime += dt;
 
+            // if the particle is dead, respawn it
+            if (p.lifeTime >= p.maxLifeTime)
+                InitParticle(i);
+                
             if (!p.active)
             {
                 if (m_spawnTimer >= m_spawnRate)
@@ -64,11 +70,7 @@ namespace shak
                 }
             }
 
-            p.lifeTime += dt;
 
-            // if the particle is dead, respawn it
-            if (p.lifeTime >= p.maxLifeTime)
-                InitParticle(i);
 
             // Update each vertex of the particle
             // position
@@ -90,6 +92,7 @@ namespace shak
             float h = m_texture->getSize().y;
             p.SetTextureCoords(w, h);
         }
+
     }
 
     void ParticleSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const
