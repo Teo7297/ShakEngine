@@ -9,7 +9,7 @@ uniform sampler2D u_texture;
 uniform vec2 u_resolution;
 uniform float u_time;
 uniform float u_laserWidth = 5.0;
-uniform bool u_isRainbow = true;
+uniform bool u_isRainbow = false;
 uniform vec4 u_laserColor = RED;
 
 const float centerIntensity = 100.0;
@@ -19,7 +19,8 @@ const float speed = 1.8;
 void drawLaser(out vec4 fragColor, in vec2 fragCoord)
 {
     // Normalize pixel coordinates (from 0 to 1)
-    vec2 uv = fragCoord / u_resolution.xy;
+    vec2 uv = gl_TexCoord[0].xy;                //! UV texture coords based
+    // vec2 uv = fragCoord / u_resolution.xy;   //! UV window coords based
 
     // this make the laser move horizontally
     // uv.x += (fract(u_time) - 0.5) * 10;
@@ -27,10 +28,10 @@ void drawLaser(out vec4 fragColor, in vec2 fragCoord)
     //Define the laser effect and center color
     vec4 laserColor;
     if(u_isRainbow)
-        {
-            laserColor.rgb = 0.5 + 0.5 * cos(u_time * 4.5 + uv.xyx + vec3(2, 4, 6));
-            laserColor.a = 1.0;
-        }
+    {
+        laserColor.rgb = 0.5 + 0.5 * cos(u_time * 4.5 + uv.xyx + vec3(2, 4, 6));
+        laserColor.a = 1.0;
+    }
     else
         laserColor = u_laserColor;
 
@@ -82,6 +83,6 @@ void main()
     vec4 vertexColor = gl_Color;
 
     drawLaser(vertexColor, gl_FragCoord.xy);
-    
+
     gl_FragColor = vertexColor;
 }

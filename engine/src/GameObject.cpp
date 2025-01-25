@@ -83,6 +83,15 @@ namespace shak
         return std::vector<std::shared_ptr<GameObject>>(m_children);
     }
 
+    void GameObject::Awake() // TODO: Awake should be also called when an object gets created at runtime
+    {
+        for (const auto& child : m_children)
+        {
+            if (child->IsActive())
+                child->Awake();
+        }
+    }
+
     void GameObject::Update(float dt)
     {
         for (const auto& child : m_children)

@@ -19,6 +19,8 @@ public:
 
     void RemoveGameObject(std::shared_ptr<shak::GameObject> gameObject);
 
+    std::shared_ptr<shak::GameObject> FindGameObjectByName(std::string name) const;
+
     shak::ResourceManager& GetResourceManager();
 
     void AddCamera(std::string name, std::shared_ptr<shak::Camera> camera);

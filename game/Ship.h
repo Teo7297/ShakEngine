@@ -12,21 +12,34 @@ public:
     virtual ~Ship() = default;
 
     virtual void HandleInput(const sf::Event& event) override;
-
+    virtual void Awake() override;
     virtual void Update(float dt) override;
+
+    virtual float TakeDamage(float damage);
 
 protected:
     int GetTextureByDirection() const;
     void UpdateDirection();
     void UpdateTextureCoords();
+    void SetTarget(std::shared_ptr<Ship> target);
+
+    virtual float Shoot() { return -1.f; }
 
 protected:
     std::shared_ptr<shak::TextureAtlas> m_atlas;
     int m_atlasTexturesCount;
 
-    float m_speed = 1000.f;
     sf::Vector2f m_direction;
     sf::Vector2f m_destination;
 
     shak::GameObjectPool<DamageNumber> m_damageNumberPool;
+
+    std::shared_ptr<Ship> m_target;
+
+    // STATS
+    float m_speed = 1000.f;
+    float m_hp = 100000.f;
+    float m_maxHp = 100000.f;
+    float m_damage = 1000.f;
+    float m_shield = 100000.f;
 };

@@ -1,7 +1,9 @@
 #include "Player.h"
 
-Player::Player(std::shared_ptr<ShakEngine> engine, std::shared_ptr<shak::TextureAtlas> atlas)
-    : Ship(atlas), m_engine(engine)
+#include "LaserShot.h"
+
+Player::Player(std::shared_ptr<ShakEngine> engine, std::shared_ptr<shak::TextureAtlas> atlas, std::shared_ptr<sf::Texture> laserTexture, std::shared_ptr<sf::Shader> laserShader)
+    : Ship(atlas), m_engine(engine), m_laserTexture(laserTexture), m_laserShader(laserShader)
 {
 }
 
@@ -11,13 +13,17 @@ void Player::HandleInput(const sf::Event& event)
     {
         if (key->code == sf::Keyboard::Key::Space)
         {
-            auto damageNumber = m_damageNumberPool.Get();
-            damageNumber->Reset(100, this->getPosition());
-            this->AddChild(damageNumber);
+            Shoot();
         }
     }
 
     Ship::HandleInput(event);
+}
+
+void Player::Awake()
+{
+    m_target = std::dynamic_pointer_cast<Ship>(m_engine->FindGameObjectByName("Alien"));
+    Ship::Awake();
 }
 
 void Player::Update(float dt)
@@ -42,5 +48,22 @@ void Player::Update(float dt)
         }
     }
 
+    static float time = 0.f;
+    time += dt;
+    m_laserShader->setUniform("u_time", time);
+
     Ship::Update(dt);
+}
+
+float Player::Shoot()
+{
+    if (!m_target)
+        return 0.f;
+
+    sf::Angle laserAngle = m_direction.angle();
+    auto shot = std::make_shared<LaserShot>(laserAngle, sf::Color::Blue, LaserShot::Size::Large, false, m_laserTexture, m_laserShader);
+    shot->setPosition(this->getPosition());
+    this->AddChild(shot);
+
+    return m_target->TakeDamage(m_damage);
 }

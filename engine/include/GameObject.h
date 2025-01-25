@@ -48,6 +48,8 @@ namespace shak
         inline void SetTexture(const std::shared_ptr<sf::Texture> texture) { m_texture = texture; }
         inline std::shared_ptr<sf::Texture> GetTexture() { return m_texture; }
 
+        virtual void Awake();
+        
         virtual void Update(float dt);
 
         virtual void HandleInput(const sf::Event& event);
@@ -55,6 +57,9 @@ namespace shak
         // Physics
         // Check if a point in world coordinates is inside the object bounding box
         bool IsPointInside(const sf::Vector2f& worldPoint) const;
+
+    public:
+        std::string Name = "GameObject";
 
     protected:
         std::shared_ptr<sf::VertexArray> m_vertices = nullptr;

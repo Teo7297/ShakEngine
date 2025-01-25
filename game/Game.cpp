@@ -4,6 +4,8 @@
 #include "ParticleSystem.h"
 #include "Background.h"
 
+#include "Alien.h"
+
 #include "ShaderDevHelper.h"
 
 int main()
@@ -18,41 +20,51 @@ int main()
         engine->AddCamera("camera1", camera1);
 
 
-        // auto player = std::make_shared<Player>(engine, goliathPlus);
-        // player->AddChild(camera1);
-        // auto bg = std::make_shared<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
-        // camera1->SetBackground(bg);
-        // auto bgsize = rm.GetTexture("bg1")->getSize();
-        // camera1->SetBackgroundSize({ (float)(bgsize.x * 100), (float)(bgsize.y * 100) });
+        auto laserTxt = rm.LoadTexture("assets/textures/abstract1.png", "laser", true, true);
+        auto laserSh = rm.LoadShader("", "assets/shaders/laserShot.fs", "laserShot");
+        laserSh->setUniform("u_texture", *laserTxt);
+        laserSh->setUniform("u_resolution", sf::Glsl::Vec2{ engine->GetWindowSize().x, engine->GetWindowSize().y });
 
-        // engine->AddGameObject(bg);
+        auto player = std::make_shared<Player>(engine, goliathPlus, laserTxt, laserSh);
+        player->AddChild(camera1);
+        auto bg = std::make_shared<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
+        camera1->SetBackground(bg);
+        auto bgsize = rm.GetTexture("bg1")->getSize();
+        camera1->SetBackgroundSize({ (float)(bgsize.x * 100), (float)(bgsize.y * 100) });
 
-        // engine->AddGameObject(player);
+        engine->AddGameObject(bg);
 
-        // camera1->move({ -1920 / 2, -1080 / 2 });
+        engine->AddGameObject(player);
 
-        // auto bricks = rm.LoadTexture("assets/textures/Bricks.jpg", "bricks");
-        auto chicken = rm.LoadTexture("assets/textures/goliathplusargon.png", "chicken", true, true);
+        camera1->move({ -1920 / 2, -1080 / 2 });
 
-        auto psShader = rm.LoadShader("", "assets/shaders/particle.fs", "particle");
-        psShader->setUniform("u_texture", *chicken);
-        psShader->setUniform("u_resolution", sf::Glsl::Vec2{ engine->GetWindowSize().x, engine->GetWindowSize().y });
-
-
-        auto ps = std::make_shared<shak::ParticleSystem>(
-            1, 60.f,  // count
-            200.f, 200.f,   // lifetime
-            0.f,       // start delay
-            600.f, 600.f,  // size
-            sf::Vector2f(0.f, 0.f), sf::Vector2f(0.f, 0.f),   // velocity 
-            sf::Color::White, sf::Color::White, false,              // color
-            shak::Particle::Type::Quad, chicken);           // type and texture
-        ps->SetShader(psShader);
-        ps->setPosition({ 0.f, 0.f });
+        // auto chicken = rm.LoadTexture("assets/textures/abstract1.png", "chicken", true, true);
+        // auto psShader = rm.LoadShader("", "assets/shaders/laserShot.fs", "particle");
+        // psShader->setUniform("u_texture", *chicken);
+        // psShader->setUniform("u_resolution", sf::Glsl::Vec2{ engine->GetWindowSize().x, engine->GetWindowSize().y });
+        // auto ps = std::make_shared<shak::ParticleSystem>(
+        //     2000, 600.f,  // count
+        //     .5f, 2.f,   // lifetime
+        //     0.f,       // start delay
+        //     600.f, 600.f,  // size
+        //     sf::Vector2f(-200.f, -200.f), sf::Vector2f(200.f, 200.f),   // velocity 
+        //     sf::Color::Green, sf::Color::Red, false,              // color
+        //     shak::Particle::Type::Point, nullptr);           // type and texture
+        // ps->SetShader(psShader);
+        // ps->setPosition(player->getPosition());
+        // player->AddChild(ps);
         // engine->AddGameObject(ps);
 
-        auto shaderHelper = std::make_shared<ShaderDevHelper>("particle", chicken);
-        engine->AddGameObject(shaderHelper);
+        // for(int i = 0; i < 100; i++)
+        // {
+        auto alien = std::make_shared<Alien>(goliathPlus, player);
+        engine->AddGameObject(alien);
+        alien->setPosition({ 500.f, 500.f });
+        alien->Name = "Alien";
+        // }        
+
+        // auto shaderHelper = std::make_shared<ShaderDevHelper>("particle", chicken);
+        // engine->AddGameObject(shaderHelper);
     }
 
     engine->Start();

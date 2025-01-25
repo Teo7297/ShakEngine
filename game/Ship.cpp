@@ -31,12 +31,33 @@ void Ship::HandleInput(const sf::Event& event)
     GameObject::HandleInput(event);
 }
 
+void Ship::Awake()
+{
+    GameObject::Awake();
+}
+
 void Ship::Update(float dt)
 {
     if ((getPosition() - m_destination).lengthSquared() > 10.f)
         this->move(m_direction * m_speed * dt);
 
     GameObject::Update(dt);
+}
+
+float Ship::TakeDamage(float damage)
+{
+    m_hp -= damage;
+
+    auto damageNumber = m_damageNumberPool.Get();
+    damageNumber->Reset(damage, this->getPosition());
+    this->AddChild(damageNumber);
+
+    if (m_hp <= 0.f)
+    {
+        std::cout << "Ship destroyed!" << std::endl;
+        m_hp = m_maxHp;
+    }
+    return damage;
 }
 
 int Ship::GetTextureByDirection() const
@@ -61,5 +82,10 @@ void Ship::UpdateTextureCoords()
     (*m_vertices)[1].texCoords = coords.bottomLeft;
     (*m_vertices)[2].texCoords = coords.topRight;
     (*m_vertices)[3].texCoords = coords.bottomRight;
+}
+
+void Ship::SetTarget(std::shared_ptr<Ship> target)
+{
+    m_target = target;
 }
 

@@ -21,6 +21,11 @@ void ShakEngine::RemoveGameObject(std::shared_ptr<shak::GameObject> gameObject)
     m_scene.RemoveGameObject(gameObject);
 }
 
+std::shared_ptr<shak::GameObject> ShakEngine::FindGameObjectByName(std::string name) const
+{
+    return m_scene.FindGameObjectByName(name);
+}
+
 shak::ResourceManager& ShakEngine::GetResourceManager()
 {
     return m_resourceManager;

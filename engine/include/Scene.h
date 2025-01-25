@@ -16,6 +16,8 @@ namespace shak
 
         void RemoveGameObject(std::shared_ptr<GameObject> gameObject);
 
+        std::shared_ptr<GameObject> FindGameObjectByName(std::string name) const;
+
         void Update(float dt);
 
         void Render();
@@ -26,5 +28,6 @@ namespace shak
         std::vector<std::shared_ptr<GameObject>> m_gameObjects;
         std::vector<shak::Drawable> m_drawables;
         std::shared_ptr<shak::Renderer> m_renderer;
+        bool m_awakeDone = false;
     };
 }
