@@ -62,7 +62,14 @@ float Ship::TakeDamage(float damage)
 
 int Ship::GetTextureByDirection() const
 {
-    const float directionAngle = m_direction.angleTo({ 1.f, 0.f }).asRadians(); // Distance from right dir (aka 0 degrees)
+    sf::Vector2f direction;
+    if (m_lookAtTarget && m_target)
+        direction = m_target->getPosition() - getPosition();
+    else
+        direction = m_direction;
+
+    const float directionAngle = direction.angleTo({ 1.f, 0.f }).asRadians(); // Distance from right dir (aka 0 degrees)
+
     float signedAngle = directionAngle / (2.0f * M_PI);
     if (signedAngle < 0.f)
         signedAngle += 1.f;

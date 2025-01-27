@@ -44,9 +44,9 @@ void Player::Update(float dt)
         {
             m_destination = mousePos;
             this->UpdateDirection();
-            this->UpdateTextureCoords();
         }
     }
+    this->UpdateTextureCoords();
 
     static float time = 0.f;
     time += dt;
@@ -60,7 +60,10 @@ float Player::Shoot()
     if (!m_target)
         return 0.f;
 
-    sf::Angle laserAngle = m_direction.angle();
+    m_lookAtTarget = true;
+    auto direction = m_target->getPosition() - this->getPosition();
+    direction = direction.normalized();
+    sf::Angle laserAngle = direction.angle();
     auto shot = std::make_shared<LaserShot>(laserAngle, sf::Color::Blue, LaserShot::Size::Large, false, m_laserTexture, m_laserShader);
     shot->setPosition(this->getPosition());
     this->AddChild(shot);

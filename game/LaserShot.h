@@ -5,7 +5,7 @@
 class LaserShot : public shak::Sprite
 {
 public:
-   
+
     enum class Size
     {
         Small,

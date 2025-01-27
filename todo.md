@@ -1,0 +1,1 @@
+laser shots should not move with ship

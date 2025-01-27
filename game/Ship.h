@@ -29,7 +29,7 @@ protected:
     std::shared_ptr<shak::TextureAtlas> m_atlas;
     int m_atlasTexturesCount;
 
-    sf::Vector2f m_direction;
+    sf::Vector2f m_direction = { 1.f, 0.f };
     sf::Vector2f m_destination;
 
     shak::GameObjectPool<DamageNumber> m_damageNumberPool;
@@ -37,6 +37,7 @@ protected:
     std::shared_ptr<Ship> m_target;
 
     // STATS
+    bool m_lookAtTarget = false;
     float m_speed = 1000.f;
     float m_hp = 100000.f;
     float m_maxHp = 100000.f;
