@@ -29,7 +29,7 @@ namespace shak
             m_texture = texture;
             m_shader = shader;
 
-            this->setOrigin(m_vertices->getBounds().getCenter());
+            this->setOrigin({ size.x / 2.f, size.y / 2.f });
         }
 
         virtual ~Sprite() = default;

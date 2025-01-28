@@ -26,11 +26,19 @@ namespace shak
 
         void rotate(sf::Angle angle);
 
+        void rotateAround(sf::Angle angle, const sf::Vector2f& pivot);
+
         void scale(sf::Vector2f factor);
 
+        void setOrigin(const sf::Vector2f& origin);
+
+        // TODO: this should be a tree structure and should be better implemented
         void AddChild(std::shared_ptr<GameObject> child);
 
         void RemoveChild(int id);
+
+        inline void SetParent(std::shared_ptr<GameObject> parent) { m_parent = parent; }
+        inline std::shared_ptr<GameObject> GetParent() { return m_parent; }
 
         inline void SetActive(bool active) { m_active = active; }
         inline bool IsActive() const { return m_active; }
@@ -48,8 +56,11 @@ namespace shak
         inline void SetTexture(const std::shared_ptr<sf::Texture> texture) { m_texture = texture; }
         inline std::shared_ptr<sf::Texture> GetTexture() { return m_texture; }
 
+        inline void SetFollowParent(bool follow) { m_followParent = follow; }
+        inline bool GetFollowParent() const { return m_followParent; }
+
         virtual void Awake();
-        
+
         virtual void Update(float dt);
 
         virtual void HandleInput(const sf::Event& event);
@@ -60,12 +71,15 @@ namespace shak
 
     public:
         std::string Name = "GameObject";
+        unsigned int Id = -1;
 
     protected:
         std::shared_ptr<sf::VertexArray> m_vertices = nullptr;
         std::shared_ptr<sf::Texture> m_texture = nullptr;
         std::shared_ptr<sf::Shader> m_shader = nullptr;
+        std::shared_ptr<GameObject> m_parent = nullptr; //! not implemented, we need a static engine API to find objects this as shared_ptr in the scene
         std::vector<std::shared_ptr<GameObject>> m_children;
         bool m_active = true;
+        bool m_followParent = true;
     };
 }

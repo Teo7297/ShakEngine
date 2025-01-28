@@ -3,8 +3,24 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas)
-    : GameObject(), m_atlas(atlas), m_atlasTexturesCount{ atlas->GetCount() }
+Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf::Vector2f> lasersOffsets)
+    : GameObject(),
+    m_atlas(atlas),
+    m_atlasTexturesCount{ atlas->GetCount() },
+    m_direction{ 1.f, 0.f }, // spawn looking right
+    m_lookDirection{ 1.f, 0.f },
+    m_destination{ 0.f, 0.f },
+    m_damageNumberPool(20),
+    m_laserShotPool(20),
+    m_target{ nullptr },
+    m_lasers{ },
+    m_laserOffsets{ lasersOffsets },
+    m_laserIndex{ 0 },
+    m_speed{ 1000.f },
+    m_hp{ 100000.f },
+    m_maxHp{ 100000.f },
+    m_damage{ 1000.f },
+    m_shield{ 100000.f }
 {
     auto coords = atlas->GetTextureCoords(1);
     m_vertices = std::make_shared<sf::VertexArray>(sf::PrimitiveType::TriangleStrip, 4);
@@ -23,7 +39,17 @@ Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas)
 
     this->SetTexture(atlas->GetAtlasTexture());
 
-    this->setOrigin(m_vertices->getBounds().getCenter());
+    auto origin = m_vertices->getBounds().getCenter();
+    this->setOrigin(origin);
+
+    // Setup child points
+    for (int i = 0; i < lasersOffsets.size(); i++)
+    {
+        auto laser = std::make_shared<shak::GameObject>();
+        laser->setPosition(this->getPosition() + lasersOffsets[i]);
+        m_lasers.push_back(laser);
+        this->AddChild(laser);
+    }
 }
 
 void Ship::HandleInput(const sf::Event& event)
@@ -33,6 +59,7 @@ void Ship::HandleInput(const sf::Event& event)
 
 void Ship::Awake()
 {
+    m_destination = this->getPosition();
     GameObject::Awake();
 }
 
@@ -62,13 +89,7 @@ float Ship::TakeDamage(float damage)
 
 int Ship::GetTextureByDirection() const
 {
-    sf::Vector2f direction;
-    if (m_lookAtTarget && m_target)
-        direction = m_target->getPosition() - getPosition();
-    else
-        direction = m_direction;
-
-    const float directionAngle = direction.angleTo({ 1.f, 0.f }).asRadians(); // Distance from right dir (aka 0 degrees)
+    const float directionAngle = m_lookDirection.angleTo({ 1.f, 0.f }).asRadians(); // Distance from right dir (aka 0 degrees)
 
     float signedAngle = directionAngle / (2.0f * M_PI);
     if (signedAngle < 0.f)
@@ -78,8 +99,22 @@ int Ship::GetTextureByDirection() const
 
 void Ship::UpdateDirection()
 {
-    m_direction = m_destination - getPosition();
-    m_direction = m_direction.normalized();
+    const auto dir = m_destination - getPosition();
+    if (dir.lengthSquared() > 0.f)
+        m_direction = dir.normalized();
+}
+
+void Ship::UpdateLookDirection()
+{
+    auto prevLookDirection = m_lookDirection;
+    if (m_lookAtTarget && m_target)
+        m_lookDirection = m_target->getPosition() - getPosition();
+    else
+        m_lookDirection = m_direction;
+
+    sf::Angle lasersAngle = prevLookDirection.angleTo(m_lookDirection);
+    for (auto& laser : m_lasers)
+        laser->rotateAround(lasersAngle, this->getPosition());
 }
 
 void Ship::UpdateTextureCoords()

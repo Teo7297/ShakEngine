@@ -13,6 +13,8 @@ namespace shak
         Camera(sf::FloatRect viewport, std::shared_ptr<sf::VertexArray> va = nullptr, std::shared_ptr<sf::Texture> texture = nullptr)
             : GameObject(va, texture), m_bg{ nullptr }, m_view{ std::make_shared<sf::View>(viewport) }
         {
+            this->setOrigin(viewport.size / 2.f);
+            this->move(-viewport.size);
         }
         ~Camera() { std::cout << "destroyed camera" << std::endl; }
 

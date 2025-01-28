@@ -17,6 +17,7 @@ int main()
         auto goliathPlus = rm.LoadTextureAtlas("assets/textures/New_Goliath_plus/ship106.atlas", "goliathPlus");
 
         auto camera1 = std::make_shared<shak::Camera>(sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
+
         engine->AddCamera("camera1", camera1);
 
 
@@ -36,8 +37,7 @@ int main()
 
         engine->AddGameObject(player);
 
-        camera1->move({ -1920 / 2, -1080 / 2 });
-
+        camera1->move(player->GetVertexArray()->getBounds().size / 2.f);
         // auto chicken = rm.LoadTexture("assets/textures/abstract1.png", "chicken", true, true);
         // auto psShader = rm.LoadShader("", "assets/shaders/laserShot.fs", "particle");
         // psShader->setUniform("u_texture", *chicken);

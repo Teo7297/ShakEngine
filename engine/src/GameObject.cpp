@@ -14,7 +14,8 @@ namespace shak
             states.texture = m_texture.get();
         if (m_shader)
             states.shader = m_shader.get();
-        target.draw(*m_vertices, states);
+        if (m_vertices)
+            target.draw(*m_vertices, states);
 
         for (const auto& child : m_children)
         {
@@ -28,7 +29,8 @@ namespace shak
         Transformable::move(offset);
         for (const auto& child : m_children)
         {
-            child->move(offset);
+            if (child->GetFollowParent())
+                child->move(offset);
         }
     }
 
@@ -37,6 +39,8 @@ namespace shak
         Transformable::rotate(angle);
         for (const auto& child : m_children)
         {
+            if (!child->GetFollowParent()) continue;
+
             sf::Vector2f relativePos = child->getPosition() - this->getPosition();
 
             // Calculate the new position after rotation (remember, we are using global coordinates, with global axis for translation!)
@@ -54,6 +58,23 @@ namespace shak
 
     }
 
+    void GameObject::rotateAround(sf::Angle angle, const sf::Vector2f& pivot)
+    {
+        sf::Vector2f relativePos = this->getPosition() - pivot;
+
+        // Calculate the new position after rotation (remember, we are using global coordinates, with global axis for translation!)
+        float radians = angle.asDegrees() * (3.14159265f / 180.f);
+        float cosAngle = std::cos(radians);
+        float sinAngle = std::sin(radians);
+        sf::Vector2f rotatedPos(
+            relativePos.x * cosAngle - relativePos.y * sinAngle,
+            relativePos.x * sinAngle + relativePos.y * cosAngle
+        );
+
+        this->setPosition(pivot + rotatedPos);
+        this->rotate(angle);
+    }
+
     void GameObject::scale(sf::Vector2f factor)
     {
         Transformable::scale(factor);
@@ -61,6 +82,12 @@ namespace shak
         {
             child->scale(factor);
         }
+    }
+
+    void GameObject::setOrigin(const sf::Vector2f& origin)
+    {
+        Transformable::setOrigin(origin);
+        this->move(origin);
     }
 
     void GameObject::AddChild(std::shared_ptr<GameObject> child)
@@ -75,7 +102,14 @@ namespace shak
 
     void GameObject::RemoveChild(int id)
     {
-        m_children.erase(m_children.cbegin() + id);
+        for (auto it = m_children.begin(); it != m_children.end(); ++it)
+        {
+            if ((*it)->Id == id)
+            {
+                m_children.erase(it);
+                return;
+            }
+        }
     }
 
     std::vector<std::shared_ptr<GameObject>> GameObject::GetChildren() const

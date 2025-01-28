@@ -11,13 +11,15 @@ namespace shak
     class GameObjectPool
     {
     public:
-        GameObjectPool()
+        GameObjectPool(size_t size = 10ull)
         {
+            m_pool.reserve(size);
             static_assert(std::is_base_of<GameObject, T>::value, "GameObjectPool instantiated with class not derived from GameObject");
         }
         ~GameObjectPool() {}
 
-        std::shared_ptr<T> Get()
+        template <typename ... Args>
+        std::shared_ptr<T> Get(Args&& ... args)
         {
             for (auto& obj : m_pool)
             {
@@ -29,13 +31,35 @@ namespace shak
             }
 
             // No free objects found, create a new one
-            return Make();
+            return Make(std::forward<Args>(args)...);
+        }
+
+        int GetActiveCount() const
+        {
+            int count = 0;
+            for (const auto& obj : m_pool)
+            {
+                if (obj->IsActive())
+                    count++;
+            }
+            return count;
+        }
+
+        int GetInactiveCount() const
+        {
+            return m_pool.size() - GetActiveCount();
+        }
+
+        int GetTotalCount() const
+        {
+            return m_pool.size();
         }
 
     private:
-        std::shared_ptr<T> Make()
+        template <typename ... Args>
+        std::shared_ptr<T> Make(Args&& ... args)
         {
-            auto obj = std::make_shared<T>();
+            auto obj = std::make_shared<T>(std::forward<Args>(args)...);
             m_pool.push_back(obj);
             return obj;
         }

@@ -18,4 +18,8 @@ private:
     std::shared_ptr<ShakEngine> m_engine;
     std::shared_ptr<sf::Texture> m_laserTexture;
     std::shared_ptr<sf::Shader> m_laserShader;
+
+    float m_totalDamage = 0.0f;
+    float m_dpsTimer = 0.0f;
+    float m_dps = 0.0f;
 };

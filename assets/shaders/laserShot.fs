@@ -29,7 +29,7 @@ void drawLaser(out vec4 fragColor, in vec2 fragCoord)
     vec4 laserColor;
     if(u_isRainbow)
     {
-        laserColor.rgb = 0.5 + 0.5 * cos(u_time * 4.5 + uv.xyx + vec3(2, 4, 6));
+        laserColor.rgb = 0.5 + 0.5 * cos(u_time * 15.0 + uv.xyx + vec3(2, 4, 6));
         laserColor.a = 1.0;
     }
     else
