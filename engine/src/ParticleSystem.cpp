@@ -42,7 +42,10 @@ namespace shak
 
     void ParticleSystem::Update(float dt)
     {
-        m_spawnTimer += dt;
+        // stop spawn timer if the system is not active
+        if (m_spawnActive)
+
+            m_spawnTimer += dt;
         if (m_shader)
             m_shader->setUniform("u_time", m_spawnTimer);
 
@@ -54,10 +57,11 @@ namespace shak
             // if the particle is dead, respawn it
             if (p.lifeTime >= p.maxLifeTime)
                 InitParticle(i);
-                
+
             if (!p.active)
             {
-                if (m_spawnTimer >= m_spawnRate)
+                // Spawn a new particle (if the system is active)
+                if (m_spawnActive && m_spawnTimer >= m_spawnRate)
                 {
                     p.active = true;
                     m_spawnTimer -= m_spawnRate; // This allows for multiple particles to spawn in each frame!
