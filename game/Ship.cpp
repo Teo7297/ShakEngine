@@ -131,3 +131,8 @@ void Ship::SetTarget(std::shared_ptr<Ship> target)
     m_target = target;
 }
 
+void Ship::OnLaserHit()
+{
+    m_target->TakeDamage(m_damage + std::rand() % 10000);
+}
+

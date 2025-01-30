@@ -28,6 +28,9 @@ protected:
 
     virtual float Shoot() { return -1.f; }
 
+    // CALLBACKS
+    virtual void OnLaserHit();
+
 protected:
     std::shared_ptr<shak::TextureAtlas> m_atlas;
     int m_atlasTexturesCount;

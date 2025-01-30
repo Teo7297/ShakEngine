@@ -30,6 +30,7 @@ void LaserShot::Update(float dt)
     m_targetDistance -= movement.length();
     if (m_targetDistance <= 0.f)
     {
+        OnHit();
         this->SetActive(false);
     }
     shak::Sprite::Update(dt);

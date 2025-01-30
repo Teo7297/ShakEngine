@@ -65,6 +65,9 @@ int main()
 
         // auto shaderHelper = std::make_shared<ShaderDevHelper>("particle", chicken);
         // engine->AddGameObject(shaderHelper);
+
+        auto explosion = rm.LoadTextureAtlas("assets/animations/explosion.atlas", "explosion");
+        
     }
 
     engine->Start();

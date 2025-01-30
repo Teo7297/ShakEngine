@@ -65,7 +65,7 @@ void Player::Update(float dt)
         m_totalDamage = 0.f;
     }
 
-    if (shooting && ++fcount % 10 == 0)
+    if (shooting && ++fcount % 100 == 0)
     {
         float dmg = Shoot();
         m_totalDamage += dmg;
@@ -78,6 +78,7 @@ void Player::Update(float dt)
     Ship::Update(dt);
 }
 
+
 float Player::Shoot()
 {
     if (!m_target)
@@ -85,21 +86,24 @@ float Player::Shoot()
 
     m_lookAtTarget = true;
 
+    bool cbSet = false;
     for (int i = m_laserIndex; i < m_lasers.size(); i += 2)
     {
         auto& laser = m_lasers[i];
         auto direction = m_target->getPosition() - laser->getPosition();
         direction = direction.normalized();
         sf::Angle laserAngle = direction.angle();
-        auto shotLeft = m_laserShotPool.Get(sf::Color::Blue, LaserShot::Size::Small, true, m_laserTexture, m_laserShader);
-        shotLeft->setPosition(laser->getPosition());
-        shotLeft->Init(m_target->getPosition(), laserAngle); // must be called after set position!!
-        shotLeft->SetFollowParent(false);
-        this->AddChild(shotLeft);
+        auto shot = m_laserShotPool.Get(sf::Color::Blue, LaserShot::Size::Small, true, m_laserTexture, m_laserShader);
+        shot->setPosition(laser->getPosition());
+        shot->Init(m_target->getPosition(), laserAngle); // must be called after set position!!
+        shot->SetFollowParent(false);
+        this->AddChild(shot);
+
+        shot->OnHit = std::bind(&Player::OnLaserHit, this); //todo: find a way to avoid having every laser shot call this cb
+
     }
     m_laserIndex = (m_laserIndex + 1) % 2; // alternate front and back lasers
 
-    std::cout << m_laserShotPool.GetTotalCount() << " lasers in pool" << std::endl;
 
-    return m_target->TakeDamage(m_damage + std::rand() % 10000);
+    return 0.f;
 }

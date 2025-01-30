@@ -20,6 +20,9 @@ public:
 
     void Init(const sf::Vector2f& target, sf::Angle angle);
 
+public:
+    std::function<void()> OnHit;
+
 private:
     float m_speed = 5000.f;
     sf::Vector2f m_direction = { 0.f, -1.f };
