@@ -5,6 +5,7 @@
 #include "Background.h"
 
 #include "Alien.h"
+#include "Animation.h"
 
 #include "ShaderDevHelper.h"
 
@@ -65,8 +66,6 @@ int main()
 
         // auto shaderHelper = std::make_shared<ShaderDevHelper>("particle", chicken);
         // engine->AddGameObject(shaderHelper);
-
-        auto explosion = rm.LoadTextureAtlas("assets/animations/explosion.atlas", "explosion");
         
     }
 

@@ -1,7 +1,7 @@
 #include "Player.h"
 
 #include "LaserShot.h"
-
+#include "Animation.h"
 Player::Player(std::shared_ptr<ShakEngine> engine, std::shared_ptr<shak::TextureAtlas> atlas, std::shared_ptr<sf::Texture> laserTexture, std::shared_ptr<sf::Shader> laserShader)
     : Ship(atlas, { { 75.f, -31.f }, { 15.f, -26.f }, { 75.f, +41.f }, { 16.f, +23.f } }), m_engine(engine), m_laserTexture(laserTexture), m_laserShader(laserShader)
 {
@@ -16,6 +16,15 @@ void Player::HandleInput(const sf::Event& event)
         if (key->code == sf::Keyboard::Key::Space)
         {
             shooting = !shooting;
+        }
+
+        else if (key->code == sf::Keyboard::Key::R)
+        {
+            auto explosion = std::make_shared<shak::TextureAtlas>("assets/animations/explosion.atlas");
+            auto anim = std::make_shared<shak::Animation>(explosion, 2.f);
+            anim->setPosition(this->getPosition());
+            this->AddChild(anim);
+            anim->Play();
         }
     }
 
