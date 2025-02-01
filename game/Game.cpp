@@ -27,7 +27,9 @@ int main()
         laserSh->setUniform("u_texture", *laserTxt);
         laserSh->setUniform("u_resolution", sf::Glsl::Vec2{ engine->GetWindowSize().x, engine->GetWindowSize().y });
 
-        auto player = std::make_shared<Player>(engine, goliathPlus, laserTxt, laserSh);
+        auto explosionAtlas = rm.LoadTextureAtlas("assets/animations/explosion.atlas", "deathExplosion");
+
+        auto player = std::make_shared<Player>(engine, goliathPlus, laserTxt, laserSh, explosionAtlas);
         player->AddChild(camera1);
         auto bg = std::make_shared<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
         camera1->SetBackground(bg);
@@ -58,7 +60,7 @@ int main()
 
         // for(int i = 0; i < 100; i++)
         // {
-        auto alien = std::make_shared<Alien>(goliathPlus, player);
+        auto alien = std::make_shared<Alien>(goliathPlus, player, explosionAtlas);
         engine->AddGameObject(alien);
         alien->setPosition({ 500.f, 500.f });
         alien->Name = "Alien";
@@ -66,7 +68,7 @@ int main()
 
         // auto shaderHelper = std::make_shared<ShaderDevHelper>("particle", chicken);
         // engine->AddGameObject(shaderHelper);
-        
+
     }
 
     engine->Start();

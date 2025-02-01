@@ -4,20 +4,20 @@
 #include "GameObjectPool.h"
 #include "DamageNumber.h"
 #include "LaserShot.h"
-
+#include "Animation.h"
 
 class Ship : public shak::GameObject
 {
 public:
     Ship() = delete;
-    Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf::Vector2f> lasersOffsets);
+    Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf::Vector2f> lasersOffsets, const std::shared_ptr<shak::TextureAtlas> deathAnimation);
     virtual ~Ship() = default;
 
     virtual void HandleInput(const sf::Event& event) override;
     virtual void Awake() override;
     virtual void Update(float dt) override;
 
-    virtual float TakeDamage(float damage);
+    virtual LaserShot::HitInfo TakeDamage(float damage);
 
 protected:
     int GetTextureByDirection() const;
@@ -26,10 +26,10 @@ protected:
     void UpdateTextureCoords();
     void SetTarget(std::shared_ptr<Ship> target);
 
-    virtual float Shoot() { return -1.f; }
+    virtual float Shoot() {return 0.f; };
 
     // CALLBACKS
-    virtual void OnLaserHit();
+    virtual LaserShot::HitInfo OnLaserHit(const LaserShot* thisLaser);
 
 protected:
     std::shared_ptr<shak::TextureAtlas> m_atlas;
@@ -54,4 +54,7 @@ protected:
     float m_maxHp;
     float m_damage;
     float m_shield;
+
+    // ANIMATIONS
+    std::shared_ptr<shak::Animation> m_deathAnimation;
 };

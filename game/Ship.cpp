@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf::Vector2f> lasersOffsets)
+Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf::Vector2f> lasersOffsets, const std::shared_ptr<shak::TextureAtlas> deathAnimation)
     : GameObject(),
     m_atlas(atlas),
     m_atlasTexturesCount{ atlas->GetCount() },
@@ -17,10 +17,11 @@ Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf
     m_laserOffsets{ lasersOffsets },
     m_laserIndex{ 0 },
     m_speed{ 1000.f },
-    m_hp{ 100000.f },
-    m_maxHp{ 100000.f },
+    m_hp{ 20000.f },
+    m_maxHp{ 20000.f },
     m_damage{ 1000.f },
-    m_shield{ 100000.f }
+    m_shield{ 100000.f },
+    m_deathAnimation{ std::make_shared<shak::Animation>(deathAnimation, 2.f) }
 {
     auto coords = atlas->GetTextureCoords(1);
     m_vertices = std::make_shared<sf::VertexArray>(sf::PrimitiveType::TriangleStrip, 4);
@@ -50,6 +51,10 @@ Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf
         m_lasers.push_back(laser);
         this->AddChild(laser);
     }
+
+    // Setup death animation
+    this->AddChild(m_deathAnimation);
+    m_deathAnimation->SetFollowParent(false);
 }
 
 void Ship::HandleInput(const sf::Event& event)
@@ -71,7 +76,7 @@ void Ship::Update(float dt)
     GameObject::Update(dt);
 }
 
-float Ship::TakeDamage(float damage)
+LaserShot::HitInfo Ship::TakeDamage(float damage)
 {
     m_hp -= damage;
 
@@ -79,12 +84,21 @@ float Ship::TakeDamage(float damage)
     damageNumber->Reset(damage, this->getPosition());
     this->AddChild(damageNumber);
 
+    LaserShot::HitInfo info{
+        .damage = damage,
+        .hitPosition = {0.f,0.f}, // will be populated by the onHit callback
+        .killed = m_hp <= 0.f,
+        .isCritical = false // todo: implement crits
+    };
+
     if (m_hp <= 0.f)
     {
-        std::cout << "Ship destroyed!" << std::endl;
+        m_deathAnimation->setPosition(this->getPosition()); // make sure it's in the right place
+        m_deathAnimation->Play();
+        this->move({ 3000.f, 3000.f }); // move out of the way
         m_hp = m_maxHp;
     }
-    return damage;
+    return info;
 }
 
 int Ship::GetTextureByDirection() const
@@ -131,8 +145,14 @@ void Ship::SetTarget(std::shared_ptr<Ship> target)
     m_target = target;
 }
 
-void Ship::OnLaserHit()
+LaserShot::HitInfo Ship::OnLaserHit(const LaserShot* thisLaser)
 {
-    m_target->TakeDamage(m_damage + std::rand() % 10000);
+    if (!m_target)
+        return { 0.f, {0.f,0.f}, false, false };
+    auto info = m_target->TakeDamage(m_damage + std::rand() % 10000);
+    info.hitPosition = thisLaser->getPosition();
+    if (info.killed)
+        this->SetTarget(nullptr);
+    return info;
 }
 

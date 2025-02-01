@@ -1,9 +1,9 @@
 #include "Alien.h"
 
-Alien::Alien(const std::shared_ptr<shak::TextureAtlas> atlas, const std::shared_ptr<Player> player)
-    : Ship(atlas, {}), m_player(player)
+Alien::Alien(const std::shared_ptr<shak::TextureAtlas> atlas, const std::shared_ptr<Player> player, const std::shared_ptr<shak::TextureAtlas> deathAnimation)
+    : Ship(atlas, {}, deathAnimation), m_player(player)
 {
-    m_speed = 200.f;
+    m_speed = 500.f;
     m_destinationTimer = 5.f;
     m_currentDestinationTimer = 0.f;
 }
@@ -18,12 +18,13 @@ void Alien::Update(float dt)
     {
         const sf::Angle angle = sf::degrees(std::rand() % 360);
         auto bboxSize = m_player->GetVertexArray()->getBounds().size.x;
-        // m_destination = m_player->getPosition() + sf::Vector2f(bboxSize, 0.f).rotatedBy(angle);
+        m_destination = m_player->getPosition() + sf::Vector2f(bboxSize, 0.f).rotatedBy(angle);
 
         m_currentDestinationTimer = 0.f;
     }
 
     this->UpdateDirection();
+    this->UpdateLookDirection();
     this->UpdateTextureCoords();
 
     Ship::Update(dt);

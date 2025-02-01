@@ -6,7 +6,7 @@
 class Alien : public Ship
 {
 public:
-    Alien(const std::shared_ptr<shak::TextureAtlas> atlas, const std::shared_ptr<Player> player);
+    Alien(const std::shared_ptr<shak::TextureAtlas> atlas, const std::shared_ptr<Player> player, const std::shared_ptr<shak::TextureAtlas> deathAnimation);
     ~Alien() = default;
 
     virtual void Update(float dt) override;
