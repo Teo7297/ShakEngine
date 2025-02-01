@@ -117,6 +117,24 @@ namespace shak
         return std::vector<std::shared_ptr<GameObject>>(m_children);
     }
 
+    void GameObject::SetColor(const sf::Color& color)
+    {
+        for (int i = 0; i < m_vertices->getVertexCount(); i++)
+        {
+            auto& vertex = (*m_vertices)[i];
+            vertex.color = color;
+        }
+    }
+
+    void GameObject::SetTransparency(uint8_t transparency)
+    {
+        for (int i = 0; i < m_vertices->getVertexCount(); i++)
+        {
+            auto& vertex = (*m_vertices)[i];
+            vertex.color.a = transparency;
+        }
+    }
+
     void GameObject::Awake() // TODO: Awake should be also called when an object gets created at runtime
     {
         for (const auto& child : m_children)

@@ -17,10 +17,7 @@ namespace shak
             (*m_vertices)[1].position = sf::Vector2f(0.f, size.y);
             (*m_vertices)[2].position = sf::Vector2f(size.x, 0.f);
             (*m_vertices)[3].position = sf::Vector2f(size.x, size.y);
-            (*m_vertices)[0].color = tint;
-            (*m_vertices)[1].color = tint;
-            (*m_vertices)[2].color = tint;
-            (*m_vertices)[3].color = tint;
+            this->SetColor(tint);
             (*m_vertices)[0].texCoords = { 0.f, 0.f };
             (*m_vertices)[1].texCoords = { 0.f, (float)txtSize.y };
             (*m_vertices)[2].texCoords = { (float)txtSize.x, 0.f };

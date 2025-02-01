@@ -20,8 +20,19 @@ void Player::HandleInput(const sf::Event& event)
 
         else if (key->code == sf::Keyboard::Key::R)
         {
+            m_deathAnimation->setPosition(this->getPosition()); // make sure it's in the right place
+            m_deathAnimation->Play();
         }
     }
+
+    else if(auto key = event.getIf<sf::Event::MouseButtonPressed>())
+    {
+        if (key->button == sf::Mouse::Button::Left)
+        {
+            m_target = std::dynamic_pointer_cast<Ship>(m_engine->FindGameObjectByName("Alien"));
+        }
+    }
+
 
     Ship::HandleInput(event);
 }
@@ -58,6 +69,9 @@ void Player::Update(float dt)
     static float time = 0.f;
     time += dt;
     m_laserShader->setUniform("u_time", time);
+
+    if(!m_target)
+        shooting = false;
 
     if (shooting)
     {

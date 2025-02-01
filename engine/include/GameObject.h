@@ -59,6 +59,9 @@ namespace shak
         inline void SetFollowParent(bool follow) { m_followParent = follow; }
         inline bool GetFollowParent() const { return m_followParent; }
 
+        void SetColor(const sf::Color& color);
+        void SetTransparency(uint8_t transparency);
+
         virtual void Awake();
 
         virtual void Update(float dt);

@@ -4,17 +4,30 @@
 namespace shak
 {
     Animation::Animation(std::shared_ptr<shak::TextureAtlas> atlas, float duration, const std::shared_ptr<sf::Shader>& shader, const sf::Vector2f& size, const sf::Color tint)
-        : shak::Sprite(atlas->GetAtlasTexture(), shader, size, { 0,0,0,0 }), m_atlas(atlas), m_duration(duration), m_time(0.f), m_playing(false), m_frames(atlas->GetCount()), m_currentFrame(0)
+        : shak::Sprite(atlas->GetAtlasTexture(), shader, size, tint), m_atlas(atlas), m_duration(duration), m_time(0.f), m_playing(false), m_frames(atlas->GetCount()), m_currentFrame(-1), m_tint(tint)
     {
+        this->SetTransparency(0);
     }
 
     void Animation::Play()
     {
+        m_time = 0.f;
         m_playing = true;
-        (*m_vertices)[0].color = sf::Color::White;
-        (*m_vertices)[1].color = sf::Color::White;
-        (*m_vertices)[2].color = sf::Color::White;
-        (*m_vertices)[3].color = sf::Color::White;
+    }
+
+    void Animation::Stop()
+    {
+        m_time = m_duration + 1.f;
+    }
+
+    void Animation::Pause()
+    {
+        m_playing = false;
+    }
+
+    void Animation::Resume()
+    {
+        m_playing = true;
     }
 
     void Animation::Update(float dt)
@@ -25,24 +38,28 @@ namespace shak
         if (m_time >= m_duration)
         {
             m_time = 0.f;
-            (*m_vertices)[0].color = {0,0,0,0};
-            (*m_vertices)[1].color = {0,0,0,0};
-            (*m_vertices)[2].color = {0,0,0,0};
-            (*m_vertices)[3].color = {0,0,0,0};
+            this->SetTransparency(0);
             m_playing = false;
+            return;
         }
 
-        auto currentFrame = std::floor(m_time / (m_duration / m_frames));
+        auto currentFrame = std::floor(m_time * (m_frames / m_duration));
         if (m_currentFrame != currentFrame)
         {
+            this->SetTransparency(255);
             m_currentFrame = currentFrame;
-            auto frameCoords = m_atlas->GetTextureCoords(m_currentFrame);
-            (*m_vertices)[0].texCoords = frameCoords.topLeft;
-            (*m_vertices)[1].texCoords = frameCoords.bottomLeft;
-            (*m_vertices)[2].texCoords = frameCoords.topRight;
-            (*m_vertices)[3].texCoords = frameCoords.bottomRight;
+            const auto frameCoords = m_atlas->GetTextureCoords(m_currentFrame);
+            this->SetTextureCoordinates(frameCoords);
         }
 
+    }
+
+    void Animation::SetTextureCoordinates(const shak::TextureCoordinates& coords)
+    {
+        (*m_vertices)[0].texCoords = coords.topLeft;
+        (*m_vertices)[1].texCoords = coords.bottomLeft;
+        (*m_vertices)[2].texCoords = coords.topRight;
+        (*m_vertices)[3].texCoords = coords.bottomRight;
     }
 
 

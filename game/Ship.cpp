@@ -152,7 +152,9 @@ LaserShot::HitInfo Ship::OnLaserHit(const LaserShot* thisLaser)
     auto info = m_target->TakeDamage(m_damage + std::rand() % 10000);
     info.hitPosition = thisLaser->getPosition();
     if (info.killed)
+    {
         this->SetTarget(nullptr);
+    }
     return info;
 }
 

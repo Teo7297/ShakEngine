@@ -13,13 +13,20 @@ namespace shak
         ~Animation() = default;
 
         void Play();
+        void Stop();
+        void Pause();
+        void Resume();
 
         void Update(float dt) override;
+
+    private:
+        void SetTextureCoordinates(const shak::TextureCoordinates& coords);
 
     private:
         std::shared_ptr<shak::TextureAtlas> m_atlas;
         float m_duration, m_time;
         bool m_playing;
         int m_frames, m_currentFrame;
+        sf::Color m_tint;
     };
 }
