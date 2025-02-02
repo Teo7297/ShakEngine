@@ -27,6 +27,7 @@ namespace shak
 
         void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
         void Destroy(const std::shared_ptr<GameObject>& gameObject);
+        inline unsigned int GetNextGameObjectId() { return m_nextGameObjectId++; }
 
         std::shared_ptr<GameObject> FindGameObjectByName(std::string name) const;
 
@@ -56,7 +57,6 @@ namespace shak
         std::shared_ptr<Scene> m_scene;
         sf::Clock m_clock;
         std::unordered_map<std::string, std::shared_ptr<Camera>> m_cameras;
-    public:
         unsigned int m_nextGameObjectId = 0;
     };
 }
