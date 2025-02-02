@@ -6,8 +6,6 @@ namespace shak
 {
     class GameObject : public sf::Transformable, public sf::Drawable
     {
-        using GameObjectPtr = std::shared_ptr<GameObject>;
-
     public:
         GameObject();
         GameObject(std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture = nullptr);
@@ -25,17 +23,17 @@ namespace shak
 
         void setOrigin(const sf::Vector2f& origin);
 
-        void AddChild(GameObjectPtr child);
+        void AddChild(std::shared_ptr<GameObject> child);
         bool RemoveChild(int id);
         bool RemoveChildRecursive(int id);
-        GameObjectPtr FindChildRecursive(std::string name) const;
-        GameObjectPtr FindChildRecursive(int id) const;
-        void GetDrawables(std::vector<GameObjectPtr>& drawables) const;
+        std::shared_ptr<GameObject> FindChildRecursive(std::string name) const;
+        std::shared_ptr<GameObject> FindChildRecursive(int id) const;
+        void GetDrawables(std::vector<std::shared_ptr<GameObject>>& drawables) const;
 
         template<typename T>
-        std::vector<GameObjectPtr> FindChildrenByTypeRecursive() const
+        std::vector<std::shared_ptr<GameObject>> FindChildrenByTypeRecursive() const
         {
-            std::vector<GameObjectPtr> result;
+            std::vector<std::shared_ptr<GameObject>> result;
             for (const auto& child : m_children)
             {
                 if (std::dynamic_pointer_cast<T>(child))
@@ -53,8 +51,8 @@ namespace shak
         inline bool IsActive() const { return m_active; }
 
         /// @brief Obtain a copy of the children vector of this GameObject
-        /// @return std::vector<GameObjectPtr>
-        std::vector<GameObjectPtr> GetChildren() const;
+        /// @return std::vector<std::shared_ptr<GameObject>>
+        std::vector<std::shared_ptr<GameObject>> GetChildren() const;
 
         inline void SetShader(const std::shared_ptr<sf::Shader> shader) { m_shader = shader; }
         inline std::shared_ptr<sf::Shader> GetShader() { return m_shader; }
@@ -96,7 +94,7 @@ namespace shak
         std::shared_ptr<sf::Shader> m_shader;
         // raw pointer because of double ownership, check doubly linked list implementations
         GameObject* m_parent;
-        std::vector<GameObjectPtr> m_children;
+        std::vector<std::shared_ptr<GameObject>> m_children;
         bool m_active;
         bool m_followParent;
         int m_zIndex;

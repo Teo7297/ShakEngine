@@ -8,6 +8,7 @@ public:
     DamageNumber()
         : m_font("assets/fonts/Roboto/static/Roboto-Black.ttf"), m_text(m_font)
     {
+        m_zIndex = 1000;
     }
     ~DamageNumber() {}
 

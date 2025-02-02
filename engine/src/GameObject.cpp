@@ -214,7 +214,8 @@ namespace shak
 
     void GameObject::Update(float dt)
     {
-        for (const auto& child : m_children)
+        std::vector<GameObjectPtr> toUpdate(m_children);
+        for (const auto& child : toUpdate)
         {
             if (child->IsActive())
                 child->Update(dt);

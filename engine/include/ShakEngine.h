@@ -25,7 +25,7 @@ namespace shak
 
         void Initialize(const std::string& windowTitle = "ShakEngine");
 
-        void AddGameObject(const GameObjectPtr& gameObject);
+        void AddGameObject(const GameObjectPtr gameObject);
         void Destroy(const GameObjectPtr& gameObject);
         inline unsigned int GetNextGameObjectId() { return m_nextGameObjectId++; }
 

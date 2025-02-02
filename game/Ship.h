@@ -5,6 +5,7 @@
 #include "DamageNumber.h"
 #include "LaserShot.h"
 #include "Animation.h"
+#include "GameObject.h"
 
 class Ship : public shak::GameObject
 {
@@ -45,7 +46,7 @@ protected:
     std::shared_ptr<Ship> m_target;
 
     // Child points
-    std::vector<std::shared_ptr<shak::GameObject>> m_lasers;
+    std::vector<GameObjectPtr> m_lasers;
     std::vector<sf::Vector2f> m_laserOffsets;
     unsigned int m_laserIndex;
 

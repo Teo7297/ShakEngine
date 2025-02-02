@@ -1,6 +1,5 @@
 #include "ShakEngine.h"
 #include "Renderer.h"
-#include "GameObject.h"
 
 namespace shak
 {
@@ -12,18 +11,18 @@ namespace shak
         m_scene = std::make_shared<Scene>(m_renderer);
     }
 
-    void ShakEngine::AddGameObject(const std::shared_ptr<shak::GameObject>& gameObject)
+    void ShakEngine::AddGameObject(const GameObjectPtr gameObject)
     {
         m_scene->AddGameObject(gameObject);
     }
 
-    void ShakEngine::Destroy(const std::shared_ptr<shak::GameObject>& gameObject)
+    void ShakEngine::Destroy(const GameObjectPtr& gameObject)
     {
         gameObject->OnDestroy();
         m_scene->RemoveGameObject(gameObject->Id);
     }
 
-    std::shared_ptr<shak::GameObject> ShakEngine::FindGameObjectByName(std::string name) const
+    GameObjectPtr ShakEngine::FindGameObjectByName(std::string name) const
     {
         return m_scene->FindGameObject(name);
     }

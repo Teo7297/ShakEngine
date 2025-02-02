@@ -90,7 +90,7 @@ LaserShot::HitInfo Ship::TakeDamage(float damage)
 
     auto damageNumber = m_damageNumberPool.Get();
     damageNumber->Reset(damage, this->getPosition());
-    this->AddChild(damageNumber);
+    m_engine->AddGameObject(damageNumber);
 
     LaserShot::HitInfo info{
         .damage = damage,
