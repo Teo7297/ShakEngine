@@ -15,9 +15,8 @@ public:
     ShakEngine& operator=(const ShakEngine&) = delete;
     ShakEngine& operator=(ShakEngine&&) = delete;
 
-    void AddGameObject(std::shared_ptr<shak::GameObject> gameObject);
-
-    void RemoveGameObject(std::shared_ptr<shak::GameObject> gameObject);
+    void AddGameObject(const std::shared_ptr<shak::GameObject>& gameObject);
+    void Destroy(const std::shared_ptr<shak::GameObject>& gameObject);
 
     std::shared_ptr<shak::GameObject> FindGameObjectByName(std::string name) const;
 

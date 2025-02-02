@@ -11,19 +11,20 @@ ShakEngine::ShakEngine()
     m_window = m_renderer->CreateSFWindow("GAME");
 }
 
-void ShakEngine::AddGameObject(std::shared_ptr<shak::GameObject> gameObject)
+void ShakEngine::AddGameObject(const std::shared_ptr<shak::GameObject>& gameObject)
 {
     m_scene.AddGameObject(gameObject);
 }
 
-void ShakEngine::RemoveGameObject(std::shared_ptr<shak::GameObject> gameObject)
+void ShakEngine::Destroy(const std::shared_ptr<shak::GameObject>& gameObject)
 {
-    m_scene.RemoveGameObject(gameObject);
+    gameObject->OnDestroy();
+    m_scene.RemoveGameObject(gameObject->Id);
 }
 
 std::shared_ptr<shak::GameObject> ShakEngine::FindGameObjectByName(std::string name) const
 {
-    return m_scene.FindGameObjectByName(name);
+    return m_scene.FindGameObject(name);
 }
 
 shak::ResourceManager& ShakEngine::GetResourceManager()

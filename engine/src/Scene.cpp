@@ -1,57 +1,57 @@
 #include "Scene.h"
 
-void shak::Scene::AddGameObject(std::shared_ptr<GameObject> gameObject)
+namespace shak
 {
-    m_gameObjects.push_back(gameObject);
-}
-
-void shak::Scene::RemoveGameObject(std::shared_ptr<GameObject> gameObject)
-{
-    m_gameObjects.erase(std::remove(m_gameObjects.begin(), m_gameObjects.end(), gameObject), m_gameObjects.end());
-}
-
-std::shared_ptr<shak::GameObject> shak::Scene::FindGameObjectByName(std::string name) const
-{
-    for (const auto& gameObject : m_gameObjects)
+    Scene::Scene(std::shared_ptr<shak::Renderer> renderer)
+        : m_renderer(renderer), m_root(std::make_shared<GameObject>())
     {
-        if (gameObject->Name == name)
-            return gameObject;
-    }
-    return nullptr;
-}
-
-void shak::Scene::Update(float dt)
-{
-    if (!m_awakeDone)
-    {
-        for (auto& gameObject : m_gameObjects)
-            if (gameObject->IsActive())
-                gameObject->Awake();
-        m_awakeDone = true;
+        m_root->Name = "Root";
     }
 
-    for (auto& gameObject : m_gameObjects)
+    void Scene::AddGameObject(std::shared_ptr<GameObject> gameObject)
     {
-        if (gameObject->IsActive())
-            gameObject->Update(dt);
+        m_root->AddChild(gameObject);
     }
-}
 
-void shak::Scene::Render()
-{
-    m_drawables.clear();
-    for (auto& gameObject : m_gameObjects)
+    void Scene::RemoveGameObject(int id)
     {
-        if (gameObject->IsActive())
-            m_drawables.emplace_back(gameObject, nullptr);
+        bool result = m_root->RemoveChildRecursive(id);
+        if (!result)
+            std::cerr << "[Scene - Destroy] GameObject with id " << id << " not found" << std::endl;
     }
-    m_renderer->Render(m_drawables);
-}
 
-void shak::Scene::HandleInput(const sf::Event& event)
-{
-    for (auto& gameObject : m_gameObjects)
+    std::shared_ptr<GameObject> Scene::FindGameObject(std::string name) const
     {
-        gameObject->HandleInput(event);
+        return m_root->FindChildRecursive(name);
+    }
+
+    std::shared_ptr<GameObject> Scene::FindGameObject(int id) const
+    {
+        return m_root->FindChildRecursive(id);
+    }
+
+    void Scene::Update(float dt)
+    {
+        if (!m_awakeDone)
+        {
+            m_root->Awake();
+            m_awakeDone = true;
+        }
+
+        m_root->Update(dt);
+    }
+
+    void Scene::Render()
+    {
+        m_drawables.clear();
+
+        m_drawables.emplace_back(m_root, nullptr);
+
+        m_renderer->Render(m_drawables);
+    }
+
+    void Scene::HandleInput(const sf::Event& event)
+    {
+        m_root->HandleInput(event);
     }
 }
