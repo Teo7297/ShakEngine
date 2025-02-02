@@ -2,9 +2,15 @@
 
 namespace shak
 {
+    GameObject::GameObject()
+    {
+        Id = nextId++;
+    }
+
     GameObject::GameObject(std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture)
         : m_vertices(va), m_texture(texture)
     {
+        Id = nextId++;
     }
 
     void GameObject::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -94,42 +100,79 @@ namespace shak
     {
         for (auto& c : m_children)
         {
-            if (c == child)
+            if (c->Id == child->Id)
                 return;
         }
         m_children.push_back(child);
+        child->SetParent(this);
     }
 
-    void GameObject::RemoveChild(int id)
+    bool GameObject::RemoveChild(int id)
     {
         for (auto it = m_children.begin(); it != m_children.end(); ++it)
         {
             if ((*it)->Id == id)
             {
                 m_children.erase(it);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
-    std::vector<std::shared_ptr<GameObject>> GameObject::GetChildren() const
+    bool GameObject::RemoveChildRecursive(int id)
     {
-        return std::vector<std::shared_ptr<GameObject>>(m_children);
+        for (auto it = m_children.begin(); it != m_children.end(); ++it)
+        {
+            if ((*it)->Id == id)
+            {
+                m_children.erase(it);
+                return true;
+            }
+            else
+            {
+                if ((*it)->RemoveChildRecursive(id))
+                    return true;
+            }
+        }
+        return false;
     }
 
-    std::shared_ptr<GameObject> GameObject::FindGameObjectByNameInChildren(std::string name) const
+    std::shared_ptr<GameObject> GameObject::FindChildRecursive(std::string name) const
     {
-        std::shared_ptr<GameObject> result = nullptr;
-
         for (const auto& child : m_children)
         {
             if (child->Name == name)
                 return child;
             else
-                result = child->FindGameObjectByNameInChildren(name);
+            {
+                auto found = child->FindChildRecursive(name);
+                if (found)
+                    return found;
+            }
         }
+        return nullptr;
+    }
 
-        return result;
+    std::shared_ptr<GameObject> GameObject::FindChildRecursive(int id) const
+    {
+        for (const auto& child : m_children)
+        {
+            if (child->Id == id)
+                return child;
+            else
+            {
+                auto found = child->FindChildRecursive(id);
+                if (found)
+                    return found;
+            }
+        }
+        return nullptr;
+    }
+
+    std::vector<std::shared_ptr<GameObject>> GameObject::GetChildren() const
+    {
+        return std::vector<std::shared_ptr<GameObject>>(m_children);
     }
 
     void GameObject::SetColor(const sf::Color& color)
@@ -173,6 +216,14 @@ namespace shak
         for (const auto& child : m_children)
         {
             child->HandleInput(event);
+        }
+    }
+
+    void GameObject::OnDestroy()
+    {
+        for (const auto& child : m_children)
+        {
+            child->OnDestroy();
         }
     }
 

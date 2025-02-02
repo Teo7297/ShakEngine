@@ -2,6 +2,8 @@
 
 #include "EngineDefines.h"
 
+static int nextId = 0;
+
 namespace shak
 {
     class GameObject;
@@ -16,7 +18,7 @@ namespace shak
     class GameObject : public sf::Transformable, public sf::Drawable
     {
     public:
-        GameObject() = default;
+        GameObject();
         GameObject(std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture = nullptr);
         virtual ~GameObject() = default;
 
@@ -32,13 +34,14 @@ namespace shak
 
         void setOrigin(const sf::Vector2f& origin);
 
-        // TODO: this should be a tree structure and should be better implemented
         void AddChild(std::shared_ptr<GameObject> child);
+        bool RemoveChild(int id);
+        bool RemoveChildRecursive(int id);
+        std::shared_ptr<GameObject> FindChildRecursive(std::string name) const;
+        std::shared_ptr<GameObject> FindChildRecursive(int id) const;
 
-        void RemoveChild(int id);
-
-        inline void SetParent(std::shared_ptr<GameObject> parent) { m_parent = parent; }
-        inline std::shared_ptr<GameObject> GetParent() { return m_parent; }
+        inline void SetParent(GameObject* parent) { m_parent = parent; }
+        inline GameObject* GetParent() { return m_parent; }
 
         inline void SetActive(bool active) { m_active = active; }
         inline bool IsActive() const { return m_active; }
@@ -59,8 +62,6 @@ namespace shak
         inline void SetFollowParent(bool follow) { m_followParent = follow; }
         inline bool GetFollowParent() const { return m_followParent; }
 
-        std::shared_ptr<GameObject> FindGameObjectByNameInChildren(std::string name) const;
-
         void SetColor(const sf::Color& color);
         void SetTransparency(uint8_t transparency);
 
@@ -69,6 +70,8 @@ namespace shak
         virtual void Update(float dt);
 
         virtual void HandleInput(const sf::Event& event);
+
+        virtual void OnDestroy();
 
         // Physics
         // Check if a point in world coordinates is inside the object bounding box
@@ -82,7 +85,8 @@ namespace shak
         std::shared_ptr<sf::VertexArray> m_vertices = nullptr;
         std::shared_ptr<sf::Texture> m_texture = nullptr;
         std::shared_ptr<sf::Shader> m_shader = nullptr;
-        std::shared_ptr<GameObject> m_parent = nullptr; //! not implemented, we need a static engine API to find objects this as shared_ptr in the scene
+        // raw pointer because of double ownership, check doubly linked list implementations
+        GameObject* m_parent = nullptr;
         std::vector<std::shared_ptr<GameObject>> m_children;
         bool m_active = true;
         bool m_followParent = true;
