@@ -35,7 +35,7 @@ namespace shak
         m_cameras.erase(name);
     }
 
-    void Renderer::Render(const std::vector<Drawable>& drawables)
+    void Renderer::Render(const std::vector<GameObjectPtr>& drawables)
     {
         m_window->clear(m_clearColor);
 
@@ -55,14 +55,11 @@ namespace shak
         m_window->display();
     }
 
-    void Renderer::Draw(const std::vector<Drawable>& drawables)
+    void Renderer::Draw(const std::vector<GameObjectPtr>& drawables)
     {
         for (const auto& drawable : drawables)
         {
-            if (drawable.renderStates)
-                m_window->draw(*drawable.drawable, *drawable.renderStates);
-            else
-                m_window->draw(*drawable.drawable);
+            m_window->draw(*drawable);
         }
     }
 }

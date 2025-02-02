@@ -9,6 +9,7 @@ namespace shak
         this->SetScreenSize(screenSize);
         this->SetColor(sf::Color::White);
         m_texture = texture;
+        this->m_zIndex = -100;
     }
 
     Background::~Background()

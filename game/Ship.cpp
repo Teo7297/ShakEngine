@@ -70,6 +70,7 @@ void Ship::Awake()
     m_aimSprite = std::make_shared<shak::Sprite>(aimtxt, nullptr, sf::Vector2f(250.f, 250.f), sf::Color::Red);
     m_aimSprite->setPosition(this->getPosition());
     m_aimSprite->SetTransparency(0);
+    m_aimSprite->SetZIndex(0);
     this->AddChild(m_aimSprite);
 
     GameObject::Awake();

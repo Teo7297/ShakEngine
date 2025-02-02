@@ -19,9 +19,9 @@ namespace shak
 
         inline void SetClearColor(sf::Color color) { m_clearColor = color; }
 
-        void Render(const std::vector<Drawable>& drawables);
+        void Render(const std::vector<GameObjectPtr>& drawables);
     private:
-        void Draw(const std::vector<Drawable>& drawables);
+        void Draw(const std::vector<GameObjectPtr>& drawables);
 
     private:
         bool m_isRunning = true;

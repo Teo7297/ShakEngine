@@ -12,15 +12,15 @@ namespace shak
         Scene(std::shared_ptr<shak::Renderer> renderer);
         virtual ~Scene() = default;
 
-        void AddGameObject(std::shared_ptr<GameObject> gameObject);
+        void AddGameObject(GameObjectPtr gameObject);
 
         void RemoveGameObject(int id);
 
-        std::shared_ptr<GameObject> FindGameObject(std::string name) const;
-        std::shared_ptr<GameObject> FindGameObject(int id) const;
+        GameObjectPtr FindGameObject(std::string name) const;
+        GameObjectPtr FindGameObject(int id) const;
 
         template<typename T>
-        std::vector<std::shared_ptr<GameObject>> FindGameObjectsByType() const
+        std::vector<GameObjectPtr> FindGameObjectsByType() const
         {
             return m_root->FindChildrenByTypeRecursive<T>();
         }
@@ -32,8 +32,8 @@ namespace shak
         void HandleInput(const sf::Event& event);
 
     private:
-        std::shared_ptr<GameObject> m_root;
-        std::vector<shak::Drawable> m_drawables;
+        GameObjectPtr m_root;
+        std::vector<GameObjectPtr> m_drawables;
         std::shared_ptr<shak::Renderer> m_renderer;
         bool m_awakeDone = false;
     };

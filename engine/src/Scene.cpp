@@ -8,7 +8,7 @@ namespace shak
         m_root->Name = "Root";
     }
 
-    void Scene::AddGameObject(std::shared_ptr<GameObject> gameObject)
+    void Scene::AddGameObject(GameObjectPtr gameObject)
     {
         m_root->AddChild(gameObject);
     }
@@ -20,15 +20,15 @@ namespace shak
             std::cerr << "[Scene - Destroy] GameObject with id " << id << " not found" << std::endl;
     }
 
-    std::shared_ptr<GameObject> Scene::FindGameObject(std::string name) const
+    GameObjectPtr Scene::FindGameObject(std::string name) const
     {
         return m_root->FindChildRecursive(name);
     }
 
-    std::shared_ptr<GameObject> Scene::FindGameObject(int id) const
+    GameObjectPtr Scene::FindGameObject(int id) const
     {
         return m_root->FindChildRecursive(id);
-    }    
+    }
 
     void Scene::Update(float dt)
     {
@@ -45,7 +45,13 @@ namespace shak
     {
         m_drawables.clear();
 
-        m_drawables.emplace_back(m_root, nullptr);
+        // traverse the tree and add all drawables to the list
+        m_root->GetDrawables(m_drawables);
+
+        std::sort(m_drawables.begin(), m_drawables.end(), [](const GameObjectPtr& a, const GameObjectPtr& b)
+            {
+                return a->GetZIndex() < b->GetZIndex();
+            });
 
         m_renderer->Render(m_drawables);
     }

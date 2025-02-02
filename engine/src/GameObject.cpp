@@ -26,12 +26,6 @@ namespace shak
             states.shader = m_shader.get();
         if (m_vertices)
             target.draw(*m_vertices, states);
-
-        for (const auto& child : m_children)
-        {
-            if (child->IsActive())
-                child->draw(target, sf::RenderStates::Default);
-        }
     }
 
     void GameObject::move(sf::Vector2f offset)
@@ -100,7 +94,7 @@ namespace shak
         this->move(origin);
     }
 
-    void GameObject::AddChild(std::shared_ptr<GameObject> child)
+    void GameObject::AddChild(GameObjectPtr child)
     {
         for (auto& c : m_children)
         {
@@ -142,7 +136,7 @@ namespace shak
         return false;
     }
 
-    std::shared_ptr<GameObject> GameObject::FindChildRecursive(std::string name) const
+    GameObjectPtr GameObject::FindChildRecursive(std::string name) const
     {
         for (const auto& child : m_children)
         {
@@ -158,7 +152,7 @@ namespace shak
         return nullptr;
     }
 
-    std::shared_ptr<GameObject> GameObject::FindChildRecursive(int id) const
+    GameObjectPtr GameObject::FindChildRecursive(int id) const
     {
         for (const auto& child : m_children)
         {
@@ -174,9 +168,21 @@ namespace shak
         return nullptr;
     }
 
-    std::vector<std::shared_ptr<GameObject>> GameObject::GetChildren() const
+    void GameObject::GetDrawables(std::vector<GameObjectPtr>& drawables) const
     {
-        return std::vector<std::shared_ptr<GameObject>>(m_children);
+        for (const auto& child : m_children)
+        {
+            if (child->IsActive())
+            {
+                drawables.emplace_back(child);
+                child->GetDrawables(drawables);
+            }
+        }
+    }
+
+    std::vector<GameObjectPtr> GameObject::GetChildren() const
+    {
+        return std::vector<GameObjectPtr>(m_children);
     }
 
     void GameObject::SetColor(const sf::Color& color)
