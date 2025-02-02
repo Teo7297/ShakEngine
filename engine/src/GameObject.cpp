@@ -44,7 +44,7 @@ namespace shak
             sf::Vector2f relativePos = child->getPosition() - this->getPosition();
 
             // Calculate the new position after rotation (remember, we are using global coordinates, with global axis for translation!)
-            float radians = angle.asDegrees() * (3.14159265f / 180.f);
+            float radians = angle.asRadians();
             float cosAngle = std::cos(radians);
             float sinAngle = std::sin(radians);
             sf::Vector2f rotatedPos(
