@@ -5,42 +5,58 @@
 #include "Scene.h"
 #include "Camera.h"
 
-class ShakEngine
+namespace shak
 {
-public:
-    ShakEngine();
-    ~ShakEngine() = default;
-    ShakEngine(const ShakEngine&) = delete;
-    ShakEngine(ShakEngine&&) = delete;
-    ShakEngine& operator=(const ShakEngine&) = delete;
-    ShakEngine& operator=(ShakEngine&&) = delete;
+    class ShakEngine
+    {
+    public:
+        // Delete copy constructor and assignment operator to prevent copying
+        ShakEngine(const ShakEngine&) = delete;
+        ShakEngine(ShakEngine&&) = delete;
+        ShakEngine& operator=(const ShakEngine&) = delete;
+        ShakEngine& operator=(ShakEngine&&) = delete;
 
-    void AddGameObject(const std::shared_ptr<shak::GameObject>& gameObject);
-    void Destroy(const std::shared_ptr<shak::GameObject>& gameObject);
+        // Static method to get the singleton instance
+        static ShakEngine& GetInstance()
+        {
+            static ShakEngine instance;
+            return instance;
+        }
 
-    std::shared_ptr<shak::GameObject> FindGameObjectByName(std::string name) const;
+        void Initialize(const std::string& windowTitle = "ShakEngine");
 
-    shak::ResourceManager& GetResourceManager();
+        void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
+        void Destroy(const std::shared_ptr<GameObject>& gameObject);
 
-    void AddCamera(std::string name, std::shared_ptr<shak::Camera> camera);
+        std::shared_ptr<GameObject> FindGameObjectByName(std::string name) const;
 
-    std::shared_ptr<shak::Camera> GetCamera(std::string name) const;
+        ResourceManager& GetResourceManager();
 
-    void RemoveCamera(std::string name);
+        void AddCamera(std::string name, std::shared_ptr<Camera> camera);
 
-    sf::Vector2f GetMousePixelPos() const;
-    sf::Vector2f GetMouseWorldPos() const;
-    sf::Vector2f GetWindowSize() const;
+        std::shared_ptr<Camera> GetCamera(std::string name) const;
 
-    void Start();
+        void RemoveCamera(std::string name);
 
-private:
+        sf::Vector2f GetMousePixelPos() const;
+        sf::Vector2f GetMouseWorldPos() const;
+        sf::Vector2f GetWindowSize() const;
 
-private:
-    std::shared_ptr<shak::Renderer> m_renderer;
-    std::shared_ptr<sf::RenderWindow> m_window;
-    shak::ResourceManager m_resourceManager;
-    shak::Scene m_scene;
-    sf::Clock m_clock;
-    std::unordered_map<std::string, std::shared_ptr<shak::Camera>> m_cameras;
-};
+        void Start();
+
+    private:
+        // Private constructor to prevent instantiation
+        ShakEngine() = default;
+        ~ShakEngine() = default;
+
+    private:
+        std::shared_ptr<Renderer> m_renderer;
+        std::shared_ptr<sf::RenderWindow> m_window;
+        ResourceManager m_resourceManager;
+        std::shared_ptr<Scene> m_scene;
+        sf::Clock m_clock;
+        std::unordered_map<std::string, std::shared_ptr<Camera>> m_cameras;
+    public:
+        unsigned int m_nextGameObjectId = 0;
+    };
+}

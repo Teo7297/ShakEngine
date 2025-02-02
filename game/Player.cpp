@@ -2,8 +2,8 @@
 
 #include "LaserShot.h"
 #include "Animation.h"
-Player::Player(std::shared_ptr<ShakEngine> engine, std::shared_ptr<shak::TextureAtlas> atlas, std::shared_ptr<sf::Texture> laserTexture, std::shared_ptr<sf::Shader> laserShader, std::shared_ptr<shak::TextureAtlas> deathAnimation)
-    : Ship(atlas, { { 75.f, -31.f }, { 15.f, -26.f }, { 75.f, +41.f }, { 16.f, +23.f } }, deathAnimation), m_engine(engine), m_laserTexture(laserTexture), m_laserShader(laserShader)
+Player::Player(std::shared_ptr<shak::TextureAtlas> atlas, std::shared_ptr<sf::Texture> laserTexture, std::shared_ptr<sf::Shader> laserShader, std::shared_ptr<shak::TextureAtlas> deathAnimation)
+    : Ship(atlas, { { 75.f, -31.f }, { 15.f, -26.f }, { 75.f, +41.f }, { 16.f, +23.f } }, deathAnimation), m_laserTexture(laserTexture), m_laserShader(laserShader)
 {
 }
 
@@ -20,12 +20,11 @@ void Player::HandleInput(const sf::Event& event)
 
         else if (key->code == sf::Keyboard::Key::R)
         {
-            m_deathAnimation->setPosition(this->getPosition()); // make sure it's in the right place
-            m_deathAnimation->Play();
+            std::cout << this->GetParent()->Name << std::endl;
         }
     }
 
-    else if(auto key = event.getIf<sf::Event::MouseButtonPressed>())
+    else if (auto key = event.getIf<sf::Event::MouseButtonPressed>())
     {
         if (key->button == sf::Mouse::Button::Left)
         {
@@ -70,7 +69,7 @@ void Player::Update(float dt)
     time += dt;
     m_laserShader->setUniform("u_time", time);
 
-    if(!m_target)
+    if (!m_target)
         shooting = false;
 
     if (shooting)

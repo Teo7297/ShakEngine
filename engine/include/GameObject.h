@@ -2,11 +2,9 @@
 
 #include "EngineDefines.h"
 
-static int nextId = 0;
-
 namespace shak
 {
-    class GameObject;
+    class ShakEngine;
     struct Drawable
     {
         Drawable(std::shared_ptr<sf::Drawable> d, std::shared_ptr<sf::RenderStates> s) : drawable{ d }, renderStates{ s } {}
@@ -82,13 +80,14 @@ namespace shak
         unsigned int Id = -1;
 
     protected:
-        std::shared_ptr<sf::VertexArray> m_vertices = nullptr;
-        std::shared_ptr<sf::Texture> m_texture = nullptr;
-        std::shared_ptr<sf::Shader> m_shader = nullptr;
+        ShakEngine* m_engine;
+        std::shared_ptr<sf::VertexArray> m_vertices;
+        std::shared_ptr<sf::Texture> m_texture;
+        std::shared_ptr<sf::Shader> m_shader;
         // raw pointer because of double ownership, check doubly linked list implementations
-        GameObject* m_parent = nullptr;
+        GameObject* m_parent;
         std::vector<std::shared_ptr<GameObject>> m_children;
-        bool m_active = true;
-        bool m_followParent = true;
+        bool m_active;
+        bool m_followParent;
     };
 }

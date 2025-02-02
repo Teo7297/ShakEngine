@@ -1,16 +1,20 @@
+#include "ShakEngine.h"
 #include "GameObject.h"
 
 namespace shak
 {
     GameObject::GameObject()
+        : m_vertices(nullptr), m_texture(nullptr), m_shader(nullptr), m_parent(nullptr), m_active(true), m_followParent(true)
     {
-        Id = nextId++;
+        m_engine = &ShakEngine::GetInstance();
+        Id = m_engine->m_nextGameObjectId++;
     }
 
     GameObject::GameObject(std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture)
-        : m_vertices(va), m_texture(texture)
+        : m_vertices(va), m_texture(texture), m_shader(nullptr), m_parent(nullptr), m_active(true), m_followParent(true)
     {
-        Id = nextId++;
+        m_engine = &ShakEngine::GetInstance();
+        Id = m_engine->m_nextGameObjectId++;
     }
 
     void GameObject::draw(sf::RenderTarget& target, sf::RenderStates states) const

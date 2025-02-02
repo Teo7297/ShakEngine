@@ -11,8 +11,8 @@
 
 int main()
 {
-    auto engine = std::make_shared<ShakEngine>();
-
+    shak::ShakEngine* engine = &shak::ShakEngine::GetInstance();
+    engine->Initialize();
     {
         auto& rm = engine->GetResourceManager();
         auto goliathPlus = rm.LoadTextureAtlas("assets/textures/New_Goliath_plus/ship106.atlas", "goliathPlus");
@@ -29,7 +29,7 @@ int main()
 
         auto explosionAtlas = rm.LoadTextureAtlas("assets/animations/explosion.atlas", "deathExplosion");
 
-        auto player = std::make_shared<Player>(engine, goliathPlus, laserTxt, laserSh, explosionAtlas);
+        auto player = std::make_shared<Player>(goliathPlus, laserTxt, laserSh, explosionAtlas);
         player->AddChild(camera1);
         auto bg = std::make_shared<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
         camera1->SetBackground(bg);
