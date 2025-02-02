@@ -9,7 +9,7 @@ namespace shak
     class Animation : public shak::Sprite
     {
     public:
-        Animation(std::shared_ptr<shak::TextureAtlas> atlas, float duration, const std::shared_ptr<sf::Shader>& shader = nullptr, const sf::Vector2f& size = { 400.f, 400.f }, const sf::Color tint = sf::Color::White);
+        Animation(std::shared_ptr<shak::TextureAtlas> atlas, float duration, const std::shared_ptr<sf::Shader>& shader = nullptr, const sf::Vector2f& size = { 250.f, 250.f }, const sf::Color tint = sf::Color::White);
         ~Animation() = default;
 
         void Play();

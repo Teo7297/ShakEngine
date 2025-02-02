@@ -19,6 +19,8 @@ public:
 
     virtual LaserShot::HitInfo TakeDamage(float damage);
 
+    void ToggleAimSprite(bool show);
+
 protected:
     int GetTextureByDirection() const;
     void UpdateDirection();
@@ -26,7 +28,7 @@ protected:
     void UpdateTextureCoords();
     void SetTarget(std::shared_ptr<Ship> target);
 
-    virtual float Shoot() {return 0.f; };
+    virtual float Shoot() { return 0.f; };
 
     // CALLBACKS
     virtual LaserShot::HitInfo OnLaserHit();
@@ -55,6 +57,7 @@ protected:
     float m_damage;
     float m_shield;
 
-    // ANIMATIONS
+    // EFFECTS
     std::shared_ptr<shak::Animation> m_deathAnimation;
+    std::shared_ptr<shak::Sprite> m_aimSprite;
 };

@@ -58,13 +58,13 @@ int main()
         // player->AddChild(ps);
         // engine->AddGameObject(ps);
 
-        // for(int i = 0; i < 100; i++)
-        // {
-        auto alien = std::make_shared<Alien>(goliathPlus, player, explosionAtlas);
-        engine->AddGameObject(alien);
-        alien->setPosition({ 500.f, 500.f });
-        alien->Name = "Alien";
-        // }        
+        for (int i = 0; i < 3; i++)
+        {
+            auto alien = std::make_shared<Alien>(goliathPlus, player, explosionAtlas);
+            engine->AddGameObject(alien);
+            alien->setPosition({ i * 500.f, i * 500.f });
+            alien->Name = "Alien" + i;
+        }
 
         // auto shaderHelper = std::make_shared<ShaderDevHelper>("particle", chicken);
         // engine->AddGameObject(shaderHelper);

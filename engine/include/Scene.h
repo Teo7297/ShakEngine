@@ -19,6 +19,12 @@ namespace shak
         std::shared_ptr<GameObject> FindGameObject(std::string name) const;
         std::shared_ptr<GameObject> FindGameObject(int id) const;
 
+        template<typename T>
+        std::vector<std::shared_ptr<GameObject>> FindGameObjectsByType() const
+        {
+            return m_root->FindChildrenByTypeRecursive<T>();
+        }
+
         void Update(float dt);
 
         void Render();

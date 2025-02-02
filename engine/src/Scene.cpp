@@ -28,7 +28,7 @@ namespace shak
     std::shared_ptr<GameObject> Scene::FindGameObject(int id) const
     {
         return m_root->FindChildRecursive(id);
-    }
+    }    
 
     void Scene::Update(float dt)
     {

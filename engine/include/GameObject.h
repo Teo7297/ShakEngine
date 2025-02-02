@@ -38,6 +38,20 @@ namespace shak
         std::shared_ptr<GameObject> FindChildRecursive(std::string name) const;
         std::shared_ptr<GameObject> FindChildRecursive(int id) const;
 
+        template<typename T>
+        std::vector<std::shared_ptr<GameObject>> FindChildrenByTypeRecursive() const
+        {
+            std::vector<std::shared_ptr<GameObject>> result;
+            for (const auto& child : m_children)
+            {
+                if (std::dynamic_pointer_cast<T>(child))
+                    result.push_back(child);
+                auto found = child->FindChildrenByTypeRecursive<T>();
+                result.insert(result.end(), found.begin(), found.end());
+            }
+            return result;
+        }
+
         inline void SetParent(GameObject* parent) { m_parent = parent; }
         inline GameObject* GetParent() { return m_parent; }
 
@@ -62,6 +76,7 @@ namespace shak
 
         void SetColor(const sf::Color& color);
         void SetTransparency(uint8_t transparency);
+        inline void SetZIndex(int zIndex) { m_zIndex = zIndex; }
 
         virtual void Awake();
 
@@ -89,5 +104,6 @@ namespace shak
         std::vector<std::shared_ptr<GameObject>> m_children;
         bool m_active;
         bool m_followParent;
+        int m_zIndex;
     };
 }

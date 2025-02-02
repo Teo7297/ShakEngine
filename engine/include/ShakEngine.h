@@ -30,6 +30,12 @@ namespace shak
         inline unsigned int GetNextGameObjectId() { return m_nextGameObjectId++; }
 
         std::shared_ptr<GameObject> FindGameObjectByName(std::string name) const;
+        
+        template <typename T>
+        std::vector<std::shared_ptr<GameObject>> FindGameObjectsByType() const
+        {
+            return m_scene->FindGameObjectsByType<T>();
+        }
 
         ResourceManager& GetResourceManager();
 

@@ -21,4 +21,7 @@ private:
     float m_totalDamage = 0.0f;
     float m_dpsTimer = 0.0f;
     float m_dps = 0.0f;
+
+    bool m_shooting = false;
+    bool m_targetWasSelected = false;
 };

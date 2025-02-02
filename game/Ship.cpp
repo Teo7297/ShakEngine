@@ -65,6 +65,13 @@ void Ship::HandleInput(const sf::Event& event)
 void Ship::Awake()
 {
     m_destination = this->getPosition();
+
+    auto aimtxt = m_engine->GetResourceManager().LoadTexture("assets/textures/aim.png", "aim");
+    m_aimSprite = std::make_shared<shak::Sprite>(aimtxt, nullptr, sf::Vector2f(250.f, 250.f), sf::Color::Red);
+    m_aimSprite->setPosition(this->getPosition());
+    m_aimSprite->SetTransparency(0);
+    this->AddChild(m_aimSprite);
+
     GameObject::Awake();
 }
 
@@ -91,6 +98,7 @@ LaserShot::HitInfo Ship::TakeDamage(float damage)
 
     if (m_hp <= 0.f)
     {
+        ToggleAimSprite(false);
         m_deathAnimation->setPosition(this->getPosition()); // make sure it's in the right place
         m_deathAnimation->Play();
         this->move({ 3000.f, 3000.f }); // move out of the way
@@ -143,13 +151,18 @@ void Ship::SetTarget(std::shared_ptr<Ship> target)
     m_target = target;
 }
 
+void Ship::ToggleAimSprite(bool show)
+{
+    m_aimSprite->SetTransparency(show ? 255 : 0);
+}
+
 LaserShot::HitInfo Ship::OnLaserHit()
 {
     if (!m_target)
         return { 0.f, false };
-    
+
     auto info = m_target->TakeDamage(m_damage + std::rand() % 10000);
-    
+
     if (info.killed)
     {
         this->SetTarget(nullptr);
