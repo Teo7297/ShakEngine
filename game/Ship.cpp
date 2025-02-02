@@ -86,9 +86,7 @@ LaserShot::HitInfo Ship::TakeDamage(float damage)
 
     LaserShot::HitInfo info{
         .damage = damage,
-        .hitPosition = {0.f,0.f}, // will be populated by the onHit callback
         .killed = m_hp <= 0.f,
-        .isCritical = false // todo: implement crits
     };
 
     if (m_hp <= 0.f)
@@ -145,12 +143,13 @@ void Ship::SetTarget(std::shared_ptr<Ship> target)
     m_target = target;
 }
 
-LaserShot::HitInfo Ship::OnLaserHit(const LaserShot* thisLaser)
+LaserShot::HitInfo Ship::OnLaserHit()
 {
     if (!m_target)
-        return { 0.f, {0.f,0.f}, false, false };
+        return { 0.f, false };
+    
     auto info = m_target->TakeDamage(m_damage + std::rand() % 10000);
-    info.hitPosition = thisLaser->getPosition();
+    
     if (info.killed)
     {
         this->SetTarget(nullptr);

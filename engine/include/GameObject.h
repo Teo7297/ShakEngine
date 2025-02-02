@@ -59,6 +59,8 @@ namespace shak
         inline void SetFollowParent(bool follow) { m_followParent = follow; }
         inline bool GetFollowParent() const { return m_followParent; }
 
+        std::shared_ptr<GameObject> FindGameObjectByNameInChildren(std::string name) const;
+
         void SetColor(const sf::Color& color);
         void SetTransparency(uint8_t transparency);
 

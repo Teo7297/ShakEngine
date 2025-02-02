@@ -29,7 +29,7 @@ protected:
     virtual float Shoot() {return 0.f; };
 
     // CALLBACKS
-    virtual LaserShot::HitInfo OnLaserHit(const LaserShot* thisLaser);
+    virtual LaserShot::HitInfo OnLaserHit();
 
 protected:
     std::shared_ptr<shak::TextureAtlas> m_atlas;

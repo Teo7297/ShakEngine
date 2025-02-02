@@ -117,6 +117,21 @@ namespace shak
         return std::vector<std::shared_ptr<GameObject>>(m_children);
     }
 
+    std::shared_ptr<GameObject> GameObject::FindGameObjectByNameInChildren(std::string name) const
+    {
+        std::shared_ptr<GameObject> result = nullptr;
+
+        for (const auto& child : m_children)
+        {
+            if (child->Name == name)
+                return child;
+            else
+                result = child->FindGameObjectByNameInChildren(name);
+        }
+
+        return result;
+    }
+
     void GameObject::SetColor(const sf::Color& color)
     {
         for (int i = 0; i < m_vertices->getVertexCount(); i++)

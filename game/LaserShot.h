@@ -10,9 +10,7 @@ public:
     struct HitInfo
     {
         float damage;
-        sf::Vector2f hitPosition;
         bool killed;
-        bool isCritical;
     };
 
     enum class Size
@@ -30,7 +28,7 @@ public:
     void Init(const sf::Vector2f& target, sf::Angle angle);
 
 public:
-    std::function<HitInfo(const LaserShot* thisLaser)> OnHit;
+    std::function<HitInfo()> OnHit;
 
 private:
     float m_speed = 5000.f;

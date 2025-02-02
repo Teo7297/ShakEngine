@@ -117,7 +117,7 @@ float Player::Shoot()
         shot->SetFollowParent(false);
         this->AddChild(shot);
 
-        shot->OnHit = std::bind(&Player::OnLaserHit, this, std::placeholders::_1); //todo: find a way to avoid having every laser shot call this cb
+        shot->OnHit = std::bind(&Player::OnLaserHit, this); //todo: find a way to avoid having every laser shot call this cb
 
     }
     m_laserIndex = (m_laserIndex + 1) % 2; // alternate front and back lasers
