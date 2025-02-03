@@ -27,6 +27,17 @@ void Player::HandleInput(const sf::Event& event)
         {
             m_engine->TestQuadtree();
         }
+
+        else if (key->code == sf::Keyboard::Key::D)
+        {
+            auto vec = m_engine->FindGameObjectsByType<Ship>();
+            for (auto& ship : vec)
+            {
+                if (ship->Name == "Player")
+                    continue;
+                std::dynamic_pointer_cast<Ship>(ship)->TakeDamage(m_damage + std::rand() % 10000);
+            }
+        }
     }
 
     else if (auto key = event.getIf<sf::Event::MouseButtonPressed>())

@@ -97,6 +97,8 @@ namespace shak
             m_scene->Update(dt);
 
             m_scene->Render();
+
+            m_scene->Cleanup();
         }
     }
 }

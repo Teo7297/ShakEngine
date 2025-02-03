@@ -62,6 +62,11 @@ namespace shak
         m_renderer->Render(m_drawables);
     }
 
+    void Scene::Cleanup()
+    {
+        m_root->Cleanup();
+    }
+
     void Scene::HandleInput(const sf::Event& event)
     {
         m_root->HandleInput(event);

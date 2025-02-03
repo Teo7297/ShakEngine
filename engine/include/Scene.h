@@ -31,6 +31,8 @@ namespace shak
 
         void Render();
 
+        void Cleanup();
+
         void HandleInput(const sf::Event& event);
 
         void TestQuadtree(sf::FloatRect area);

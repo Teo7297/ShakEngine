@@ -208,7 +208,12 @@ namespace shak
 
     void GameObject::Awake() // TODO: Awake should be also called when an object gets created at runtime
     {
-        for (const auto& child : m_children)
+        if (!m_safeChildrenCopied)
+        {
+            m_safeChildren = m_children;
+            m_safeChildrenCopied = true;
+        }
+        for (const auto& child : m_safeChildren)
         {
             if (child->IsActive())
                 child->Awake();
@@ -217,27 +222,52 @@ namespace shak
 
     void GameObject::Update(float dt)
     {
-        std::vector<GameObjectPtr> toUpdate(m_children);
-        for (const auto& child : toUpdate)
+        if (!m_safeChildrenCopied)
+        {
+            m_safeChildren = m_children;
+            m_safeChildrenCopied = true;
+        }
+        for (const auto& child : m_safeChildren)
         {
             if (child->IsActive())
                 child->Update(dt);
         }
     }
 
-    void GameObject::HandleInput(const sf::Event& event)
+    void GameObject::Cleanup()
     {
+        m_safeChildrenCopied = false;
         for (const auto& child : m_children)
         {
-            child->HandleInput(event);
+            child->Cleanup();
+        }
+    }
+
+    void GameObject::HandleInput(const sf::Event& event)
+    {
+        if (!m_safeChildrenCopied)
+        {
+            m_safeChildren = m_children;
+            m_safeChildrenCopied = true;
+        }
+        for (const auto& child : m_safeChildren)
+        {
+            if (child->IsActive())
+                child->HandleInput(event);
         }
     }
 
     void GameObject::OnDestroy()
     {
-        for (const auto& child : m_children)
+        if (!m_safeChildrenCopied)
         {
-            child->OnDestroy();
+            m_safeChildren = m_children;
+            m_safeChildrenCopied = true;
+        }
+        for (const auto& child : m_safeChildren)
+        {
+            if (child->IsActive())
+                child->OnDestroy();
         }
     }
 

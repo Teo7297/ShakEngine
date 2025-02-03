@@ -78,6 +78,9 @@ namespace shak
 
         virtual void Update(float dt);
 
+        // This function is the last one called in the game loop. It is meant to be used to reset flags, etc.
+        virtual void Cleanup();
+
         virtual void HandleInput(const sf::Event& event);
 
         virtual void OnDestroy();
@@ -104,7 +107,8 @@ namespace shak
         std::shared_ptr<sf::Shader> m_shader;
         // raw pointer because of double ownership, check doubly linked list implementations
         GameObject* m_parent;
-        std::vector<std::shared_ptr<GameObject>> m_children;
+        bool m_safeChildrenCopied = false;
+        std::vector<std::shared_ptr<GameObject>> m_children, m_safeChildren;
         bool m_active;
         bool m_followParent;
         int m_zIndex;
