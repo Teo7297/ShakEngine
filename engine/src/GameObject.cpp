@@ -36,6 +36,7 @@ namespace shak
             if (child->GetFollowParent())
                 child->move(offset);
         }
+        m_movedThisFrame = true;
     }
 
     void GameObject::rotate(sf::Angle angle)
@@ -103,6 +104,8 @@ namespace shak
         }
         m_children.push_back(child);
         child->SetParent(this);
+        if (child->m_physicsEnabled)
+            m_engine->GetScene()->AddGameObjectToQuadtree(child);
     }
 
     bool GameObject::RemoveChild(int id)
@@ -245,5 +248,17 @@ namespace shak
         const auto zeroPosition = worldPoint - this->getPosition();
 
         return m_vertices->getBounds().contains(zeroPosition + center);
+    }
+
+    bool GameObject::IsCollidingWithGameObject(const GameObjectPtr& other) const
+    {
+        const auto zeroPosition = other->getPosition() - this->getPosition();
+        return m_vertices->getBounds().findIntersection({ zeroPosition, other->GetVertexArray()->getBounds().size }).has_value();
+    }
+
+    bool GameObject::IsCollidingWitRect(const sf::FloatRect& rect) const
+    {
+        const auto zeroPosition = rect.position - this->getPosition();
+        return m_vertices->getBounds().findIntersection({ zeroPosition, rect.size }).has_value();
     }
 }

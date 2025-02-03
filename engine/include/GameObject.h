@@ -71,6 +71,9 @@ namespace shak
         inline void SetZIndex(int zIndex) { m_zIndex = zIndex; }
         inline int GetZIndex() const { return m_zIndex; }
 
+        inline void EnablePhysics() { m_physicsEnabled = true; }
+        inline void DisablePhysics() { m_physicsEnabled = false; }
+
         virtual void Awake();
 
         virtual void Update(float dt);
@@ -82,6 +85,13 @@ namespace shak
         // Physics
         // Check if a point in world coordinates is inside the object bounding box
         bool IsPointInside(const sf::Vector2f& worldPoint) const;
+
+        bool IsCollidingWithGameObject(const std::shared_ptr<GameObject>& other) const;
+
+        bool IsCollidingWitRect(const sf::FloatRect& rect) const;
+
+        inline bool HasMovedThisFrame() const { return m_movedThisFrame; }
+        inline void ResetMovedThisFrame() { m_movedThisFrame = false; }
 
     public:
         std::string Name = "GameObject";
@@ -98,6 +108,8 @@ namespace shak
         bool m_active;
         bool m_followParent;
         int m_zIndex;
+        bool m_physicsEnabled = false;
+        bool m_movedThisFrame = false;
     };
 }
 

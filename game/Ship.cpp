@@ -55,6 +55,8 @@ Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf
     // Setup death animation
     this->AddChild(m_deathAnimation);
     m_deathAnimation->SetFollowParent(false);
+
+    this->EnablePhysics();
 }
 
 void Ship::HandleInput(const sf::Event& event)

@@ -25,7 +25,7 @@ void Player::HandleInput(const sf::Event& event)
 
         else if (key->code == sf::Keyboard::Key::R)
         {
-            std::cout << this->Id << " - " << GetChildren()[0]->Id << " - " << GetChildren()[1]->Id << std::endl;
+            m_engine->TestQuadtree();
         }
     }
 

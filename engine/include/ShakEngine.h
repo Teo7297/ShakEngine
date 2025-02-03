@@ -38,6 +38,7 @@ namespace shak
         }
 
         ResourceManager& GetResourceManager();
+        std::shared_ptr<Scene> GetScene() const { return m_scene; }
 
         void AddCamera(std::string name, std::shared_ptr<Camera> camera);
 
@@ -50,6 +51,12 @@ namespace shak
         sf::Vector2f GetWindowSize() const;
 
         void Start();
+
+        void TestQuadtree()
+        {
+            auto c = m_cameras.at("camera1")->GetView();
+            m_scene->TestQuadtree({ c->getCenter() - sf::Vector2f{1920.f, 1080.f} / 2.f, {1920.f, 1080.f} });
+        }
 
     private:
         // Private constructor to prevent instantiation

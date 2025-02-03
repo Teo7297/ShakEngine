@@ -3,6 +3,7 @@
 #include "EngineDefines.h"
 #include "GameObject.h"
 #include "Renderer.h"
+#include "QuadTree.h"
 
 namespace shak
 {
@@ -13,6 +14,7 @@ namespace shak
         virtual ~Scene() = default;
 
         void AddGameObject(GameObjectPtr gameObject);
+        void AddGameObjectToQuadtree(GameObjectPtr gameObject);
 
         void RemoveGameObject(int id);
 
@@ -31,7 +33,10 @@ namespace shak
 
         void HandleInput(const sf::Event& event);
 
+        void TestQuadtree(sf::FloatRect area);
+
     private:
+        Quadtree m_quadtree;
         GameObjectPtr m_root;
         std::vector<GameObjectPtr> m_drawables;
         std::shared_ptr<shak::Renderer> m_renderer;
