@@ -13,7 +13,6 @@ namespace shak
 
         inline void SetScreenCoords(const sf::FloatRect& coords) { m_screenCoords = coords; }
         void SetScreenSize(const sf::Vector2f& size);
-        void SetColor(const sf::Color& color);
 
         void Update(float dt) override;
 

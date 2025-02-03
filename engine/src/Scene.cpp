@@ -54,7 +54,7 @@ namespace shak
         // traverse the tree and add all drawables to the list
         m_root->GetDrawables(m_drawables);
 
-        std::sort(m_drawables.begin(), m_drawables.end(), [](const GameObjectPtr& a, const GameObjectPtr& b)
+        std::ranges::sort(m_drawables, [](const GameObjectPtr& a, const GameObjectPtr& b)
             {
                 return a->GetZIndex() < b->GetZIndex();
             });

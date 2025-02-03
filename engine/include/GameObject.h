@@ -9,7 +9,7 @@ namespace shak
     public:
         GameObject();
         GameObject(std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture = nullptr);
-        virtual ~GameObject() = default;
+        virtual ~GameObject() override = default;
 
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const override;
 
@@ -34,7 +34,7 @@ namespace shak
         std::vector<std::shared_ptr<GameObject>> FindChildrenByTypeRecursive() const
         {
             std::vector<std::shared_ptr<GameObject>> result;
-            for (const auto& child : m_children)
+            for (const auto& [id, child] : m_children)
             {
                 if (std::dynamic_pointer_cast<T>(child))
                     result.push_back(child);
@@ -108,7 +108,8 @@ namespace shak
         // raw pointer because of double ownership, check doubly linked list implementations
         GameObject* m_parent;
         bool m_safeChildrenCopied = false;
-        std::vector<std::shared_ptr<GameObject>> m_children, m_safeChildren;
+        std::unordered_map<int, std::shared_ptr<GameObject>> m_children;
+        std::vector<std::shared_ptr<GameObject>> m_safeChildren;
         bool m_active;
         bool m_followParent;
         int m_zIndex;

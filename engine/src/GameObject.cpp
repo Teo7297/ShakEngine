@@ -31,7 +31,7 @@ namespace shak
     void GameObject::move(sf::Vector2f offset)
     {
         Transformable::move(offset);
-        for (const auto& child : m_children)
+        for (const auto& [id, child] : m_children)
         {
             if (child->GetFollowParent())
                 child->move(offset);
@@ -42,7 +42,7 @@ namespace shak
     void GameObject::rotate(sf::Angle angle)
     {
         Transformable::rotate(angle);
-        for (const auto& child : m_children)
+        for (const auto& [id, child] : m_children)
         {
             if (!child->GetFollowParent()) continue;
 
@@ -83,7 +83,7 @@ namespace shak
     void GameObject::scale(sf::Vector2f factor)
     {
         Transformable::scale(factor);
-        for (const auto& child : m_children)
+        for (const auto& [id, child] : m_children)
         {
             child->scale(factor);
         }
@@ -97,12 +97,9 @@ namespace shak
 
     void GameObject::AddChild(GameObjectPtr child)
     {
-        for (auto& c : m_children)
-        {
-            if (c->Id == child->Id)
-                return;
-        }
-        m_children.push_back(child);
+        if (m_children.find(child->Id) != m_children.end())
+            return;
+        m_children[child->Id] = child;
         child->SetParent(this);
         if (child->m_physicsEnabled)
             m_engine->GetScene()->AddGameObjectToQuadtree(child);
@@ -110,38 +107,28 @@ namespace shak
 
     bool GameObject::RemoveChild(int id)
     {
-        for (auto it = m_children.begin(); it != m_children.end(); ++it)
-        {
-            if ((*it)->Id == id)
-            {
-                m_children.erase(it);
-                return true;
-            }
-        }
-        return false;
+        if (m_children.find(id) == m_children.end())
+            return false;
+
+        m_children.erase(id);
+        return true;
     }
 
     bool GameObject::RemoveChildRecursive(int id)
     {
-        for (auto it = m_children.begin(); it != m_children.end(); ++it)
-        {
-            if ((*it)->Id == id)
-            {
-                m_children.erase(it);
-                return true;
-            }
-            else
-            {
-                if ((*it)->RemoveChildRecursive(id))
+        if (RemoveChild(id))
+            return true;
+        else
+            for (const auto& [id, child] : m_children)
+                if (child->RemoveChildRecursive(id))
                     return true;
-            }
-        }
+
         return false;
     }
 
     GameObjectPtr GameObject::FindChildRecursive(std::string name) const
     {
-        for (const auto& child : m_children)
+        for (const auto& [id, child] : m_children)
         {
             if (child->Name == name)
                 return child;
@@ -157,23 +144,22 @@ namespace shak
 
     GameObjectPtr GameObject::FindChildRecursive(int id) const
     {
-        for (const auto& child : m_children)
+        if (m_children.find(id) != m_children.end())
+            return m_children.at(id);
+
+        for (const auto& [id, child] : m_children)
         {
-            if (child->Id == id)
-                return child;
-            else
-            {
-                auto found = child->FindChildRecursive(id);
-                if (found)
-                    return found;
-            }
+            auto found = child->FindChildRecursive(id);
+            if (found)
+                return found;
         }
+
         return nullptr;
     }
 
     void GameObject::GetDrawables(std::vector<GameObjectPtr>& drawables) const
     {
-        for (const auto& child : m_children)
+        for (const auto& [id, child] : m_children)
         {
             if (child->IsActive())
             {
@@ -185,7 +171,11 @@ namespace shak
 
     std::vector<GameObjectPtr> GameObject::GetChildren() const
     {
-        return std::vector<GameObjectPtr>(m_children);
+        std::vector<GameObjectPtr> result;
+        result.reserve(m_children.size());
+        for (const auto& [id, child] : m_children)
+            result.emplace_back(child);
+        return result;
     }
 
     void GameObject::SetColor(const sf::Color& color)
@@ -210,7 +200,7 @@ namespace shak
     {
         if (!m_safeChildrenCopied)
         {
-            m_safeChildren = m_children;
+            m_safeChildren = GetChildren();
             m_safeChildrenCopied = true;
         }
         for (const auto& child : m_safeChildren)
@@ -224,7 +214,7 @@ namespace shak
     {
         if (!m_safeChildrenCopied)
         {
-            m_safeChildren = m_children;
+            m_safeChildren = GetChildren();
             m_safeChildrenCopied = true;
         }
         for (const auto& child : m_safeChildren)
@@ -237,7 +227,7 @@ namespace shak
     void GameObject::Cleanup()
     {
         m_safeChildrenCopied = false;
-        for (const auto& child : m_children)
+        for (const auto& [id, child] : m_children)
         {
             child->Cleanup();
         }
@@ -247,7 +237,7 @@ namespace shak
     {
         if (!m_safeChildrenCopied)
         {
-            m_safeChildren = m_children;
+            m_safeChildren = GetChildren();
             m_safeChildrenCopied = true;
         }
         for (const auto& child : m_safeChildren)
@@ -261,7 +251,7 @@ namespace shak
     {
         if (!m_safeChildrenCopied)
         {
-            m_safeChildren = m_children;
+            m_safeChildren = GetChildren();
             m_safeChildrenCopied = true;
         }
         for (const auto& child : m_safeChildren)

@@ -25,14 +25,6 @@ namespace shak
         m_screenSize = size;
     }
 
-    void Background::SetColor(const sf::Color& color)
-    {
-        (*m_vertices)[0].color = sf::Color::White;
-        (*m_vertices)[1].color = sf::Color::White;
-        (*m_vertices)[2].color = sf::Color::White;
-        (*m_vertices)[3].color = sf::Color::White;
-    }
-
     void Background::Update(float dt)
     {
         auto pos = m_screenCoords.position;
