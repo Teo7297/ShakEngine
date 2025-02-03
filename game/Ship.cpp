@@ -104,7 +104,7 @@ LaserShot::HitInfo Ship::TakeDamage(float damage)
         ToggleAimSprite(false);
         m_deathAnimation->setPosition(this->getPosition()); // make sure it's in the right place
         m_deathAnimation->Play();
-        this->move({ 3000.f, 3000.f }); // move out of the way
+        // this->move({ 3000.f, 3000.f }); // move out of the way
         m_hp = m_maxHp;
     }
     return info;

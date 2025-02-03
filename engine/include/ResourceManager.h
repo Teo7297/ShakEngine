@@ -24,9 +24,15 @@ namespace shak
         void UnloadShader(const std::string& name);
         std::shared_ptr<sf::Shader> GetShader(const std::string& name) const;
 
+        // Fonts
+        std::shared_ptr<sf::Font> LoadFont(const fs::path& path, const std::string& name);
+        void UnloadFont(const std::string& name);
+        std::shared_ptr<sf::Font> GetFont(const std::string& name) const;
+
     private:
         std::unordered_map<std::string, std::shared_ptr<sf::Texture>> m_loadedTextures;
         std::unordered_map<std::string, std::shared_ptr<TextureAtlas>> m_loadedAtlases;
         std::unordered_map<std::string, std::shared_ptr<sf::Shader>> m_loadedShaders;
+        std::unordered_map<std::string, std::shared_ptr<sf::Font>> m_loadedFonts;
     };
 }

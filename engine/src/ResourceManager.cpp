@@ -90,10 +90,39 @@ namespace shak
 
     void ResourceManager::UnloadShader(const std::string& name)
     {
+        if (m_loadedShaders.find(name) != m_loadedShaders.end())
+            m_loadedShaders.erase(name);
     }
 
     std::shared_ptr<sf::Shader> ResourceManager::GetShader(const std::string& name) const
     {
-        return std::shared_ptr<sf::Shader>();
+        if (m_loadedShaders.find(name) != m_loadedShaders.end())
+            return m_loadedShaders.at(name);
+        return nullptr;
+    }
+
+    std::shared_ptr<sf::Font> ResourceManager::LoadFont(const fs::path& path, const std::string& name)
+    {
+        if (m_loadedFonts.find(name) != m_loadedFonts.end())
+            return m_loadedFonts[name];
+
+        auto font = std::make_shared<sf::Font>();
+        if (!font->openFromFile(path))
+        {
+            std::cerr << "Failed to load font [" << name << "] at location: " << path << std::endl;
+            return nullptr;
+        }
+
+        m_loadedFonts[name] = font;
+        return font;
+    }
+
+    void ResourceManager::UnloadFont(const std::string& name)
+    {
+    }
+
+    std::shared_ptr<sf::Font> ResourceManager::GetFont(const std::string& name) const
+    {
+        return std::shared_ptr<sf::Font>();
     }
 }
