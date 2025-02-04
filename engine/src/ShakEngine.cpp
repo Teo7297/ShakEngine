@@ -11,7 +11,7 @@ namespace shak
         m_scene = std::make_shared<Scene>(m_renderer);
     }
 
-    void ShakEngine::AddGameObject(const GameObjectPtr gameObject)
+    void ShakEngine::AddGameObject(const GameObjectPtr& gameObject)
     {
         m_scene->AddGameObject(gameObject);
     }
@@ -22,7 +22,7 @@ namespace shak
         m_scene->RemoveGameObject(gameObject->Id);
     }
 
-    GameObjectPtr ShakEngine::FindGameObjectByName(std::string name) const
+    GameObjectPtr ShakEngine::FindGameObjectByName(const std::string& name) const
     {
         return m_scene->FindGameObject(name);
     }
@@ -32,20 +32,20 @@ namespace shak
         return m_resourceManager;
     }
 
-    void ShakEngine::AddCamera(std::string name, std::shared_ptr<shak::Camera> camera)
+    void ShakEngine::AddCamera(const std::string& name, const std::shared_ptr<shak::Camera>& camera)
     {
         m_cameras[name] = camera;
         m_renderer->AddCamera(name, camera->GetView());
     }
 
-    std::shared_ptr<shak::Camera> ShakEngine::GetCamera(std::string name) const
+    std::shared_ptr<shak::Camera> ShakEngine::GetCamera(const std::string& name) const
     {
-        if (m_cameras.find(name) == m_cameras.end())
+        if (!m_cameras.contains(name))
             return nullptr;
         return m_cameras.at(name);
     }
 
-    void ShakEngine::RemoveCamera(std::string name)
+    void ShakEngine::RemoveCamera(const std::string& name)
     {
         m_cameras.erase(name);
         m_renderer->RemoveCamera(name);
@@ -53,7 +53,7 @@ namespace shak
 
     sf::Vector2f ShakEngine::GetMousePixelPos() const
     {
-        return { (float)sf::Mouse::getPosition(*m_window).x, m_window->getSize().y - (float)sf::Mouse::getPosition(*m_window).y };
+        return { static_cast<float>(sf::Mouse::getPosition(*m_window).x), static_cast<float>(m_window->getSize().y - sf::Mouse::getPosition(*m_window).y) };
     }
 
     sf::Vector2f ShakEngine::GetMouseWorldPos() const
@@ -63,7 +63,7 @@ namespace shak
 
     sf::Vector2f ShakEngine::GetWindowSize() const
     {
-        return { (float)m_window->getSize().x, (float)m_window->getSize().y };
+        return { static_cast<float>(m_window->getSize().x), static_cast<float>(m_window->getSize().y) };
     }
 
     void ShakEngine::Start()

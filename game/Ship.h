@@ -27,7 +27,7 @@ protected:
     void UpdateDirection();
     void UpdateLookDirection();
     void UpdateTextureCoords();
-    void SetTarget(std::shared_ptr<Ship> target);
+    void SetTarget(const std::shared_ptr<Ship>& target);
 
     virtual float Shoot() { return 0.f; };
 

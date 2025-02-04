@@ -12,10 +12,6 @@ namespace shak
         this->m_zIndex = -100;
     }
 
-    Background::~Background()
-    {
-    }
-
     void Background::SetScreenSize(const sf::Vector2f& size)
     {
         (*m_vertices)[0].position = sf::Vector2f(0.f, 0.f);
@@ -28,7 +24,6 @@ namespace shak
     void Background::Update(float dt)
     {
         auto pos = m_screenCoords.position;
-        auto size = m_screenCoords.size;
 
         // Tex coords are LOCAL
         (*m_vertices)[0].texCoords = sf::Vector2f(pos.x, pos.y);

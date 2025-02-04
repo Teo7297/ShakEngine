@@ -95,9 +95,9 @@ namespace shak
         this->move(origin);
     }
 
-    void GameObject::AddChild(GameObjectPtr child)
+    void GameObject::AddChild(const GameObjectPtr& child)
     {
-        if (m_children.find(child->Id) != m_children.end())
+        if (m_children.contains(child->Id))
             return;
         m_children[child->Id] = child;
         child->SetParent(this);
@@ -107,7 +107,7 @@ namespace shak
 
     bool GameObject::RemoveChild(int id)
     {
-        if (m_children.find(id) == m_children.end())
+        if (!m_children.contains(id))
             return false;
 
         m_children.erase(id);
@@ -119,38 +119,33 @@ namespace shak
         if (RemoveChild(id))
             return true;
         else
-            for (const auto& [id, child] : m_children)
+            for (const auto& [_, child] : m_children)
                 if (child->RemoveChildRecursive(id))
                     return true;
 
         return false;
     }
 
-    GameObjectPtr GameObject::FindChildRecursive(std::string name) const
+    GameObjectPtr GameObject::FindChildRecursive(const std::string& name) const
     {
         for (const auto& [id, child] : m_children)
         {
             if (child->Name == name)
                 return child;
-            else
-            {
-                auto found = child->FindChildRecursive(name);
-                if (found)
-                    return found;
-            }
+            else if (auto found = child->FindChildRecursive(name))
+                return found;
         }
         return nullptr;
     }
 
     GameObjectPtr GameObject::FindChildRecursive(int id) const
     {
-        if (m_children.find(id) != m_children.end())
+        if (m_children.contains(id))
             return m_children.at(id);
 
-        for (const auto& [id, child] : m_children)
+        for (const auto& [_, child] : m_children)
         {
-            auto found = child->FindChildRecursive(id);
-            if (found)
+            if (auto found = child->FindChildRecursive(id))
                 return found;
         }
 
@@ -178,18 +173,18 @@ namespace shak
         return result;
     }
 
-    void GameObject::SetColor(const sf::Color& color)
+    void GameObject::SetColor(const sf::Color& color) const
     {
-        for (int i = 0; i < m_vertices->getVertexCount(); i++)
+        for (size_t i = 0; i < m_vertices->getVertexCount(); i++)
         {
             auto& vertex = (*m_vertices)[i];
             vertex.color = color;
         }
     }
 
-    void GameObject::SetTransparency(uint8_t transparency)
+    void GameObject::SetTransparency(uint8_t transparency) const
     {
-        for (int i = 0; i < m_vertices->getVertexCount(); i++)
+        for (size_t i = 0; i < m_vertices->getVertexCount(); i++)
         {
             auto& vertex = (*m_vertices)[i];
             vertex.color.a = transparency;

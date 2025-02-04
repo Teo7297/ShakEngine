@@ -20,7 +20,7 @@ namespace shak
         void Update(float dt) override;
 
     private:
-        void SetTextureCoordinates(const shak::TextureCoordinates& coords);
+        void SetTextureCoordinates(const shak::TextureCoordinates& coords) const;
 
     private:
         std::shared_ptr<shak::TextureAtlas> m_atlas;

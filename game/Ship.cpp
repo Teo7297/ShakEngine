@@ -91,7 +91,7 @@ LaserShot::HitInfo Ship::TakeDamage(float damage)
     m_hp -= damage;
 
     auto damageNumber = m_damageNumberPool.Get();
-    damageNumber->Reset(damage, this->getPosition());
+    damageNumber->Reset(static_cast<int>(damage), this->getPosition());
     m_engine->AddGameObject(damageNumber);
 
     LaserShot::HitInfo info{
@@ -114,10 +114,10 @@ int Ship::GetTextureByDirection() const
 {
     const float directionAngle = m_lookDirection.angleTo({ 1.f, 0.f }).asRadians(); // Distance from right dir (aka 0 degrees)
 
-    float signedAngle = directionAngle / (2.0f * M_PI);
+    float signedAngle = directionAngle / (2.0f * static_cast<float>(M_PI));
     if (signedAngle < 0.f)
         signedAngle += 1.f;
-    return static_cast<int>(signedAngle * m_atlasTexturesCount) % m_atlasTexturesCount;
+    return static_cast<int>(signedAngle * static_cast<float>(m_atlasTexturesCount)) % m_atlasTexturesCount;
 }
 
 void Ship::UpdateDirection()
@@ -149,7 +149,7 @@ void Ship::UpdateTextureCoords()
     (*m_vertices)[3].texCoords = coords.bottomRight;
 }
 
-void Ship::SetTarget(std::shared_ptr<Ship> target)
+void Ship::SetTarget(const std::shared_ptr<Ship>& target)
 {
     m_target = target;
 }
@@ -162,7 +162,11 @@ void Ship::ToggleAimSprite(bool show)
 LaserShot::HitInfo Ship::OnLaserHit()
 {
     if (!m_target)
-        return { 0.f, false };
+        return
+    {
+        .damage = 0.f,
+        .killed = false
+    };
 
     auto info = m_target->TakeDamage(m_damage + std::rand() % 10000);
 

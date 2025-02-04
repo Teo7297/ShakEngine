@@ -2,14 +2,6 @@
 
 namespace shak
 {
-    Renderer::Renderer()
-    {
-    }
-
-    Renderer::~Renderer()
-    {
-    }
-
     std::shared_ptr<sf::RenderWindow> Renderer::CreateSFWindow(const std::string& title)
     {
         m_window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ DEFAULT_APP_WIDTH, DEFAULT_APP_HEIGHT }), title);

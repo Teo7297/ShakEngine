@@ -8,8 +8,8 @@ namespace shak
     class Renderer
     {
     public:
-        Renderer();
-        ~Renderer();
+        Renderer() = default;
+        ~Renderer() = default;
 
         std::shared_ptr<sf::RenderWindow> CreateSFWindow(const std::string& title);
         void CloseWindow();

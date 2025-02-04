@@ -9,7 +9,7 @@ namespace shak
     {
     public:
         Background(const std::shared_ptr<sf::Texture> texture, const sf::Vector2f& screenSize);
-        ~Background();
+        ~Background() = default;
 
         inline void SetScreenCoords(const sf::FloatRect& coords) { m_screenCoords = coords; }
         void SetScreenSize(const sf::Vector2f& size);

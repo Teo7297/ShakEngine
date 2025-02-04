@@ -43,7 +43,7 @@ namespace shak
             return;
         }
 
-        auto currentFrame = std::floor(m_time * (m_frames / m_duration));
+        int currentFrame = static_cast<int>(std::floor(m_time * (static_cast<float>(m_frames) / m_duration)));
         if (m_currentFrame != currentFrame)
         {
             this->SetTransparency(255);
@@ -54,14 +54,11 @@ namespace shak
 
     }
 
-    void Animation::SetTextureCoordinates(const shak::TextureCoordinates& coords)
+    void Animation::SetTextureCoordinates(const shak::TextureCoordinates& coords) const
     {
         (*m_vertices)[0].texCoords = coords.topLeft;
         (*m_vertices)[1].texCoords = coords.bottomLeft;
         (*m_vertices)[2].texCoords = coords.topRight;
         (*m_vertices)[3].texCoords = coords.bottomRight;
     }
-
-
-
 }

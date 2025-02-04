@@ -8,12 +8,12 @@ namespace shak
         m_root->Name = "Root";
     }
 
-    void Scene::AddGameObject(GameObjectPtr gameObject)
+    void Scene::AddGameObject(const GameObjectPtr& gameObject)
     {
         m_root->AddChild(gameObject);
     }
 
-    void Scene::AddGameObjectToQuadtree(GameObjectPtr gameObject)
+    void Scene::AddGameObjectToQuadtree(const GameObjectPtr& gameObject)
     {
         m_quadtree.add(gameObject);
     }
@@ -25,7 +25,7 @@ namespace shak
             std::cerr << "[Scene - Destroy] GameObject with id " << id << " not found" << std::endl;
     }
 
-    GameObjectPtr Scene::FindGameObject(std::string name) const
+    GameObjectPtr Scene::FindGameObject(const std::string& name) const
     {
         return m_root->FindChildRecursive(name);
     }

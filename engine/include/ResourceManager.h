@@ -6,8 +6,8 @@ namespace shak
     class ResourceManager
     {
     public:
-        ResourceManager();
-        ~ResourceManager();
+        ResourceManager() = default;
+        ~ResourceManager() = default;
 
         // Texture
         std::shared_ptr<sf::Texture> LoadTexture(const std::string& path, const std::string& name, bool repeated = false, bool smooth = false);

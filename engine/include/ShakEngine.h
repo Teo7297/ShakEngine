@@ -25,11 +25,11 @@ namespace shak
 
         void Initialize(const std::string& windowTitle = "ShakEngine");
 
-        void AddGameObject(const GameObjectPtr gameObject);
+        void AddGameObject(const GameObjectPtr& gameObject);
         void Destroy(const GameObjectPtr& gameObject);
         inline unsigned int GetNextGameObjectId() { return m_nextGameObjectId++; }
 
-        GameObjectPtr FindGameObjectByName(std::string name) const;
+        GameObjectPtr FindGameObjectByName(const std::string& name) const;
 
         template <typename T>
         std::vector<GameObjectPtr> FindGameObjectsByType() const
@@ -40,11 +40,11 @@ namespace shak
         ResourceManager& GetResourceManager();
         std::shared_ptr<Scene> GetScene() const { return m_scene; }
 
-        void AddCamera(std::string name, std::shared_ptr<Camera> camera);
+        void AddCamera(const std::string& name, const std::shared_ptr<Camera>& camera);
 
-        std::shared_ptr<Camera> GetCamera(std::string name) const;
+        std::shared_ptr<Camera> GetCamera(const std::string& name) const;
 
-        void RemoveCamera(std::string name);
+        void RemoveCamera(const std::string& name);
 
         sf::Vector2f GetMousePixelPos() const;
         sf::Vector2f GetMouseWorldPos() const;

@@ -4,7 +4,6 @@ namespace shak
 {
     ParticleSystem::ParticleSystem(int maxParticles, float particlesPerSecond, float minLifeTime, float maxLifeTime, float initialDelay, float minSize, float maxSize, sf::Vector2f minVelocity, sf::Vector2f maxVelocity, sf::Color startColor, sf::Color endColor, bool fade, Particle::Type type, std::shared_ptr<sf::Texture> texture)
         :
-        GameObject{},
         m_maxParticles{ maxParticles },
         m_spawnRate{ 1.f / particlesPerSecond },
         m_spawnTimer{ -initialDelay },
@@ -36,10 +35,6 @@ namespace shak
         }
     }
 
-    ParticleSystem::~ParticleSystem()
-    {
-    }
-
     void ParticleSystem::Update(float dt)
     {
         // stop spawn timer if the system is not active
@@ -56,7 +51,7 @@ namespace shak
 
             // if the particle is dead, respawn it
             if (p.lifeTime >= p.maxLifeTime)
-                InitParticle(i);
+                InitParticle(static_cast<int>(i));
 
             if (!p.active)
             {
@@ -92,8 +87,8 @@ namespace shak
 
             // texture coords
             if (!m_texture) continue;
-            float w = m_texture->getSize().x;
-            float h = m_texture->getSize().y;
+            float w = static_cast<float>(m_texture->getSize().x);
+            float h = static_cast<float>(m_texture->getSize().y);
             p.SetTextureCoords(w, h);
         }
 

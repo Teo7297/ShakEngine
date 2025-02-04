@@ -10,7 +10,7 @@ namespace shak
     {
     public:
         ParticleSystem(int maxParticles = 50, float particlesPerSecond = 10.f, float minLifeTime = 0.5f, float maxLifeTime = 3.f, float initialDelay = 0.f, float minSize = 2.f, float maxSize = 15.f, sf::Vector2f minVelocity = { 0.f, 0.f }, sf::Vector2f maxVelocity = { 0.f, 50.f }, sf::Color startColor = sf::Color::White, sf::Color endColor = sf::Color::White, bool fade = false, Particle::Type type = Particle::Type::Point, std::shared_ptr<sf::Texture> texture = nullptr);
-        ~ParticleSystem() override;
+        ~ParticleSystem() override = default;
 
         void SetSpawnActive(bool active) { m_spawnActive = active; }
 

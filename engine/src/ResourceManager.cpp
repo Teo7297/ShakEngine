@@ -1,17 +1,9 @@
 #include "ResourceManager.h"
 namespace shak
 {
-    ResourceManager::ResourceManager()
-    {
-    }
-
-    ResourceManager::~ResourceManager()
-    {
-    }
-
     std::shared_ptr<sf::Texture> ResourceManager::LoadTexture(const std::string& path, const std::string& name, bool repeated, bool smooth)
     {
-        if (m_loadedTextures.find(name) != m_loadedTextures.end())
+        if (m_loadedTextures.contains(name))
             return m_loadedTextures[name];
 
         auto texture = std::make_shared<sf::Texture>();
@@ -29,20 +21,20 @@ namespace shak
 
     void ResourceManager::UnloadTexture(const std::string& name)
     {
-        if (m_loadedTextures.find(name) != m_loadedTextures.end())
+        if (m_loadedTextures.contains(name))
             m_loadedTextures.erase(name);
     }
 
     std::shared_ptr<sf::Texture> ResourceManager::GetTexture(const std::string& name) const
     {
-        if (m_loadedTextures.find(name) != m_loadedTextures.end())
+        if (m_loadedTextures.contains(name))
             return m_loadedTextures.at(name);
         return nullptr;
     }
 
     std::shared_ptr<TextureAtlas> ResourceManager::LoadTextureAtlas(const std::string& path, const std::string& name)
     {
-        if (m_loadedAtlases.find(name) != m_loadedAtlases.end())
+        if (m_loadedAtlases.contains(name))
             return m_loadedAtlases[name];
 
         auto atlas = std::make_shared<TextureAtlas>(path);
@@ -52,24 +44,24 @@ namespace shak
 
     void ResourceManager::UnloadTextureAtlas(const std::string& name)
     {
-        if (m_loadedAtlases.find(name) != m_loadedAtlases.end())
+        if (m_loadedAtlases.contains(name))
             m_loadedAtlases.erase(name);
     }
 
     std::shared_ptr<TextureAtlas> ResourceManager::GetTextureAtlas(const std::string& name) const
     {
-        if (m_loadedAtlases.find(name) != m_loadedAtlases.end())
+        if (m_loadedAtlases.contains(name))
             return m_loadedAtlases.at(name);
         return nullptr;
     }
 
     std::shared_ptr<sf::Shader> ResourceManager::LoadShader(const fs::path& vpath, const fs::path& fpath, const std::string& name)
     {
-        if (m_loadedShaders.find(name) != m_loadedShaders.end())
+        if (m_loadedShaders.contains(name))
             return m_loadedShaders[name];
 
         auto shader = std::make_shared<sf::Shader>();
-        bool success = false;
+        bool success;
 
         if (vpath == "")
             success = shader->loadFromFile(fpath, sf::Shader::Type::Fragment);
@@ -90,20 +82,20 @@ namespace shak
 
     void ResourceManager::UnloadShader(const std::string& name)
     {
-        if (m_loadedShaders.find(name) != m_loadedShaders.end())
+        if (m_loadedShaders.contains(name))
             m_loadedShaders.erase(name);
     }
 
     std::shared_ptr<sf::Shader> ResourceManager::GetShader(const std::string& name) const
     {
-        if (m_loadedShaders.find(name) != m_loadedShaders.end())
+        if (m_loadedShaders.contains(name))
             return m_loadedShaders.at(name);
         return nullptr;
     }
 
     std::shared_ptr<sf::Font> ResourceManager::LoadFont(const fs::path& path, const std::string& name)
     {
-        if (m_loadedFonts.find(name) != m_loadedFonts.end())
+        if (m_loadedFonts.contains(name))
             return m_loadedFonts[name];
 
         auto font = std::make_shared<sf::Font>();
@@ -119,10 +111,14 @@ namespace shak
 
     void ResourceManager::UnloadFont(const std::string& name)
     {
+        if (m_loadedFonts.contains(name))
+            m_loadedFonts.erase(name);
     }
 
     std::shared_ptr<sf::Font> ResourceManager::GetFont(const std::string& name) const
     {
-        return std::shared_ptr<sf::Font>();
+        if (m_loadedFonts.contains(name))
+            return m_loadedFonts.at(name);
+        return nullptr;
     }
 }

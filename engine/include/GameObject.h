@@ -23,10 +23,10 @@ namespace shak
 
         void setOrigin(const sf::Vector2f& origin);
 
-        void AddChild(std::shared_ptr<GameObject> child);
+        void AddChild(const std::shared_ptr<GameObject>& child);
         bool RemoveChild(int id);
         bool RemoveChildRecursive(int id);
-        std::shared_ptr<GameObject> FindChildRecursive(std::string name) const;
+        std::shared_ptr<GameObject> FindChildRecursive(const std::string& name) const;
         std::shared_ptr<GameObject> FindChildRecursive(int id) const;
         void GetDrawables(std::vector<std::shared_ptr<GameObject>>& drawables) const;
 
@@ -66,8 +66,8 @@ namespace shak
         inline void SetFollowParent(bool follow) { m_followParent = follow; }
         inline bool GetFollowParent() const { return m_followParent; }
 
-        void SetColor(const sf::Color& color);
-        void SetTransparency(uint8_t transparency);
+        void SetColor(const sf::Color& color) const;
+        void SetTransparency(uint8_t transparency) const;
         inline void SetZIndex(int zIndex) { m_zIndex = zIndex; }
         inline int GetZIndex() const { return m_zIndex; }
 
@@ -108,7 +108,7 @@ namespace shak
         // raw pointer because of double ownership, check doubly linked list implementations
         GameObject* m_parent;
         bool m_safeChildrenCopied = false;
-        std::unordered_map<int, std::shared_ptr<GameObject>> m_children;
+        std::unordered_map<unsigned int, std::shared_ptr<GameObject>> m_children;
         std::vector<std::shared_ptr<GameObject>> m_safeChildren;
         bool m_active;
         bool m_followParent;

@@ -146,7 +146,6 @@ float Player::Shoot()
 
     m_lookAtTarget = true;
 
-    bool cbSet = false;
     for (int i = m_laserIndex; i < m_lasers.size(); i += 2)
     {
         auto& laser = m_lasers[i];
