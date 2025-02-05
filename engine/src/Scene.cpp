@@ -35,6 +35,11 @@ namespace shak
         return m_root->FindChildRecursive(id);
     }
 
+    void Scene::ForwardAwake()
+    {
+        m_root->ForwardAwake();
+    }
+
     void Scene::Update(float dt)
     {
         if (!m_awakeDone)

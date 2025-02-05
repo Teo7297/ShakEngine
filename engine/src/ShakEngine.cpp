@@ -93,7 +93,8 @@ namespace shak
             // Calculate delta time
             float dt = m_clock.restart().asSeconds();
 
-            // Update the active scene
+            m_scene->ForwardAwake();
+
             m_scene->Update(dt);
 
             m_scene->Render();

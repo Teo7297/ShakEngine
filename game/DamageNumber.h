@@ -21,8 +21,6 @@ public:
 
     void Update(float dt) override
     {
-        GameObject::Update(dt);
-
         m_elapsedTime += dt;
         float t = m_elapsedTime / m_lifeTime;
 

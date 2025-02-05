@@ -57,11 +57,6 @@ Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf
     this->EnablePhysics();
 }
 
-void Ship::HandleInput(const sf::Event& event)
-{
-    GameObject::HandleInput(event);
-}
-
 void Ship::Awake()
 {
     m_destination = this->getPosition();
@@ -79,16 +74,12 @@ void Ship::Awake()
     health->OnDeath.Add(std::bind(&Ship::DisableAimSprite, this));
     health->OnDeath.Add(std::bind(&Ship::PlayDeathAnimation, this));
     health->OnDeath.Add(std::bind(&Ship::ResetHealth, this));
-
-    GameObject::Awake();
 }
 
 void Ship::Update(float dt)
 {
     if ((getPosition() - m_destination).lengthSquared() > 10.f)
         this->move(m_direction * m_speed * dt);
-
-    GameObject::Update(dt);
 }
 
 int Ship::GetTextureByDirection() const

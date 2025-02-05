@@ -27,6 +27,8 @@ namespace shak
             return m_root->FindChildrenByTypeRecursive<T>();
         }
 
+        void ForwardAwake();
+
         void Update(float dt);
 
         void Render();

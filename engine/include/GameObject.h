@@ -73,11 +73,11 @@ namespace shak
             return result;
         }
 
-        inline void SetParent(GameObject* parent) { m_parent = parent; }
-        inline GameObject* GetParent() { return m_parent; }
+        void SetParent(GameObject* parent) { m_parent = parent; }
+        GameObject* GetParent() { return m_parent; }
 
-        inline void SetActive(bool active) { m_active = active; }
-        inline bool IsActive() const { return m_active; }
+        void SetActive(bool active) { m_active = active; }
+        bool IsActive() const { return m_active; }
 
         /// @brief Obtain a copy of the children vector of this GameObject
         /// @return std::vector<std::shared_ptr<GameObject>>
@@ -87,25 +87,28 @@ namespace shak
         /// @return std::vector<std::shared_ptr<Components>>
         std::vector<std::shared_ptr<Component>> GetComponents() const;
 
-        inline void SetShader(const std::shared_ptr<sf::Shader> shader) { m_shader = shader; }
-        inline std::shared_ptr<sf::Shader> GetShader() { return m_shader; }
+        void SetShader(const std::shared_ptr<sf::Shader> shader) { m_shader = shader; }
+        std::shared_ptr<sf::Shader> GetShader() { return m_shader; }
 
-        inline void SetVertexArray(const std::shared_ptr<sf::VertexArray> va) { m_vertices = va; }
-        inline std::shared_ptr<sf::VertexArray> GetVertexArray() { return m_vertices; }
+        void SetVertexArray(const std::shared_ptr<sf::VertexArray> va) { m_vertices = va; }
+        std::shared_ptr<sf::VertexArray> GetVertexArray() { return m_vertices; }
 
-        inline void SetTexture(const std::shared_ptr<sf::Texture> texture) { m_texture = texture; }
-        inline std::shared_ptr<sf::Texture> GetTexture() { return m_texture; }
+        void SetTexture(const std::shared_ptr<sf::Texture> texture) { m_texture = texture; }
+        std::shared_ptr<sf::Texture> GetTexture() { return m_texture; }
 
-        inline void SetFollowParent(bool follow) { m_followParent = follow; }
-        inline bool GetFollowParent() const { return m_followParent; }
+        void SetFollowParent(bool follow) { m_followParent = follow; }
+        bool GetFollowParent() const { return m_followParent; }
 
         void SetColor(const sf::Color& color) const;
         void SetTransparency(uint8_t transparency) const;
-        inline void SetZIndex(int zIndex) { m_zIndex = zIndex; }
-        inline int GetZIndex() const { return m_zIndex; }
+        void SetZIndex(int zIndex) { m_zIndex = zIndex; }
+        int GetZIndex() const { return m_zIndex; }
 
-        inline void EnablePhysics() { m_physicsEnabled = true; }
-        inline void DisablePhysics() { m_physicsEnabled = false; }
+        void EnablePhysics() { m_physicsEnabled = true; }
+        void DisablePhysics() { m_physicsEnabled = false; }
+
+        bool NeedAwake() const { return m_needAwake; }
+        void ForwardAwake();
 
         virtual void Awake();
 
@@ -149,6 +152,7 @@ namespace shak
         std::vector<std::shared_ptr<GameObject>> m_safeChildren;
         std::vector<std::shared_ptr<Component>> m_safeComponents;
         bool m_active;
+        bool m_needAwake;
         bool m_followParent;
         int m_zIndex;
         bool m_physicsEnabled = false;

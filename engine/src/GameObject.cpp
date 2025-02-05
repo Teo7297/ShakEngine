@@ -11,7 +11,7 @@ namespace shak
     }
 
     GameObject::GameObject(std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture)
-        : m_vertices(va), m_texture(texture), m_shader(nullptr), m_parent(nullptr), m_active(true), m_followParent(true), m_zIndex(100)
+        : m_vertices(va), m_texture(texture), m_shader(nullptr), m_parent(nullptr), m_active(true), m_needAwake(true), m_followParent(true), m_zIndex(100)
     {
         m_engine = &ShakEngine::GetInstance();
         Id = m_engine->GetNextGameObjectId();
@@ -200,35 +200,57 @@ namespace shak
         }
     }
 
-    void GameObject::Awake() // TODO: Awake should be also called when an object gets created at runtime
+    void GameObject::ForwardAwake()
     {
         TrySafeCopy();
+        for (const auto& comp : m_safeComponents)
+        {
+            if (comp->IsActive() && comp->NeedAwake())
+            {
+                comp->Awake();
+                comp->shak::Component::Awake();
+            }
+        }
+
         for (const auto& child : m_safeChildren)
         {
             if (child->IsActive())
-                child->Awake();
-        }
+            {
+                if (child->NeedAwake())
+                {
+                    child->Awake();
+                    child->shak::GameObject::Awake();
+                }
 
-        for (const auto& comp : m_safeComponents)
-        {
-            if (comp->IsActive())
-                comp->Awake();
+                child->ForwardAwake();
+            }
         }
+    }
+
+    void GameObject::Awake()
+    {
+        m_needAwake = false;
     }
 
     void GameObject::Update(float dt)
     {
         TrySafeCopy();
-        for (const auto& child : m_safeChildren)
-        {
-            if (child->IsActive())
-                child->Update(dt);
-        }
-
         for (const auto& comp : m_safeComponents)
         {
             if (comp->IsActive())
+            {
                 comp->Update(dt);
+                comp->shak::Component::Update(dt);
+            }
+        }
+
+        for (const auto& child : m_safeChildren)
+        {
+            if (child->IsActive())
+            {
+                child->Update(dt);
+                child->shak::GameObject::Update(dt);
+            }
         }
     }
 
@@ -238,38 +260,51 @@ namespace shak
         for (const auto& [id, child] : m_children)
         {
             child->Cleanup();
+            child->shak::GameObject::Cleanup();
         }
     }
 
     void GameObject::HandleInput(const sf::Event& event)
     {
         TrySafeCopy();
-        for (const auto& child : m_safeChildren)
-        {
-            if (child->IsActive())
-                child->HandleInput(event);
-        }
-
         for (const auto& comp : m_safeComponents)
         {
             if (comp->IsActive())
+            {
                 comp->HandleInput(event);
+                comp->shak::Component::HandleInput(event);
+            }
+        }
+
+        for (const auto& child : m_safeChildren)
+        {
+            if (child->IsActive())
+            {
+                child->HandleInput(event);
+                child->shak::GameObject::HandleInput(event);
+            }
         }
     }
 
     void GameObject::OnDestroy()
     {
         TrySafeCopy();
-        for (const auto& child : m_safeChildren)
-        {
-            if (child->IsActive())
-                child->OnDestroy();
-        }
-
         for (const auto& comp : m_safeComponents)
         {
             if (comp->IsActive())
+            {
                 comp->OnDestroy();
+                comp->shak::Component::OnDestroy();
+            }
+        }
+
+        for (const auto& child : m_safeChildren)
+        {
+            if (child->IsActive())
+            {
+                child->OnDestroy();
+                child->shak::GameObject::OnDestroy();
+            }
         }
     }
 

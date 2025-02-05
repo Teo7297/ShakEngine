@@ -14,7 +14,6 @@ public:
     Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf::Vector2f> lasersOffsets, const std::shared_ptr<shak::TextureAtlas> deathAnimation);
     virtual ~Ship() = default;
 
-    virtual void HandleInput(const sf::Event& event) override;
     virtual void Awake() override;
     virtual void Update(float dt) override;
 
