@@ -24,18 +24,18 @@ namespace shak
             }
         }
 
-        int GetAttachedCount()
+        int GetAttachedCount() const
         {
             return m_attached;
         }
 
-        Output operator()(Input ... args)
+        void operator()(Input ... args)
         {
             for (const auto& f : m_callbacks)
                 f(std::forward<Input>(args)...);
         }
 
-        operator bool() const
+        explicit operator bool() const
         {
             return m_attached > 0;
         }
