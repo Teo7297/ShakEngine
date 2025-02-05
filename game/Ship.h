@@ -18,8 +18,6 @@ public:
     virtual void Awake() override;
     virtual void Update(float dt) override;
 
-    virtual LaserShot::HitInfo TakeDamage(float damage);
-
     void ToggleAimSprite(bool show);
 
 protected:
@@ -33,6 +31,12 @@ protected:
 
     // CALLBACKS
     virtual LaserShot::HitInfo OnLaserHit();
+
+private:
+    void SpawnDamageNumber(float damage);
+    void DisableAimSprite();
+    void PlayDeathAnimation();
+    void ResetHealth();
 
 protected:
     std::shared_ptr<shak::TextureAtlas> m_atlas;
@@ -53,10 +57,7 @@ protected:
     // STATS
     bool m_lookAtTarget = false;
     float m_speed;
-    float m_hp;
-    float m_maxHp;
     float m_damage;
-    float m_shield;
 
     // EFFECTS
     std::shared_ptr<shak::Animation> m_deathAnimation;

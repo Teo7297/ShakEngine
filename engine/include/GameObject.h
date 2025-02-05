@@ -42,7 +42,7 @@ namespace shak
                 std::cerr << "[GameObject] Tried to add a duplicate component of type " << compName << std::endl;
                 return std::dynamic_pointer_cast<T>(m_components[compName]);
             }
-            auto component = std::make_shared<T>();
+            auto component = std::make_shared<T>(this);
             m_components[compName] = component;
 
             return component;

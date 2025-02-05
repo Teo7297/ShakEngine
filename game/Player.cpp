@@ -2,6 +2,8 @@
 
 #include "LaserShot.h"
 #include "Animation.h"
+#include "components/Health.h"
+
 Player::Player(std::shared_ptr<shak::TextureAtlas> atlas, std::shared_ptr<sf::Texture> laserTexture, std::shared_ptr<sf::Shader> laserShader, std::shared_ptr<shak::TextureAtlas> deathAnimation)
     : Ship(atlas, { { 75.f, -31.f }, { 15.f, -26.f }, { 75.f, +41.f }, { 16.f, +23.f } }, deathAnimation), m_laserTexture(laserTexture), m_laserShader(laserShader)
 {
@@ -35,7 +37,8 @@ void Player::HandleInput(const sf::Event& event)
             {
                 if (ship->Name == "Player")
                     continue;
-                std::dynamic_pointer_cast<Ship>(ship)->TakeDamage(m_damage + std::rand() % 10000);
+                auto health = std::dynamic_pointer_cast<Ship>(ship)->GetComponent<Health>();
+                health->TakeDamage(m_damage);
             }
         }
         else if (key->code == sf::Keyboard::Key::A)
@@ -175,7 +178,7 @@ float Player::Shoot()
         shot->SetFollowParent(false);
         this->AddChild(shot);
 
-        shot->OnHit = std::bind(&Player::OnLaserHit, this); //todo: find a way to avoid having every laser shot call this cb
+        // shot->OnHit.Add(std::bind(&Ship::OnLaserHit, this)); //todo: find a way to avoid having every laser shot call this cb
 
     }
     m_laserIndex = (m_laserIndex + 1) % 2; // alternate front and back lasers

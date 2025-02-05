@@ -18,10 +18,7 @@ Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf
     m_laserOffsets{ lasersOffsets },
     m_laserIndex{ 0 },
     m_speed{ 1000.f },
-    m_hp{ 20000.f },
-    m_maxHp{ 20000.f },
     m_damage{ 1000.f },
-    m_shield{ 100000.f },
     m_deathAnimation{ std::make_shared<shak::Animation>(deathAnimation, 2.f) }
 {
     auto coords = atlas->GetTextureCoords(1);
@@ -78,10 +75,10 @@ void Ship::Awake()
 
 
     std::shared_ptr<Health> health = this->AddComponent<Health>();
-    health->OnDamage.Add([this](float damage)
-        {
-            auto info = this->TakeDamage(damage);
-        });
+    health->OnDamage.Add(std::bind(&Ship::SpawnDamageNumber, this, std::placeholders::_1));
+    health->OnDeath.Add(std::bind(&Ship::DisableAimSprite, this));
+    health->OnDeath.Add(std::bind(&Ship::PlayDeathAnimation, this));
+    health->OnDeath.Add(std::bind(&Ship::ResetHealth, this));
 
     GameObject::Awake();
 }
@@ -92,30 +89,6 @@ void Ship::Update(float dt)
         this->move(m_direction * m_speed * dt);
 
     GameObject::Update(dt);
-}
-
-LaserShot::HitInfo Ship::TakeDamage(float damage)
-{
-    m_hp -= damage;
-
-    auto damageNumber = m_damageNumberPool.Get();
-    damageNumber->Reset(static_cast<int>(damage), this->getPosition());
-    m_engine->AddGameObject(damageNumber);
-
-    LaserShot::HitInfo info{
-        .damage = damage,
-        .killed = m_hp <= 0.f,
-    };
-
-    if (m_hp <= 0.f)
-    {
-        ToggleAimSprite(false);
-        m_deathAnimation->setPosition(this->getPosition()); // make sure it's in the right place
-        m_deathAnimation->Play();
-        // this->move({ 3000.f, 3000.f }); // move out of the way
-        m_hp = m_maxHp;
-    }
-    return info;
 }
 
 int Ship::GetTextureByDirection() const
@@ -176,21 +149,44 @@ LaserShot::HitInfo Ship::OnLaserHit()
         .killed = false
     };
 
-    // auto info = m_target->TakeDamage(m_damage + std::rand() % 10000);
-    // if (info.killed)
-    // {
-    //     this->SetTarget(nullptr);
-    // }
-
     auto health = m_target->GetComponent<Health>();
+    float dmg = m_damage + std::rand() % 10000;
     if (health)
     {
-        health->TakeDamage(m_damage + std::rand() % 10000);
+        health->TakeDamage(dmg);
     }
 
     return {
-        .damage = 0.f,
+        .damage = dmg,
         .killed = false
     };
+}
+
+// Events
+void Ship::SpawnDamageNumber(float damage)
+{
+    auto damageNumber = m_damageNumberPool.Get();
+    damageNumber->Reset(static_cast<int>(damage), this->getPosition());
+    m_engine->AddGameObject(damageNumber);
+}
+
+void Ship::DisableAimSprite()
+{
+    ToggleAimSprite(false);
+}
+
+void Ship::PlayDeathAnimation()
+{
+    m_deathAnimation->setPosition(this->getPosition());
+    m_deathAnimation->Play();
+}
+
+void Ship::ResetHealth()
+{
+    auto health = this->GetComponent<Health>();
+    if (health)
+    {
+        health->SetHealth(health->GetMaxHealth());
+    }
 }
 

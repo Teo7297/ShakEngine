@@ -15,12 +15,12 @@ float Health::GetHealth() const
     return m_health;
 }
 
-inline void Health::SetMaxHealth(float maxHealth)
+void Health::SetMaxHealth(float maxHealth)
 {
     m_maxHealth = maxHealth;
 }
 
-inline float Health::GetMaxHealth() const
+float Health::GetMaxHealth() const
 {
     return m_maxHealth;
 }

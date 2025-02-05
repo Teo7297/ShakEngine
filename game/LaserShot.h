@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Sprite.h"
+#include "ShakEvent.h"
 
 
 class LaserShot : public shak::Sprite
@@ -28,7 +29,7 @@ public:
     void Init(const sf::Vector2f& target, sf::Angle angle);
 
 public:
-    std::function<HitInfo()> OnHit;
+    shak::Event<HitInfo> OnHit;
 
 private:
     float m_speed = 5000.f;

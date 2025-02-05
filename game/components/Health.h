@@ -7,15 +7,19 @@
 class Health : public shak::Component
 {
 public:
-    Health() = default;
+    Health(shak::GameObject* owner)
+        : shak::Component(owner)
+    {
+    }
     ~Health() override = default;
 
     void Awake() override;
 
-    inline void SetHealth(float health);
-    inline float GetHealth() const;
-    inline void SetMaxHealth(float maxHealth);
-    inline float GetMaxHealth() const;
+    // TODO: Understand why inline causes linker errors
+    void SetHealth(float health);
+    float GetHealth() const;
+    void SetMaxHealth(float maxHealth);
+    float GetMaxHealth() const;
 
     void TakeDamage(float damage);
     void Heal(float amount);
@@ -25,6 +29,6 @@ public:
     shak::Event<void, float> OnHeal;
 
 private:
-    float m_health, m_maxHealth = 10000.f;
+    float m_health, m_maxHealth = 100000.f;
 
 };
