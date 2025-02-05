@@ -1,4 +1,5 @@
 #include "Ship.h"
+#include "components/Health.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -74,6 +75,13 @@ void Ship::Awake()
     m_aimSprite->SetTransparency(0);
     m_aimSprite->SetZIndex(0);
     this->AddChild(m_aimSprite);
+
+
+    std::shared_ptr<Health> health = this->AddComponent<Health>();
+    health->OnDamage.Add([this](float damage)
+        {
+            auto info = this->TakeDamage(damage);
+        });
 
     GameObject::Awake();
 }
@@ -168,12 +176,21 @@ LaserShot::HitInfo Ship::OnLaserHit()
         .killed = false
     };
 
-    auto info = m_target->TakeDamage(m_damage + std::rand() % 10000);
+    // auto info = m_target->TakeDamage(m_damage + std::rand() % 10000);
+    // if (info.killed)
+    // {
+    //     this->SetTarget(nullptr);
+    // }
 
-    if (info.killed)
+    auto health = m_target->GetComponent<Health>();
+    if (health)
     {
-        this->SetTarget(nullptr);
+        health->TakeDamage(m_damage + std::rand() % 10000);
     }
-    return info;
+
+    return {
+        .damage = 0.f,
+        .killed = false
+    };
 }
 

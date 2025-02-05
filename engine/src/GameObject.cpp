@@ -173,6 +173,15 @@ namespace shak
         return result;
     }
 
+    std::vector<std::shared_ptr<Component>> GameObject::GetComponents() const
+    {
+        std::vector<std::shared_ptr<Component>> result;
+        result.reserve(m_components.size());
+        for (const auto& [id, comp] : m_components)
+            result.emplace_back(comp);
+        return result;
+    }
+
     void GameObject::SetColor(const sf::Color& color) const
     {
         for (size_t i = 0; i < m_vertices->getVertexCount(); i++)
@@ -193,35 +202,39 @@ namespace shak
 
     void GameObject::Awake() // TODO: Awake should be also called when an object gets created at runtime
     {
-        if (!m_safeChildrenCopied)
-        {
-            m_safeChildren = GetChildren();
-            m_safeChildrenCopied = true;
-        }
+        TrySafeCopy();
         for (const auto& child : m_safeChildren)
         {
             if (child->IsActive())
                 child->Awake();
         }
+
+        for (const auto& comp : m_safeComponents)
+        {
+            if (comp->IsActive())
+                comp->Awake();
+        }
     }
 
     void GameObject::Update(float dt)
     {
-        if (!m_safeChildrenCopied)
-        {
-            m_safeChildren = GetChildren();
-            m_safeChildrenCopied = true;
-        }
+        TrySafeCopy();
         for (const auto& child : m_safeChildren)
         {
             if (child->IsActive())
                 child->Update(dt);
         }
+
+        for (const auto& comp : m_safeComponents)
+        {
+            if (comp->IsActive())
+                comp->Update(dt);
+        }
     }
 
     void GameObject::Cleanup()
     {
-        m_safeChildrenCopied = false;
+        m_safeCopyDone = false;
         for (const auto& [id, child] : m_children)
         {
             child->Cleanup();
@@ -230,29 +243,33 @@ namespace shak
 
     void GameObject::HandleInput(const sf::Event& event)
     {
-        if (!m_safeChildrenCopied)
-        {
-            m_safeChildren = GetChildren();
-            m_safeChildrenCopied = true;
-        }
+        TrySafeCopy();
         for (const auto& child : m_safeChildren)
         {
             if (child->IsActive())
                 child->HandleInput(event);
         }
+
+        for (const auto& comp : m_safeComponents)
+        {
+            if (comp->IsActive())
+                comp->HandleInput(event);
+        }
     }
 
     void GameObject::OnDestroy()
     {
-        if (!m_safeChildrenCopied)
-        {
-            m_safeChildren = GetChildren();
-            m_safeChildrenCopied = true;
-        }
+        TrySafeCopy();
         for (const auto& child : m_safeChildren)
         {
             if (child->IsActive())
                 child->OnDestroy();
+        }
+
+        for (const auto& comp : m_safeComponents)
+        {
+            if (comp->IsActive())
+                comp->OnDestroy();
         }
     }
 
@@ -275,5 +292,14 @@ namespace shak
     {
         const auto zeroPosition = rect.position - this->getPosition();
         return m_vertices->getBounds().findIntersection({ zeroPosition, rect.size }).has_value();
+    }
+
+    void GameObject::TrySafeCopy()
+    {
+        if (m_safeCopyDone) return;
+
+        m_safeChildren = GetChildren();
+        m_safeComponents = GetComponents();
+        m_safeCopyDone = true;
     }
 }

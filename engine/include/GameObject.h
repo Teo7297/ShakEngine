@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EngineDefines.h"
+#include "Component.h"
 
 namespace shak
 {
@@ -23,11 +24,39 @@ namespace shak
 
         void setOrigin(const sf::Vector2f& origin);
 
+        // Children
         void AddChild(const std::shared_ptr<GameObject>& child);
         bool RemoveChild(int id);
         bool RemoveChildRecursive(int id);
         std::shared_ptr<GameObject> FindChildRecursive(const std::string& name) const;
         std::shared_ptr<GameObject> FindChildRecursive(int id) const;
+
+        // Components
+        template<typename T>
+        std::shared_ptr<T> AddComponent()
+        {
+            std::string compName = typeid(T).name();
+
+            if (m_components.contains(compName))
+            {
+                std::cerr << "[GameObject] Tried to add a duplicate component of type " << compName << std::endl;
+                return std::dynamic_pointer_cast<T>(m_components[compName]);
+            }
+            auto component = std::make_shared<T>();
+            m_components[compName] = component;
+
+            return component;
+        }
+
+        template<typename T>
+        std::shared_ptr<T> GetComponent()
+        {
+            std::string compName = typeid(T).name();
+            if (m_components.contains(compName))
+                return std::dynamic_pointer_cast<T>(m_components[compName]);
+            return nullptr;
+        }
+
         void GetDrawables(std::vector<std::shared_ptr<GameObject>>& drawables) const;
 
         template<typename T>
@@ -53,6 +82,10 @@ namespace shak
         /// @brief Obtain a copy of the children vector of this GameObject
         /// @return std::vector<std::shared_ptr<GameObject>>
         std::vector<std::shared_ptr<GameObject>> GetChildren() const;
+
+        /// @brief Obtain a copy of the components vector of this GameObject
+        /// @return std::vector<std::shared_ptr<Components>>
+        std::vector<std::shared_ptr<Component>> GetComponents() const;
 
         inline void SetShader(const std::shared_ptr<sf::Shader> shader) { m_shader = shader; }
         inline std::shared_ptr<sf::Shader> GetShader() { return m_shader; }
@@ -96,6 +129,9 @@ namespace shak
         inline bool HasMovedThisFrame() const { return m_movedThisFrame; }
         inline void ResetMovedThisFrame() { m_movedThisFrame = false; }
 
+    private:
+        void TrySafeCopy();
+
     public:
         std::string Name = "GameObject";
         unsigned int Id = -1;
@@ -107,9 +143,11 @@ namespace shak
         std::shared_ptr<sf::Shader> m_shader;
         // raw pointer because of double ownership, check doubly linked list implementations
         GameObject* m_parent;
-        bool m_safeChildrenCopied = false;
+        bool m_safeCopyDone = false;
         std::unordered_map<unsigned int, std::shared_ptr<GameObject>> m_children;
+        std::unordered_map<std::string, std::shared_ptr<Component>> m_components;
         std::vector<std::shared_ptr<GameObject>> m_safeChildren;
+        std::vector<std::shared_ptr<Component>> m_safeComponents;
         bool m_active;
         bool m_followParent;
         int m_zIndex;

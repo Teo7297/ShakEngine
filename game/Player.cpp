@@ -38,6 +38,12 @@ void Player::HandleInput(const sf::Event& event)
                 std::dynamic_pointer_cast<Ship>(ship)->TakeDamage(m_damage + std::rand() % 10000);
             }
         }
+        else if (key->code == sf::Keyboard::Key::A)
+        {
+            // Alien alien;
+            // auto health = alien.GetComponent<Health>();
+            // health.TakeDamage(m_damage);
+        }
     }
 
     else if (auto key = event.getIf<sf::Event::MouseButtonPressed>())
@@ -125,12 +131,23 @@ void Player::Update(float dt)
         m_totalDamage = 0.f;
     }
 
-    if (m_shooting && ++fcount % 100 == 0)
+    if (++fcount % 100 == 0 && m_shooting)
     {
         float dmg = Shoot();
         m_totalDamage += dmg;
         m_dps = m_totalDamage / m_dpsTimer;
     }
+
+    // if (fcount % 100 == 0.f)
+    // {
+    //     auto vec = m_engine->FindGameObjectsByType<Ship>();
+    //     for (auto& ship : vec)
+    //     {
+    //         if (ship->Name == "Player")
+    //             continue;
+    //         std::dynamic_pointer_cast<Ship>(ship)->TakeDamage(m_damage + std::rand() % 10000);
+    //     }
+    // }
 
     if (!m_shooting)
         m_lookAtTarget = false;
