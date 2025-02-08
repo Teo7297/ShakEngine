@@ -3,7 +3,6 @@
 #include "Sprite.h"
 #include "ShakEvent.h"
 
-
 class LaserShot : public shak::Sprite
 {
 public:
@@ -29,7 +28,7 @@ public:
     void Init(const sf::Vector2f& target, sf::Angle angle);
 
 public:
-    shak::Event<HitInfo> OnHit;
+    shak::Event<> OnHit;
 
 private:
     float m_speed = 5000.f;

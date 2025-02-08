@@ -20,7 +20,7 @@ public:
     void ToggleAimSprite(bool show);
 
 protected:
-    int GetTextureByDirection() const;
+    int GetTextureByDirection();
     void UpdateDirection();
     void UpdateLookDirection();
     void UpdateTextureCoords();
@@ -29,7 +29,7 @@ protected:
     virtual float Shoot() { return 0.f; };
 
     // CALLBACKS
-    virtual LaserShot::HitInfo OnLaserHit();
+    virtual void OnLaserHit();
 
 private:
     void SpawnDamageNumber(float damage);
@@ -39,9 +39,11 @@ private:
 
 protected:
     std::shared_ptr<shak::TextureAtlas> m_atlas;
+    sf::Angle m_angleBetweenTextures;
     int m_atlasTexturesCount;
 
-    sf::Vector2f m_direction, m_lookDirection, m_destination;
+    sf::Vector2f m_direction, m_destination, m_lookDirection;
+    sf::Angle m_lookAngle;
 
     shak::GameObjectPool<DamageNumber> m_damageNumberPool;
     shak::GameObjectPool<LaserShot> m_laserShotPool;

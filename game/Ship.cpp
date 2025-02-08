@@ -9,7 +9,8 @@ Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf
     m_atlas(atlas),
     m_atlasTexturesCount{ atlas->GetCount() },
     m_direction{ 1.f, 0.f }, // spawn looking right
-    m_lookDirection{ 1.f, 0.f },
+    m_lookDirection{ 1.f, 0.f }, // spawn looking right
+    m_lookAngle{ sf::Angle::Zero },
     m_destination{ 0.f, 0.f },
     m_damageNumberPool(20),
     m_laserShotPool(20),
@@ -37,9 +38,11 @@ Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf
     (*m_vertices)[3].texCoords = coords.bottomRight;
 
     this->SetTexture(atlas->GetAtlasTexture());
+    m_angleBetweenTextures = sf::degrees(360.f / static_cast<float>(m_atlasTexturesCount));
 
     auto origin = m_vertices->getBounds().getCenter();
     this->setOrigin(origin);
+    // this->rotate(sf::degrees(-5));
 
     // Setup child points
     for (int i = 0; i < lasersOffsets.size(); i++)
@@ -82,11 +85,11 @@ void Ship::Update(float dt)
         this->move(m_direction * m_speed * dt);
 }
 
-int Ship::GetTextureByDirection() const
+int Ship::GetTextureByDirection()
 {
-    const float directionAngle = m_lookDirection.angleTo({ 1.f, 0.f }).asRadians(); // Distance from right dir (aka 0 degrees)
+    this->setRotation(-(m_lookAngle % m_angleBetweenTextures));
 
-    float signedAngle = directionAngle / (2.0f * static_cast<float>(M_PI));
+    float signedAngle = m_lookAngle.asRadians() / (2.0f * static_cast<float>(M_PI));
     if (signedAngle < 0.f)
         signedAngle += 1.f;
     return static_cast<int>(signedAngle * static_cast<float>(m_atlasTexturesCount)) % m_atlasTexturesCount;
@@ -106,6 +109,8 @@ void Ship::UpdateLookDirection()
         m_lookDirection = m_target->getPosition() - getPosition();
     else
         m_lookDirection = m_direction;
+
+    m_lookAngle = -m_lookDirection.angle();
 
     sf::Angle lasersAngle = prevLookDirection.angleTo(m_lookDirection);
     for (auto& laser : m_lasers)
@@ -131,26 +136,17 @@ void Ship::ToggleAimSprite(bool show)
     m_aimSprite->SetTransparency(show ? 255 : 0);
 }
 
-LaserShot::HitInfo Ship::OnLaserHit()
+void Ship::OnLaserHit()
 {
     if (!m_target)
-        return
-    {
-        .damage = 0.f,
-        .killed = false
-    };
+        return;
 
     auto health = m_target->GetComponent<Health>();
     float dmg = m_damage + std::rand() % 10000;
     if (health)
     {
-        health->TakeDamage(dmg);
+        float dealtDamage = health->TakeDamage(dmg);
     }
-
-    return {
-        .damage = dmg,
-        .killed = false
-    };
 }
 
 // Events

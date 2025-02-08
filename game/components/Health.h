@@ -21,12 +21,12 @@ public:
     void SetMaxHealth(float maxHealth);
     float GetMaxHealth() const;
 
-    void TakeDamage(float damage);
-    void Heal(float amount);
+    float TakeDamage(float damage);
+    float Heal(float amount);
 
-    shak::Event<void> OnDeath;
-    shak::Event<void, float> OnDamage;
-    shak::Event<void, float> OnHeal;
+    shak::Event<> OnDeath;
+    shak::Event<float> OnDamage;
+    shak::Event<float> OnHeal;
 
 private:
     float m_health, m_maxHealth = 100000.f;

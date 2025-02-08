@@ -25,7 +25,7 @@ float Health::GetMaxHealth() const
     return m_maxHealth;
 }
 
-void Health::TakeDamage(float damage)
+float Health::TakeDamage(float damage)
 {
     if (damage > m_health)
         damage = m_health;
@@ -35,13 +35,13 @@ void Health::TakeDamage(float damage)
     if (OnDamage)
         OnDamage(damage);
 
-    if (m_health > 0.f) return;
-
-    if (OnDeath)
+    if (m_health <= 0.f && OnDeath)
         OnDeath();
+
+    return damage;
 }
 
-void Health::Heal(float amount)
+float Health::Heal(float amount)
 {
     if (amount + m_health > m_maxHealth)
         amount = m_maxHealth - m_health;
@@ -49,5 +49,7 @@ void Health::Heal(float amount)
 
     if (OnHeal)
         OnHeal(amount);
+    
+    return amount;
 }
 

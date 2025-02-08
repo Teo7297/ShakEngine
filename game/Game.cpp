@@ -9,7 +9,7 @@
 
 #include "ShaderDevHelper.h"
 
-int main()
+void game()
 {
     shak::ShakEngine* engine = &shak::ShakEngine::GetInstance();
     engine->Initialize();
@@ -31,12 +31,12 @@ int main()
 
         auto player = std::make_shared<Player>(goliathPlus, laserTxt, laserSh, explosionAtlas);
         player->AddChild(camera1);
-        auto bg = std::make_shared<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
-        camera1->SetBackground(bg);
-        auto bgsize = rm.GetTexture("bg1")->getSize();
-        camera1->SetBackgroundSize({ (float)(bgsize.x * 100), (float)(bgsize.y * 100) });
+        // auto bg = std::make_shared<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
+        // camera1->SetBackground(bg);
+        // auto bgsize = rm.GetTexture("bg1")->getSize();
+        // camera1->SetBackgroundSize({ (float)(bgsize.x * 100), (float)(bgsize.y * 100) });
 
-        engine->AddGameObject(bg);
+        // engine->AddGameObject(bg);
 
         engine->AddGameObject(player);
 
@@ -58,7 +58,7 @@ int main()
         // player->AddChild(ps);
         // engine->AddGameObject(ps);
 
-        for (int i = 0; i < 300; i++)
+        for (int i = 0; i < 3; i++)
         {
             auto alien = std::make_shared<Alien>(goliathPlus, player, explosionAtlas);
             engine->AddGameObject(alien);
@@ -71,5 +71,10 @@ int main()
     }
 
     engine->Start();
+}
+
+int main()
+{
+    game();
     return 0;
 }

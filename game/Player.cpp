@@ -3,6 +3,7 @@
 #include "LaserShot.h"
 #include "Animation.h"
 #include "components/Health.h"
+#include "components/TestComp.h"
 
 Player::Player(std::shared_ptr<shak::TextureAtlas> atlas, std::shared_ptr<sf::Texture> laserTexture, std::shared_ptr<sf::Shader> laserShader, std::shared_ptr<shak::TextureAtlas> deathAnimation)
     : Ship(atlas, { { 75.f, -31.f }, { 15.f, -26.f }, { 75.f, +41.f }, { 16.f, +23.f } }, deathAnimation), m_laserTexture(laserTexture), m_laserShader(laserShader)
@@ -46,6 +47,7 @@ void Player::HandleInput(const sf::Event& event)
             // Alien alien;
             // auto health = alien.GetComponent<Health>();
             // health.TakeDamage(m_damage);
+            this->AddComponent<TestComp>();
         }
     }
 
@@ -177,9 +179,9 @@ float Player::Shoot()
         shot->Init(m_target->getPosition(), laserAngle); // must be called after set position!!
         shot->SetFollowParent(false);
         this->AddChild(shot);
-
-        // shot->OnHit.Add(std::bind(&Ship::OnLaserHit, this)); //todo: find a way to avoid having every laser shot call this cb
-
+        auto onLaserHitCB = std::bind(&Player::OnLaserHit, this);
+        if (shot->NeedAwake()) // This is a hack because Event cannot support contains for now
+            shot->OnHit.Add(onLaserHitCB);
     }
     m_laserIndex = (m_laserIndex + 1) % 2; // alternate front and back lasers
 
