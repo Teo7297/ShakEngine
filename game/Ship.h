@@ -20,7 +20,7 @@ public:
     void ToggleAimSprite(bool show);
 
 protected:
-    int GetTextureByDirection();
+    int GetTextureByDirection() const;
     void UpdateDirection();
     void UpdateLookDirection();
     void UpdateTextureCoords();
@@ -44,6 +44,7 @@ protected:
 
     sf::Vector2f m_direction, m_destination, m_lookDirection;
     sf::Angle m_lookAngle;
+    float m_distanceToDestination;
 
     shak::GameObjectPool<DamageNumber> m_damageNumberPool;
     shak::GameObjectPool<LaserShot> m_laserShotPool;

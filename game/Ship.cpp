@@ -11,6 +11,7 @@ Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf
     m_direction{ 1.f, 0.f }, // spawn looking right
     m_lookDirection{ 1.f, 0.f }, // spawn looking right
     m_lookAngle{ sf::Angle::Zero },
+    m_distanceToDestination{ 0.f },
     m_destination{ 0.f, 0.f },
     m_damageNumberPool(20),
     m_laserShotPool(20),
@@ -81,14 +82,16 @@ void Ship::Awake()
 
 void Ship::Update(float dt)
 {
-    if ((getPosition() - m_destination).lengthSquared() > 10.f)
-        this->move(m_direction * m_speed * dt);
+    if (m_distanceToDestination > 10.f)
+    {
+        const auto offset = m_direction * m_speed * dt;
+        this->move(offset);
+        m_distanceToDestination -= offset.length();
+    }
 }
 
-int Ship::GetTextureByDirection()
+int Ship::GetTextureByDirection() const
 {
-    this->setRotation(-(m_lookAngle % m_angleBetweenTextures));
-
     float signedAngle = m_lookAngle.asRadians() / (2.0f * static_cast<float>(M_PI));
     if (signedAngle < 0.f)
         signedAngle += 1.f;
@@ -98,8 +101,12 @@ int Ship::GetTextureByDirection()
 void Ship::UpdateDirection()
 {
     const auto dir = m_destination - getPosition();
-    if (dir.lengthSquared() > 0.f)
-        m_direction = dir.normalized();
+    auto len2 = dir.lengthSquared();
+    if (len2 > 0.f)
+    {
+        m_distanceToDestination = std::sqrt(len2);   // Length using already computed dot
+        m_direction = dir / m_distanceToDestination; // Normalize using already computed length
+    }
 }
 
 void Ship::UpdateLookDirection()
@@ -111,6 +118,7 @@ void Ship::UpdateLookDirection()
         m_lookDirection = m_direction;
 
     m_lookAngle = -m_lookDirection.angle();
+    this->setRotation(-(m_lookAngle % m_angleBetweenTextures));
 
     sf::Angle lasersAngle = prevLookDirection.angleTo(m_lookDirection);
     for (auto& laser : m_lasers)
