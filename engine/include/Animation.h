@@ -2,7 +2,7 @@
 
 #include "EngineDefines.h"
 #include "TextureAtlas.h"
-#include "Sprite.h"
+#include "ShakSprite.h"
 
 namespace shak
 {

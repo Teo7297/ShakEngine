@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Sprite.h"
+#include "ShakSprite.h"
 #include "ShakEvent.h"
 
 class LaserShot : public shak::Sprite

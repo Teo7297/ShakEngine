@@ -14,6 +14,11 @@ namespace shak
             m_attached++;
         }
 
+        void operator+=(std::function<void(Input ...)> f)
+        {
+            Add(f);
+        }
+
         int GetAttachedCount() const
         {
             return m_attached;
