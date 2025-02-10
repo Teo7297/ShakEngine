@@ -182,8 +182,7 @@ float Player::Shoot()
         shot->SetFollowParent(false);
         this->AddChild(shot);
         auto onLaserHitCB = std::bind(&Player::OnLaserHit, this);
-        if (shot->NeedAwake()) // This is a hack because Event cannot support contains for now
-            shot->OnHit.Add(onLaserHitCB);
+        shot->OnHit += onLaserHitCB;
     }
     m_laserIndex = (m_laserIndex + 1) % 2; // alternate front and back lasers
 

@@ -32,6 +32,7 @@ void LaserShot::Update(float dt)
     {
         OnHit();
         this->SetActive(false);
+        OnHit.Reset();
     }
     shak::Sprite::Update(dt);
 }

@@ -19,6 +19,12 @@ namespace shak
             Add(f);
         }
 
+        void Reset()
+        {
+            m_callbacks.clear();
+            m_attached = 0;
+        }
+
         int GetAttachedCount() const
         {
             return m_attached;
