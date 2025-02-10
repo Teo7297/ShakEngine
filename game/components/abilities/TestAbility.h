@@ -6,7 +6,7 @@ class TestAbility : public Ability
 {
 public:
     TestAbility()
-        : Ability("TestAbility", 0.0f, 0.0f, Type::Passive)
+        : Ability("TestAbility", 3.0f, 2.0f, Type::Active)
     {
         OnActivated += ActivateCB;
         OnDeactivated += DeactivateCB;
@@ -15,6 +15,8 @@ public:
 
     void Update(float dt) override
     {
+        if (!m_isActive)
+            return;
         static int fcount = 0;
         if (fcount++ % 100 == 0)
             std::cout << "TestAbility updated" << std::endl;

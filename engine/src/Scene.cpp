@@ -8,7 +8,7 @@ namespace shak
         m_root->Name = "Root";
     }
 
-    void Scene::AddGameObject(const GameObjectPtr& gameObject)
+    void Scene::AddGameObject(const GameObjectPtr gameObject)
     {
         m_root->AddChild(gameObject);
     }

@@ -162,7 +162,7 @@ void Ship::SpawnDamageNumber(float damage)
 {
     auto damageNumber = m_damageNumberPool.Get();
     damageNumber->Reset(static_cast<int>(damage), this->getPosition());
-    m_engine->AddGameObject(damageNumber);
+    m_engine->GetScene()->AddGameObject(damageNumber);
 }
 
 void Ship::DisableAimSprite()

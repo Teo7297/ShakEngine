@@ -13,7 +13,7 @@ namespace shak
         Scene(std::shared_ptr<shak::Renderer> renderer);
         virtual ~Scene() = default;
 
-        void AddGameObject(const GameObjectPtr& gameObject);
+        void AddGameObject(const GameObjectPtr gameObject);
         void AddGameObjectToQuadtree(const GameObjectPtr& gameObject);
 
         void RemoveGameObject(int id);

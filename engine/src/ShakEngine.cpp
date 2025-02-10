@@ -11,11 +11,6 @@ namespace shak
         m_scene = std::make_shared<Scene>(m_renderer);
     }
 
-    void ShakEngine::AddGameObject(const GameObjectPtr& gameObject)
-    {
-        m_scene->AddGameObject(gameObject);
-    }
-
     void ShakEngine::Destroy(const GameObjectPtr& gameObject)
     {
         gameObject->OnDestroy();

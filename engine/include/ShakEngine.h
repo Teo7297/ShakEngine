@@ -25,7 +25,13 @@ namespace shak
 
         void Initialize(const std::string& windowTitle = "ShakEngine");
 
-        void AddGameObject(const GameObjectPtr& gameObject);
+        template<typename T, typename... Args>
+        std::shared_ptr<T> AddGameObject(Args&& ... args)
+        {
+            const std::shared_ptr<T> tPtr = std::make_shared<T>(std::forward<Args>(args)...);
+            m_scene->AddGameObject(tPtr);
+            return tPtr;
+        }
         void Destroy(const GameObjectPtr& gameObject);
         inline unsigned int GetNextGameObjectId() { return m_nextGameObjectId++; }
 

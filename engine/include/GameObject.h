@@ -5,6 +5,7 @@
 
 namespace shak
 {
+    class ShakEngine;
     class GameObject : public sf::Transformable, public sf::Drawable
     {
     public:
@@ -140,13 +141,13 @@ namespace shak
         unsigned int Id = -1;
 
     protected:
-        class ShakEngine* m_engine;
+        ShakEngine* m_engine;
         std::shared_ptr<sf::VertexArray> m_vertices;
         std::shared_ptr<sf::Texture> m_texture;
         std::shared_ptr<sf::Shader> m_shader;
         // raw pointer because of double ownership, check doubly linked list implementations
         GameObject* m_parent;
-        bool m_safeCopyDone = false;
+        bool m_safeCopyDone;
         std::unordered_map<unsigned int, std::shared_ptr<GameObject>> m_children;
         std::unordered_map<std::string, std::shared_ptr<Component>> m_components;
         std::vector<std::shared_ptr<GameObject>> m_safeChildren;
@@ -155,8 +156,8 @@ namespace shak
         bool m_needAwake;
         bool m_followParent;
         int m_zIndex;
-        bool m_physicsEnabled = false;
-        bool m_movedThisFrame = false;
+        bool m_physicsEnabled;
+        bool m_movedThisFrame;
     };
 }
 

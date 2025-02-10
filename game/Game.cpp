@@ -29,8 +29,6 @@ void game()
 
         auto explosionAtlas = rm.LoadTextureAtlas("assets/animations/explosion.atlas", "deathExplosion");
 
-        auto player = std::make_shared<Player>(goliathPlus, laserTxt, laserSh, explosionAtlas);
-        player->AddChild(camera1);
         // auto bg = std::make_shared<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
         // camera1->SetBackground(bg);
         // auto bgsize = rm.GetTexture("bg1")->getSize();
@@ -38,7 +36,9 @@ void game()
 
         // engine->AddGameObject(bg);
 
-        engine->AddGameObject(player);
+        auto player = engine->AddGameObject<Player>(goliathPlus, laserTxt, laserSh, explosionAtlas);
+
+        player->AddChild(camera1);
 
         camera1->move(player->GetVertexArray()->getBounds().size / 2.f);
         // auto chicken = rm.LoadTexture("assets/textures/abstract1.png", "chicken", true, true);
@@ -60,8 +60,7 @@ void game()
 
         for (int i = 0; i < 3; i++)
         {
-            auto alien = std::make_shared<Alien>(goliathPlus, player, explosionAtlas);
-            engine->AddGameObject(alien);
+            auto alien = engine->AddGameObject<Alien>(goliathPlus, player, explosionAtlas);
             alien->Name = "Alien" + std::to_string(i);
         }
 

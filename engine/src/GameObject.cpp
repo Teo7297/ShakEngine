@@ -4,14 +4,26 @@
 namespace shak
 {
     GameObject::GameObject()
-        : m_vertices(nullptr), m_texture(nullptr), m_shader(nullptr), m_parent(nullptr), m_active(true), m_followParent(true), m_zIndex(100)
+        : GameObject(nullptr, nullptr)
     {
-        m_engine = &ShakEngine::GetInstance();
-        Id = m_engine->GetNextGameObjectId();
     }
 
     GameObject::GameObject(std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture)
-        : m_vertices(va), m_texture(texture), m_shader(nullptr), m_parent(nullptr), m_active(true), m_needAwake(true), m_followParent(true), m_zIndex(100)
+        : m_vertices(va)
+        , m_texture(texture)
+        , m_shader(nullptr)
+        , m_parent(nullptr)
+        , m_safeCopyDone(false)
+        , m_children()
+        , m_components()
+        , m_safeChildren()
+        , m_safeComponents()
+        , m_active(true)
+        , m_needAwake(true)
+        , m_followParent(true)
+        , m_zIndex(100)
+        , m_physicsEnabled(false)
+        , m_movedThisFrame(false)
     {
         m_engine = &ShakEngine::GetInstance();
         Id = m_engine->GetNextGameObjectId();
