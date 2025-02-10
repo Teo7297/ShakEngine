@@ -4,7 +4,14 @@
 namespace shak
 {
     Animation::Animation(std::shared_ptr<shak::TextureAtlas> atlas, float duration, const std::shared_ptr<sf::Shader>& shader, const sf::Vector2f& size, const sf::Color tint)
-        : shak::Sprite(atlas->GetAtlasTexture(), shader, size, tint), m_atlas(atlas), m_duration(duration), m_time(0.f), m_playing(false), m_frames(atlas->GetCount()), m_currentFrame(-1), m_tint(tint)
+        : shak::Sprite(atlas->GetAtlasTexture(), shader, size, tint)
+        , m_atlas(atlas)
+        , m_duration(duration)
+        , m_time(0.f)
+        , m_playing(false)
+        , m_frames(atlas->GetCount())
+        , m_currentFrame(-1)
+        , m_tint(tint)
     {
         this->SetTransparency(0);
     }

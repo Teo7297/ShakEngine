@@ -3,7 +3,11 @@
 namespace shak
 {
     Scene::Scene(std::shared_ptr<shak::Renderer> renderer)
-        : m_quadtree({ {0, 0}, {10000, 10000} }), m_renderer(renderer), m_root(std::make_shared<GameObject>())
+        : m_quadtree({ {0, 0}, {10000, 10000} })
+        , m_root(std::make_shared<GameObject>())
+        , m_drawables()
+        , m_renderer(renderer)
+        , m_awakeDone(false)
     {
         m_root->Name = "Root";
     }

@@ -3,13 +3,19 @@
 namespace shak
 {
     Background::Background(const std::shared_ptr<sf::Texture> texture, const sf::Vector2f& screenSize)
+        : m_screenCoords{ {0.f, 0.f}, {screenSize.x, screenSize.y} }
     {
         m_vertices = std::make_shared<sf::VertexArray>(sf::PrimitiveType::TriangleStrip, 4);
-        
+
         this->SetScreenSize(screenSize);
         this->SetColor(sf::Color::White);
         m_texture = texture;
         this->m_zIndex = -100;
+    }
+
+    void Background::SetScreenCoords(const sf::FloatRect& coords)
+    {
+        m_screenCoords = coords;
     }
 
     void Background::SetScreenSize(const sf::Vector2f& size)

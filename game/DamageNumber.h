@@ -6,6 +6,12 @@ class DamageNumber : public shak::GameObject
 {
 public:
     DamageNumber()
+        : m_lifeTime(0.f)
+        , m_elapsedTime(0.f)
+        , m_speed(100.f)
+        , m_dir(0.f, 0.f)
+        , m_sizeVelocityCurve({ 10.f, 1.f, 2.f, 1.4f, 1.3f, 1.2f, 1.1f, 1.f })
+        , m_posVelocityCurve({ 0.f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.f })
     {
         m_zIndex = 1000;
         m_font = m_engine->GetResourceManager().LoadFont("assets/fonts/Roboto/static/Roboto-Black.ttf", "roboto_black");
@@ -87,7 +93,7 @@ private:
 
     sf::Vector2f m_dir;
     // Curve for the damage number to follow
-    std::vector<float> m_sizeVelocityCurve = { 10.f, 1.f, 2.f, 1.4f, 1.3f, 1.2f, 1.1f, 1.f };
-    std::vector<float> m_posVelocityCurve = { 0.f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.f };
+    std::vector<float> m_sizeVelocityCurve;
+    std::vector<float> m_posVelocityCurve;
 };
 

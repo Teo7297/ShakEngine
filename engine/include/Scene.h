@@ -44,6 +44,6 @@ namespace shak
         GameObjectPtr m_root;
         std::vector<GameObjectPtr> m_drawables;
         std::shared_ptr<shak::Renderer> m_renderer;
-        bool m_awakeDone = false;
+        bool m_awakeDone;
     };
 }

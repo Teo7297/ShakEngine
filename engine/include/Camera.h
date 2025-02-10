@@ -11,7 +11,10 @@ namespace shak
 
     public:
         Camera(sf::FloatRect viewport, std::shared_ptr<sf::VertexArray> va = nullptr, std::shared_ptr<sf::Texture> texture = nullptr)
-            : GameObject(va, texture), m_bg{ nullptr }, m_view{ std::make_shared<sf::View>(viewport) }
+            : GameObject(va, texture)
+            , m_bg{ nullptr }
+            , m_bgSize{ 0.f, 0.f }
+            , m_view{ std::make_shared<sf::View>(viewport) }
         {
             this->setOrigin(viewport.size / 2.f);
             this->move(-viewport.size);
@@ -35,10 +38,16 @@ namespace shak
                 m_bg->SetScreenSize(size);
         }
 
-        inline void SetBackground(const std::shared_ptr<Background>& bg) { m_bg = bg; }
+        void SetBackground(const std::shared_ptr<Background>& bg)
+        {
+            m_bg = bg;
+        }
 
         // Compute size ratio at compile time
-        inline constexpr void SetBackgroundSize(const sf::Vector2f& size) { m_bgSize = sf::Vector2f{ 1.f, 1.f }.componentWiseDiv(size); }
+        constexpr void SetBackgroundSize(const sf::Vector2f& size)
+        {
+            m_bgSize = sf::Vector2f{ 1.f, 1.f }.componentWiseDiv(size);
+        }
 
         void Update(float dt) override
         {

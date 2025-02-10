@@ -10,6 +10,7 @@ class AbilitySystem : public shak::Component
 public:
     AbilitySystem(shak::GameObject* owner)
         : shak::Component(owner)
+        , m_abilities()
     {
     }
     virtual ~AbilitySystem() override = default;

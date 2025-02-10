@@ -4,6 +4,18 @@
 namespace shak
 {
 
+    // Private constructor
+    ShakEngine::ShakEngine()
+        : m_renderer(nullptr)
+        , m_window(nullptr)
+        , m_resourceManager()
+        , m_scene(nullptr)
+        , m_clock()
+        , m_cameras()
+        , m_nextGameObjectId(0)
+    {
+    }
+
     void ShakEngine::Initialize(const std::string& windowTitle)
     {
         m_renderer = std::make_shared<shak::Renderer>();

@@ -2,7 +2,6 @@
 
 void Health::Awake()
 {
-    m_health = m_maxHealth;
 }
 
 void Health::SetHealth(float health)
@@ -15,9 +14,11 @@ float Health::GetHealth() const
     return m_health;
 }
 
-void Health::SetMaxHealth(float maxHealth)
+void Health::SetMaxHealth(float maxHealth, bool resetHealth)
 {
     m_maxHealth = maxHealth;
+    if (resetHealth)
+        m_health = maxHealth;
 }
 
 float Health::GetMaxHealth() const
@@ -49,7 +50,7 @@ float Health::Heal(float amount)
 
     if (OnHeal)
         OnHeal(amount);
-    
+
     return amount;
 }
 

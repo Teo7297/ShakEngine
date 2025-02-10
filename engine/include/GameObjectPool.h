@@ -12,6 +12,7 @@ namespace shak
     {
     public:
         GameObjectPool(size_t size = 10ull)
+            : m_pool()
         {
             m_pool.reserve(size);
             static_assert(std::is_base_of<GameObject, T>::value, "GameObjectPool instantiated with class not derived from GameObject");

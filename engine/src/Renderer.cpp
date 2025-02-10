@@ -2,6 +2,14 @@
 
 namespace shak
 {
+    Renderer::Renderer()
+        : m_isRunning(true)
+        , m_window(nullptr)
+        , m_cameras()
+        , m_clearColor(2, 38, 46)
+    {
+    }
+
     std::shared_ptr<sf::RenderWindow> Renderer::CreateSFWindow(const std::string& title)
     {
         m_window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ DEFAULT_APP_WIDTH, DEFAULT_APP_HEIGHT }), title);

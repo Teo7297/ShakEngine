@@ -4,6 +4,7 @@ namespace shak
 {
     ParticleSystem::ParticleSystem(int maxParticles, float particlesPerSecond, float minLifeTime, float maxLifeTime, float initialDelay, float minSize, float maxSize, sf::Vector2f minVelocity, sf::Vector2f maxVelocity, sf::Color startColor, sf::Color endColor, bool fade, Particle::Type type, std::shared_ptr<sf::Texture> texture)
         :
+        m_particles{},
         m_maxParticles{ maxParticles },
         m_spawnRate{ 1.f / particlesPerSecond },
         m_spawnTimer{ -initialDelay },
@@ -15,7 +16,8 @@ namespace shak
         m_maxVelocity{ maxVelocity },
         m_startColor{ startColor },
         m_endColor{ endColor },
-        m_fade{ fade }
+        m_fade{ fade },
+        m_spawnActive{ true }
     {
         if (type == Particle::Type::Quad)
         {

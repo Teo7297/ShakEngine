@@ -13,6 +13,15 @@ namespace shak
         };
 
         Particle(Particle::Type type)
+            : vertices()
+            , velocity({ 0.f, 0.f })
+            , lifeTime(0.f)
+            , maxLifeTime(0.f)
+            , startColor(sf::Color::White)
+            , endColor(sf::Color::White)
+            , active(false)
+            , id(0)
+            , size(0.f)
         {
             if (type == Particle::Type::Quad)
                 vertices.resize(6);

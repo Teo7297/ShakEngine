@@ -9,7 +9,9 @@ namespace shak
     {
     public:
         Component(GameObject* owner)
-            : m_owner(owner)
+            : m_active(true)
+            , m_needAwake(true)
+            , m_owner(owner)
         {
         }
         virtual ~Component() = default;
@@ -25,8 +27,8 @@ namespace shak
         GameObject* GetOwner() { return m_owner; }
 
     protected:
-        bool m_active = true;
-        bool m_needAwake = true;
-        GameObject* m_owner = nullptr;
+        bool m_active;
+        bool m_needAwake;
+        GameObject* m_owner;
     };
 }

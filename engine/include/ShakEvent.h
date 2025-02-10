@@ -8,6 +8,13 @@ namespace shak
     class Event
     {
     public:
+        Event()
+            : m_callbacks()
+            , m_attached(0)
+        {
+        }
+        ~Event() = default;
+
         void Add(std::function<void(Input ...)> f)
         {
             m_callbacks.emplace_back(f);
@@ -46,6 +53,6 @@ namespace shak
 
     private:
         std::vector<std::function<void(Input ...)>> m_callbacks;
-        int m_attached = 0;
+        int m_attached;
     };
 }

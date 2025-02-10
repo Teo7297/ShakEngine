@@ -8,7 +8,7 @@ namespace shak
     class Renderer
     {
     public:
-        Renderer() = default;
+        Renderer();
         ~Renderer() = default;
 
         std::shared_ptr<sf::RenderWindow> CreateSFWindow(const std::string& title);
@@ -24,10 +24,9 @@ namespace shak
         void Draw(const std::vector<GameObjectPtr>& drawables);
 
     private:
-        bool m_isRunning = true;
-        std::shared_ptr<sf::RenderWindow> m_window = nullptr;
-        std::thread m_renderThread;
+        bool m_isRunning;
+        std::shared_ptr<sf::RenderWindow> m_window;
         std::unordered_map<std::string, std::shared_ptr<sf::View>> m_cameras;
-        sf::Color m_clearColor = { 2, 38, 46 };
+        sf::Color m_clearColor;
     };
 }

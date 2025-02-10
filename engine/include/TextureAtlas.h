@@ -30,11 +30,11 @@ namespace shak
 
     private:
         fs::path m_texturePath;
-        bool m_smooth = false;
-        bool m_repeat = false;
+        bool m_smooth;
+        bool m_repeat;
         sf::Vector2i m_atlasSize;
         std::shared_ptr<sf::Texture> m_atlas;
         std::unordered_map<int, sf::IntRect> m_regions;
-        int m_count = 0;
+        int m_count;
     };
 }

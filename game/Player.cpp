@@ -181,8 +181,7 @@ float Player::Shoot()
         shot->Init(m_target->getPosition(), laserAngle); // must be called after set position!!
         shot->SetFollowParent(false);
         this->AddChild(shot);
-        auto onLaserHitCB = std::bind(&Player::OnLaserHit, this);
-        shot->OnHit += onLaserHitCB;
+        shot->OnHit += std::bind(&Player::OnLaserHit, this);
     }
     m_laserIndex = (m_laserIndex + 1) % 2; // alternate front and back lasers
 

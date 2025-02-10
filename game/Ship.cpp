@@ -74,6 +74,7 @@ void Ship::Awake()
 
 
     std::shared_ptr<Health> health = this->AddComponent<Health>();
+    health->SetMaxHealth(50000.f);
     health->OnDamage.Add(std::bind(&Ship::SpawnDamageNumber, this, std::placeholders::_1));
     health->OnDeath.Add(std::bind(&Ship::DisableAimSprite, this));
     health->OnDeath.Add(std::bind(&Ship::PlayDeathAnimation, this));

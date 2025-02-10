@@ -66,7 +66,7 @@ namespace shak
 
     private:
         // Private constructor to prevent instantiation
-        ShakEngine() = default;
+        ShakEngine();
         ~ShakEngine() = default;
 
     private:
@@ -76,6 +76,6 @@ namespace shak
         std::shared_ptr<Scene> m_scene;
         sf::Clock m_clock;
         std::unordered_map<std::string, std::shared_ptr<Camera>> m_cameras;
-        unsigned int m_nextGameObjectId = 0;
+        unsigned int m_nextGameObjectId;
     };
 }

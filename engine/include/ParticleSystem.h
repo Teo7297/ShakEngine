@@ -30,6 +30,6 @@ namespace shak
         sf::Vector2f m_minVelocity, m_maxVelocity;
         sf::Color m_startColor, m_endColor;
         bool m_fade;
-        bool m_spawnActive = true;
+        bool m_spawnActive;
     };
 }

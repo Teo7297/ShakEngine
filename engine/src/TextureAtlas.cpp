@@ -4,6 +4,13 @@ namespace shak
 {
 
     TextureAtlas::TextureAtlas(const fs::path& path)
+        : m_texturePath("")
+        , m_smooth(false)
+        , m_repeat(false)
+        , m_atlasSize(0, 0)
+        , m_atlas(nullptr)
+        , m_regions()
+        , m_count(0)
     {
         Parse(path);
         m_atlas = std::make_shared<sf::Texture>(m_texturePath.string());
