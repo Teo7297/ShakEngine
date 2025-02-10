@@ -72,8 +72,27 @@ void game()
     engine->Start();
 }
 
+void ShaderTest()
+{
+    shak::ShakEngine* engine = &shak::ShakEngine::GetInstance();
+    engine->Initialize();
+    {
+        auto& rm = engine->GetResourceManager();
+
+        auto camera1 = std::make_shared<shak::Camera>(sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
+        engine->AddCamera("camera1", camera1);
+        camera1->move({ 1920.f / 2.f, 1080.f / 2.f });
+
+        auto testTexture = rm.LoadTexture("assets/textures/abstract1.png", "testTexture", true, true);
+        engine->AddGameObject<ShaderDevHelper>("particle", testTexture);
+    }
+
+    engine->Start();
+}
+
 int main()
 {
-    game();
+    // game();
+    ShaderTest();
     return 0;
 }

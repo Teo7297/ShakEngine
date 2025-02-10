@@ -176,7 +176,7 @@ float Player::Shoot()
         auto direction = m_target->getPosition() - laser->getPosition();
         direction = direction.normalized();
         sf::Angle laserAngle = direction.angle();
-        auto shot = m_laserShotPool.Get(sf::Color::Blue, LaserShot::Size::Small, true, m_laserTexture, m_laserShader);
+        auto shot = m_laserShotPool.Get(sf::Color::Blue, LaserShot::Size::Medium, false, m_laserTexture, m_laserShader);
         shot->setPosition(laser->getPosition());
         shot->Init(m_target->getPosition(), laserAngle); // must be called after set position!!
         shot->SetFollowParent(false);

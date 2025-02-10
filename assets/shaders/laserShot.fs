@@ -30,10 +30,13 @@ void drawLaser(out vec4 fragColor, in vec2 fragCoord)
     if(u_isRainbow)
     {
         laserColor.rgb = 0.5 + 0.5 * cos(u_time * 15.0 + uv.xyx + vec3(2, 4, 6));
-        laserColor.a = 1.0;
     }
     else
-        laserColor = u_laserColor;
+    {
+        laserColor.rgb = vec3(3 + cos(u_time)) * (1 - uv.xyx);
+        laserColor *= u_laserColor;
+    }
+    laserColor.a = 1.0;
 
     //Calculate how close the current pixel is to the center line of the screen
     float intensity = 1.0 - abs(uv.y - 0.5);
