@@ -36,7 +36,7 @@ public:
     {
         m_time += dt;
         auto newShader = std::make_shared<sf::Shader>();
-        if (newShader->loadFromFile("assets/shaders/laserShot.fs", sf::Shader::Type::Fragment))
+        if (newShader->loadFromFile(fs, sf::Shader::Type::Fragment))
         {
             m_shader = newShader;
             m_shader->setUniform("u_texture", *m_texture);

@@ -7,10 +7,10 @@ namespace shak
     class Spline
     {
     public:
-        Spline() {}; // todo: remove
         Spline(const sf::Vector2f& p0, const sf::Vector2f& p1, const sf::Vector2f& p2, const sf::Vector2f& p3);
         ~Spline();
 
+        void UpdatePoint(int index, const sf::Vector2f& p);
         sf::Vector2f GetPoint(float t) const;
 
     private:

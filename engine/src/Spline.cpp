@@ -14,6 +14,28 @@ namespace shak
     {
     }
 
+    void Spline::UpdatePoint(int index, const sf::Vector2f& p)
+    {
+        switch (index)
+        {
+        case 0:
+            m_p0 = p;
+            break;
+        case 1:
+            m_p1 = p;
+            break;
+        case 2:
+            m_p2 = p;
+            break;
+        case 3:
+            m_p3 = p;
+            break;
+        default:
+            std::cerr << "[Spline] Invalid index: " << index << std::endl;
+            break;
+        }
+    }
+
     sf::Vector2f Spline::GetPoint(float t) const
     {
         return CalculatePointBezier(t);

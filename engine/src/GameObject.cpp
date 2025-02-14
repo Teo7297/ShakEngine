@@ -264,6 +264,13 @@ namespace shak
                 child->shak::GameObject::Update(dt);
             }
         }
+
+        // Set basic shader uniforms
+        if (m_shader)
+        {
+            m_shader->setUniform("u_time", m_engine->GetTime());
+            m_shader->setUniform("u_resolution", sf::Glsl::Vec2{ m_engine->GetWindowSize().x, m_engine->GetWindowSize().y });
+        }
     }
 
     void GameObject::Cleanup()

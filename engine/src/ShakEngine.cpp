@@ -13,6 +13,7 @@ namespace shak
         , m_clock()
         , m_cameras()
         , m_nextGameObjectId(0)
+        , m_time(0.f)
     {
     }
 
@@ -99,6 +100,7 @@ namespace shak
 
             // Calculate delta time
             float dt = m_clock.restart().asSeconds();
+            m_time += dt;
 
             m_scene->ForwardAwake();
 
@@ -108,6 +110,11 @@ namespace shak
 
             m_scene->Cleanup();
         }
+    }
+
+    float ShakEngine::GetTime()
+    {
+        return m_time;
     }
 }
 

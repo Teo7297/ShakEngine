@@ -58,6 +58,8 @@ namespace shak
 
         void Start();
 
+        float GetTime();
+
         void TestQuadtree()
         {
             auto c = m_cameras.at("camera1")->GetView();
@@ -77,5 +79,6 @@ namespace shak
         sf::Clock m_clock;
         std::unordered_map<std::string, std::shared_ptr<Camera>> m_cameras;
         unsigned int m_nextGameObjectId;
+        float m_time;
     };
 }

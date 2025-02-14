@@ -7,7 +7,7 @@
 #include "Alien.h"
 #include "Animation.h"
 #include "Spline.h"
-#include "Missle.h"
+#include "Rocket.h"
 
 #include "ShaderDevHelper.h"
 
@@ -59,13 +59,16 @@ void game()
         // player->AddChild(ps);
         // engine->AddGameObject(ps);
 
-        // for (int i = 0; i < 3; i++)
-        // {
-        //     auto alien = engine->AddGameObject<Alien>(goliathPlus, player, explosionAtlas);
-        //     alien->Name = "Alien" + std::to_string(i);
-        // }
-        auto rocket = rm.LoadTexture("assets/textures/rocket.png", "rocket");
-        engine->AddGameObject<Missle>(rocket, player);
+        for (int i = 0; i < 3; i++)
+        {
+            auto alien = engine->AddGameObject<Alien>(goliathPlus, player, explosionAtlas);
+            alien->Name = "Alien" + std::to_string(i);
+        }
+
+        auto rocketTxt = rm.LoadTexture("assets/textures/rocket.png", "rocket");
+        auto rocketShd = rm.LoadShader("", "assets/shaders/rocket.fs", "rocket");
+        auto rocket = engine->AddGameObject<Rocket>(rocketTxt, rocketShd);
+        rocket->Init({ 0.f, 0.f }, player);
 
 
         // auto shaderHelper = std::make_shared<ShaderDevHelper>("particle", chicken);
@@ -87,8 +90,9 @@ void ShaderTest()
         engine->AddCamera("camera1", camera1);
         camera1->move({ 1920.f / 2.f, 1080.f / 2.f });
 
-        auto testTexture = rm.LoadTexture("assets/textures/abstract1.png", "testTexture", true, true);
-        engine->AddGameObject<ShaderDevHelper>("particle", testTexture);
+        // auto testTexture = rm.LoadTexture("assets/textures/abstract1.png", "testTexture", true, true);
+        auto testTexture = rm.LoadTexture("assets/textures/rocket.png", "testTexture", false, true);
+        engine->AddGameObject<ShaderDevHelper>("rocket", testTexture);
     }
 
     engine->Start();
