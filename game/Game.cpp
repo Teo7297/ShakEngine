@@ -6,6 +6,8 @@
 
 #include "Alien.h"
 #include "Animation.h"
+#include "Spline.h"
+#include "Missle.h"
 
 #include "ShaderDevHelper.h"
 
@@ -29,12 +31,11 @@ void game()
 
         auto explosionAtlas = rm.LoadTextureAtlas("assets/animations/explosion.atlas", "deathExplosion");
 
-        // auto bg = std::make_shared<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
-        // camera1->SetBackground(bg);
-        // auto bgsize = rm.GetTexture("bg1")->getSize();
-        // camera1->SetBackgroundSize({ (float)(bgsize.x * 100), (float)(bgsize.y * 100) });
+        auto bg = engine->AddGameObject<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
+        camera1->SetBackground(bg);
+        auto bgsize = rm.GetTexture("bg1")->getSize();
+        camera1->SetBackgroundSize({ (float)(bgsize.x * 100), (float)(bgsize.y * 100) });
 
-        // engine->AddGameObject(bg);
 
         auto player = engine->AddGameObject<Player>(goliathPlus, laserTxt, laserSh, explosionAtlas);
 
@@ -58,11 +59,14 @@ void game()
         // player->AddChild(ps);
         // engine->AddGameObject(ps);
 
-        for (int i = 0; i < 3; i++)
-        {
-            auto alien = engine->AddGameObject<Alien>(goliathPlus, player, explosionAtlas);
-            alien->Name = "Alien" + std::to_string(i);
-        }
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     auto alien = engine->AddGameObject<Alien>(goliathPlus, player, explosionAtlas);
+        //     alien->Name = "Alien" + std::to_string(i);
+        // }
+        auto rocket = rm.LoadTexture("assets/textures/rocket.png", "rocket");
+        engine->AddGameObject<Missle>(rocket, player);
+
 
         // auto shaderHelper = std::make_shared<ShaderDevHelper>("particle", chicken);
         // engine->AddGameObject(shaderHelper);
@@ -90,9 +94,11 @@ void ShaderTest()
     engine->Start();
 }
 
+
 int main()
 {
-    // game();
-    ShaderTest();
+    game();
+    // ShaderTest();
+
     return 0;
 }
