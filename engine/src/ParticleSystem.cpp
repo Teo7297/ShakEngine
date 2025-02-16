@@ -48,7 +48,6 @@ namespace shak
 
         if (m_shader)
             m_shader->setUniform("u_time", ShakEngine::GetInstance().GetTime());
-        static int newParts = 0;
         for (std::size_t i = 0; i < m_particles.size(); i++)
         {
             Particle& p = m_particles[i];
@@ -66,7 +65,6 @@ namespace shak
                     p.SetPosition(this->getPosition());
                     p.velocity = p.velocity.rotatedBy(this->getRotation());
                     p.active = true;
-                    newParts++;
                     m_spawnTimer -= m_spawnRate; // This allows for multiple particles to spawn in each frame!
                     if (m_spawnTimer >= 100000.f)
                         m_spawnTimer = 100000.f; // cap this value to avoid overflow
@@ -97,10 +95,6 @@ namespace shak
             float h = static_cast<float>(m_texture->getSize().y);
             p.SetTextureCoords(w, h);
         }
-        if (newParts > 0)
-            std::cout << "Spawned " << newParts << " new particles" << std::endl;
-        newParts = 0;
-
     }
 
     void ParticleSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const

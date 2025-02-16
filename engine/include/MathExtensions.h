@@ -32,4 +32,14 @@ namespace shak
         relative = relative / len;
         return a * std::cos(theta) + relative * std::sin(theta);
     }
+
+    inline sf::Color lerp(const sf::Color& a, const sf::Color& b, float t)
+    {
+        return sf::Color(
+            static_cast<uint8_t>((1 - t) * a.r + t * b.r),
+            static_cast<uint8_t>((1 - t) * a.g + t * b.g),
+            static_cast<uint8_t>((1 - t) * a.b + t * b.b),
+            static_cast<uint8_t>((1 - t) * a.a + t * b.a)
+        );
+    }
 }

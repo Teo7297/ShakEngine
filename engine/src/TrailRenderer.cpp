@@ -1,4 +1,5 @@
 #include "TrailRenderer.h"
+#include "MathExtensions.h"
 
 shak::TrailRenderer::TrailRenderer(TrailType type)
     : GameObject()
@@ -32,6 +33,9 @@ void shak::TrailRenderer::Update(float dt)
         point.ttl -= dt;
 
         const auto progress = point.ttl / m_totalLifeTime;
+
+        if (m_startColor != m_endColor)
+            point.color = shak::lerp(m_startColor, m_endColor, progress);
 
         if (m_fade)
             point.color.a = (std::max(0.f, progress) * 255);
@@ -104,5 +108,6 @@ void shak::TrailRenderer::DrawStrip(sf::RenderTarget& target, sf::RenderStates s
     }
 
     // Render the trail
-    target.draw(trail);
+    states.shader = m_shader.get();
+    target.draw(trail, states);
 }
