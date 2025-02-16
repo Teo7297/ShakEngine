@@ -6,6 +6,7 @@
 #include "components/TestComp.h"
 #include "components/AbilitySystem.h"
 #include "components/abilities/TestAbility.h"
+#include "TrailRenderer.h"
 
 Player::Player(std::shared_ptr<shak::TextureAtlas> atlas, std::shared_ptr<sf::Texture> laserTexture, std::shared_ptr<sf::Shader> laserShader, std::shared_ptr<shak::TextureAtlas> deathAnimation)
     : Ship(atlas, { { 75.f, -31.f }, { 15.f, -26.f }, { 75.f, +41.f }, { 16.f, +23.f } }, deathAnimation), m_laserTexture(laserTexture), m_laserShader(laserShader)

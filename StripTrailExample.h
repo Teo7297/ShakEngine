@@ -29,7 +29,7 @@ public:
         for (auto& point : trailPoints) {
             point.ttl -= deltaTime; // Reduce TTL
             float alpha = std::max(0.f, point.ttl / pointTTL); // Normalize TTL to 0-1
-            point.color.a = (alpha * 255); // Scale to 0-255
+            // point.color.a = (alpha * 255); // Scale to 0-255
         }
 
         // Remove expired points
@@ -61,7 +61,7 @@ public:
             perpendicular /= length; // Normalize
 
             // Half-width offset
-            sf::Vector2f offset = perpendicular * trailWidth * 0.5f;
+            sf::Vector2f offset = perpendicular * trailWidth * 0.5f * point.ttl / pointTTL;
 
             // Create vertices for the current point
             sf::Vertex top, bottom;
@@ -92,7 +92,7 @@ int StripTrailExample() {
     window.setFramerateLimit(60);
 
     // Create the trail renderer
-    TrailRenderer trailRenderer(1.0f, 20.0f); // Points last 1 second, trail width is 20
+    TrailRenderer trailRenderer(0.3f, 20.0f); // Points last 1 second, trail width is 20
 
     // Moving object (e.g., a circle)
     sf::CircleShape object(10.f);

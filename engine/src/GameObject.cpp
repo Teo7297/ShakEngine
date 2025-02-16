@@ -51,6 +51,17 @@ namespace shak
         m_movedThisFrame = true;
     }
 
+    void GameObject::setPosition(sf::Vector2f position)
+    {
+        Transformable::setPosition(position);
+        for (const auto& [id, child] : m_children)
+        {
+            if (child->GetFollowParent())
+                child->setPosition(position);
+        }
+        m_movedThisFrame = true;
+    }
+
     void GameObject::rotate(sf::Angle angle)
     {
         Transformable::rotate(angle);
@@ -174,6 +185,15 @@ namespace shak
                 child->GetDrawables(drawables);
             }
         }
+    }
+
+    void GameObject::SetActive(bool active)
+    {
+        m_active = active;
+        if (m_active)
+            OnEnable();
+        else
+            OnDisable();
     }
 
     std::vector<GameObjectPtr> GameObject::GetChildren() const

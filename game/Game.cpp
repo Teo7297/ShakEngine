@@ -31,10 +31,10 @@ void game()
 
         auto explosionAtlas = rm.LoadTextureAtlas("assets/animations/explosion.atlas", "deathExplosion");
 
-        auto bg = engine->AddGameObject<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
-        camera1->SetBackground(bg);
-        auto bgsize = rm.GetTexture("bg1")->getSize();
-        camera1->SetBackgroundSize({ (float)(bgsize.x * 100), (float)(bgsize.y * 100) });
+        // auto bg = engine->AddGameObject<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
+        // camera1->SetBackground(bg);
+        // auto bgsize = rm.GetTexture("bg1")->getSize();
+        // camera1->SetBackgroundSize({ (float)(bgsize.x * 100), (float)(bgsize.y * 100) });
 
 
         auto player = engine->AddGameObject<Player>(goliathPlus, laserTxt, laserSh, explosionAtlas);
@@ -98,11 +98,14 @@ void ShaderTest()
     engine->Start();
 }
 
+// #include "../StripTrailExample.h"
+// #include "../LineTrailExample.h"
 
 int main()
 {
     game();
     // ShaderTest();
-
+    // StripTrailExample();
+    // LineTrailExample();
     return 0;
 }

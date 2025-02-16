@@ -2,6 +2,7 @@
 
 #include "EngineDefines.h"
 #include "Component.h"
+#include "ShakEvent.h"
 
 namespace shak
 {
@@ -16,6 +17,8 @@ namespace shak
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const override;
 
         virtual void move(sf::Vector2f offset);
+
+        virtual void setPosition(sf::Vector2f position);
 
         void rotate(sf::Angle angle);
 
@@ -77,7 +80,7 @@ namespace shak
         void SetParent(GameObject* parent) { m_parent = parent; }
         GameObject* GetParent() { return m_parent; }
 
-        void SetActive(bool active) { m_active = active; }
+        void SetActive(bool active);
         bool IsActive() const { return m_active; }
 
         /// @brief Obtain a copy of the children vector of this GameObject
@@ -139,6 +142,8 @@ namespace shak
     public:
         std::string Name = "GameObject";
         unsigned int Id = -1;
+        Event<> OnEnable;
+        Event<> OnDisable;
 
     protected:
         ShakEngine* m_engine;
