@@ -10,6 +10,7 @@
 #include "Rocket.h"
 
 #include "ShaderDevHelper.h"
+#include "TestGO.h"
 
 void game()
 {
@@ -59,17 +60,18 @@ void game()
         // player->AddChild(ps);
         // engine->AddGameObject(ps);
 
-        for (int i = 0; i < 3; i++)
-        {
-            auto alien = engine->AddGameObject<Alien>(goliathPlus, player, explosionAtlas);
-            alien->Name = "Alien" + std::to_string(i);
-        }
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     auto alien = engine->AddGameObject<Alien>(goliathPlus, player, explosionAtlas);
+        //     alien->Name = "Alien" + std::to_string(i);
+        // }
 
         auto rocketTxt = rm.LoadTexture("assets/textures/rocket.png", "rocket");
         auto rocketShd = rm.LoadShader("", "assets/shaders/rocket.fs", "rocket");
         auto rocket = engine->AddGameObject<Rocket>(rocketTxt, rocketShd);
         rocket->Init({ 0.f, 0.f }, player);
 
+        // engine->AddGameObject<TestGO>();
 
         // auto shaderHelper = std::make_shared<ShaderDevHelper>("particle", chicken);
         // engine->AddGameObject(shaderHelper);

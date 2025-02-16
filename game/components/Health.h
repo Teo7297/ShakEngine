@@ -17,7 +17,6 @@ public:
 
     void Awake() override;
 
-    // TODO: Understand why inline causes linker errors
     void SetHealth(float health);
     float GetHealth() const;
     void SetMaxHealth(float maxHealth, bool resetHealth = true);

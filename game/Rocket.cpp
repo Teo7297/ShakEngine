@@ -1,5 +1,6 @@
 #include "Rocket.h"
 #include "TrailRenderer.h"
+#include "ParticleSystem.h"
 
 Rocket::Rocket(const std::shared_ptr<sf::Texture>& texture, const std::shared_ptr<sf::Shader>& shader)
     : Sprite(texture, shader)
@@ -27,13 +28,27 @@ void Rocket::Init(const sf::Vector2f& start, const std::shared_ptr<Ship>& target
 
 void Rocket::Awake()
 {
-    auto trail = std::make_shared<shak::TrailRenderer>(shak::TrailRenderer::TrailType::Line);
+    auto trail = std::make_shared<shak::TrailRenderer>(shak::TrailRenderer::TrailType::Strip);
     trail->setPosition(this->getPosition());
     trail->SetZIndex(this->GetZIndex() - 10);
-    trail->SetTTL(1.f);
+    trail->SetTTL(0.3f);
     trail->SetFade(true);
-    trail->SetColors(sf::Color::White, sf::Color::Green);
+    trail->SetColors(sf::Color::White, sf::Color::White);
+    trail->SetWidths(10.f, 10.f);
     this->AddChild(trail);
+
+    auto back = sf::Vector2f{ 0, 1 };
+    auto psMinDir = back.rotatedBy(sf::degrees(-30));
+    auto psMaxDir = back.rotatedBy(sf::degrees(30));
+    auto ps = std::make_shared<shak::ParticleSystem>(shak::Particle::Type::Point, 100000, 0.f);
+    ps->SetSpawnRate(10000.f);
+    ps->SetLifeTimes(0.4f, 1.f);
+    ps->SetDirections(psMinDir, psMaxDir);
+    ps->SetSpeeds(100.f, 200.f);
+    ps->SetColors(sf::Color::Red, sf::Color::Yellow);
+    ps->SetFade(true);
+    ps->setPosition(this->getPosition());
+    this->AddChild(ps);
 }
 
 void Rocket::Update(float dt)

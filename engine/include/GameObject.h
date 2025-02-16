@@ -22,6 +22,8 @@ namespace shak
 
         void rotate(sf::Angle angle);
 
+        void setRotation(sf::Angle angle);
+
         void rotateAround(sf::Angle angle, const sf::Vector2f& pivot);
 
         void scale(sf::Vector2f factor);

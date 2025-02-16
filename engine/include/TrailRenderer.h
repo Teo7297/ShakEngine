@@ -25,6 +25,7 @@ namespace shak
         void SetTTL(float ttl) { m_totalLifeTime = ttl; }
         void SetFade(bool fade) { m_fade = fade; }
         void SetColors(sf::Color start, sf::Color end) { m_startColor = start; m_endColor = end; }
+        void SetWidths(float start, float end) { m_startWidth = start; m_endWidth = end; }
 
     private:
         void DrawLine(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
@@ -44,5 +45,6 @@ namespace shak
         float m_totalLifeTime;
         bool m_fade;
         sf::Color m_startColor, m_endColor;
+        float m_startWidth, m_endWidth;
     };
 }

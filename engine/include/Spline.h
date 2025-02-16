@@ -15,7 +15,6 @@ namespace shak
 
     private:
         sf::Vector2f CalculatePointBezier(float t) const;
-        // TODO: Add more types of splines
 
     private:
         sf::Vector2f m_p0, m_p1, m_p2, m_p3;

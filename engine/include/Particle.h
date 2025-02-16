@@ -29,6 +29,12 @@ namespace shak
                 vertices.resize(1);
         }
 
+        void SetPosition(const sf::Vector2f& pos)
+        {
+            for (auto& v : vertices)
+                v->position = pos;
+        }
+
         void Move(sf::Vector2f offset)
         {
             for (auto& v : vertices)

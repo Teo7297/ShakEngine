@@ -5,6 +5,10 @@ shak::TrailRenderer::TrailRenderer(TrailType type)
     , m_type(type)
     , m_totalLifeTime(0.0f)
     , m_fade(false)
+    , m_startColor(sf::Color::White)
+    , m_endColor(sf::Color::White)
+    , m_startWidth(0.0f)
+    , m_endWidth(0.0f)
 {
 }
 
@@ -67,4 +71,38 @@ void shak::TrailRenderer::DrawLine(sf::RenderTarget& target, sf::RenderStates st
 
 void shak::TrailRenderer::DrawStrip(sf::RenderTarget& target, sf::RenderStates states) const
 {
+    sf::VertexArray trail(sf::PrimitiveType::TriangleStrip);
+
+    for (size_t i = 0; i < m_trailPoints.size(); ++i) {
+        const auto& point = m_trailPoints[i];
+
+        // Skip invalid points
+        if (i == 0 || i == m_trailPoints.size() - 1) continue;
+
+        // Direction vector perpendicular to the segment
+        const sf::Vector2f& prevPos = m_trailPoints[i - 1].position;
+        const sf::Vector2f& nextPos = m_trailPoints[i + 1].position;
+        if (prevPos == nextPos) continue;
+        sf::Vector2f direction = nextPos - prevPos;
+        sf::Vector2f perpendicular(-direction.y, direction.x);
+        perpendicular = perpendicular.normalized();
+
+        // Half-width offset
+        sf::Vector2f offset = perpendicular * m_startWidth * 0.5f * point.ttl / m_totalLifeTime; // point.ttl / m_totalLifeTime allows to make it pointy by moving the vertices closer to the center
+
+        // Create vertices for the current point
+        sf::Vertex top, bottom;
+        top.position = point.position + offset;
+        top.color = point.color;
+
+        bottom.position = point.position - offset;
+        bottom.color = point.color;
+
+        // Add to the trail
+        trail.append(top);
+        trail.append(bottom);
+    }
+
+    // Render the trail
+    target.draw(trail);
 }

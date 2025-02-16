@@ -83,7 +83,29 @@ namespace shak
             child->setPosition(this->getPosition() + rotatedPos);
             child->rotate(angle);
         }
+    }
 
+    void GameObject::setRotation(sf::Angle angle)
+    {
+        Transformable::setRotation(angle);
+        for (const auto& [id, child] : m_children)
+        {
+            if (!child->GetFollowParent()) continue;
+
+            sf::Vector2f relativePos = child->getPosition() - this->getPosition();
+
+            // Calculate the new position after rotation (remember, we are using global coordinates, with global axis for translation!)
+            float radians = angle.asRadians();
+            float cosAngle = std::cos(radians);
+            float sinAngle = std::sin(radians);
+            sf::Vector2f rotatedPos(
+                relativePos.x * cosAngle - relativePos.y * sinAngle,
+                relativePos.x * sinAngle + relativePos.y * cosAngle
+            );
+
+            child->setPosition(this->getPosition() + rotatedPos);
+            child->setRotation(angle);
+        }
     }
 
     void GameObject::rotateAround(sf::Angle angle, const sf::Vector2f& pivot)
