@@ -1,13 +1,13 @@
 #include "ShakEngine.h"
 
-#include "Player.h"
 #include "ParticleSystem.h"
 #include "Background.h"
 
-#include "Alien.h"
 #include "Animation.h"
 #include "Spline.h"
 #include "Rocket.h"
+#include "components/PlayerController.h"
+#include "components/AIController.h"
 
 #include "ShaderDevHelper.h"
 #include "TestGO.h"
@@ -48,49 +48,25 @@ void game()
         std::string content = buffer.str();
 
         json::JSON jsonData = json::JSON::Load(content);
-        auto playerShip = std::make_shared<Ship>(jsonData);
-        auto player = engine->AddGameObject<PlayerObj>();
-        player->SetShip(playerShip);
-        // auto player = engine->AddGameObject<Player>(goliathPlus, laserTxt, laserSh, explosionAtlas);
 
-        playerShip->AddChild(camera1);
+        auto player = engine->AddGameObject<Ship>(jsonData);
+        player->AddComponent<PlayerController>();
+        player->AddChild(camera1);
 
-        camera1->move(playerShip->GetVertexArray()->getBounds().size / 2.f);
-        // auto chicken = rm.LoadTexture("assets/textures/abstract1.png", "chicken", true, true);
-        // auto psShader = rm.LoadShader("", "assets/shaders/laserShot.fs", "particle");
-        // psShader->setUniform("u_texture", *chicken);
-        // psShader->setUniform("u_resolution", sf::Glsl::Vec2{ engine->GetWindowSize().x, engine->GetWindowSize().y });
-        // auto ps = std::make_shared<shak::ParticleSystem>(
-        //     2000, 600.f,  // count
-        //     .5f, 2.f,   // lifetime
-        //     0.f,       // start delay
-        //     600.f, 600.f,  // size
-        //     sf::Vector2f(-200.f, -200.f), sf::Vector2f(200.f, 200.f),   // velocity 
-        //     sf::Color::Green, sf::Color::Red, false,              // color
-        //     shak::Particle::Type::Point, nullptr);           // type and texture
-        // ps->SetShader(psShader);
-        // ps->setPosition(player->getPosition());
-        // player->AddChild(ps);
-        // engine->AddGameObject(ps);
+        camera1->move(player->GetVertexArray()->getBounds().size / 2.f);
+    
 
         for (int i = 0; i < 3; i++)
         {
-            auto alienShip = std::make_shared<Ship>(jsonData);
-            auto alien = engine->AddGameObject<Alien>();
-            alien->SetShip(alienShip);
+            auto alien = engine->AddGameObject<Ship>(jsonData);
+            alien->AddComponent<AIController>();
             alien->Name = "Alien" + std::to_string(i);
         }
 
         auto rocketTxt = rm.LoadTexture("assets/textures/rocket.png", "rocket");
         auto rocketShd = rm.LoadShader("", "assets/shaders/rocket.fs", "rocket");
         auto rocket = engine->AddGameObject<Rocket>(rocketTxt, rocketShd);
-        rocket->Init({ 0.f, 0.f }, playerShip);
-
-        // engine->AddGameObject<TestGO>();
-
-        // auto shaderHelper = std::make_shared<ShaderDevHelper>("particle", chicken);
-        // engine->AddGameObject(shaderHelper);
-
+        rocket->Init({ 0.f, 0.f }, player);
     }
 
     engine->Start();
