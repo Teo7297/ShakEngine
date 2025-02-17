@@ -6,7 +6,11 @@
 class PlayerObj : public shak::GameObject
 {
 public:
-    // void Awake() override;
+    void Awake() override
+    {
+        Name = "Player";
+    }
+
     void Update(float dt) override
     {
         if (!m_activeShip->GetTargetWasSelected()) // we can move
@@ -79,6 +83,8 @@ public:
         m_activeShip->SetControlledByPlayer(true);
         this->AddChild(m_activeShip);
     }
+
+    std::shared_ptr<Ship> GetShip() const { return m_activeShip; }
 
 private:
     std::shared_ptr<Ship> m_activeShip;

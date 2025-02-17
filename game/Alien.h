@@ -9,7 +9,7 @@ class Alien : public shak::GameObject
 public:
     void Awake() override
     {
-        m_player = std::dynamic_pointer_cast<PlayerObj>(m_engine->FindGameObjectByName("Player"));
+        m_player = std::dynamic_pointer_cast<PlayerObj>(m_engine->FindGameObjectByName("Player"))->GetShip();
     }
 
     void Update(float dt) override
@@ -49,6 +49,6 @@ private:
     float m_currentDestinationTimer = 0.f;
     float m_destinationTimer = 10.f;
     sf::Vector2f m_destination;
-    std::shared_ptr<PlayerObj> m_player;
+    std::shared_ptr<Ship> m_player;
 
 };
