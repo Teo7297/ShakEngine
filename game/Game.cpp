@@ -38,23 +38,14 @@ void game()
         // camera1->SetBackgroundSize({ (float)(bgsize.x * 100), (float)(bgsize.y * 100) });
 
 
-        std::ifstream file("assets/json/ships/DPS.json");
-        if (!file.is_open()) {
-            std::cerr << "Failed to open file.\n";
-        }
-
-        std::stringstream buffer;
-        buffer << file.rdbuf();
-        std::string content = buffer.str();
-
-        json::JSON jsonData = json::JSON::Load(content);
+        json::JSON jsonData = json::JSON::LoadFromDisk("assets/json/ships/DPS.json");
 
         auto player = engine->AddGameObject<Ship>(jsonData);
         player->AddComponent<PlayerController>();
         player->AddChild(camera1);
 
         camera1->move(player->GetVertexArray()->getBounds().size / 2.f);
-    
+
 
         for (int i = 0; i < 3; i++)
         {
@@ -91,24 +82,6 @@ void ShaderTest()
     engine->Start();
 }
 
-#include "JSON.h"
-
-int jsontest() {
-    std::ifstream file("assets/json/ships/DPS.json");
-    if (!file.is_open()) {
-        std::cerr << "Failed to open file.\n";
-        return 1;
-    }
-
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    std::string content = buffer.str();
-
-    json::JSON jsonData = json::JSON::Load(content);
-    std::cout << jsonData.dump() << std::endl;
-
-    return 0;
-}
 
 int main()
 {
