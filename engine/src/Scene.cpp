@@ -81,23 +81,14 @@ namespace shak
         m_root->HandleInput(event);
     }
 
-    void Scene::TestQuadtree(sf::FloatRect area)
+    void Scene::CheckCollisions()
     {
-        std::cout << "Area: " << area.position.x << ", " << area.position.y << " - " << area.position.x + area.size.x << ", " << area.position.y + area.size.y << std::endl;
-        std::vector<GameObjectPtr> retrieved = m_quadtree.query(area);
+        auto collisions = m_quadtree.findAllIntersections();
 
-        std::cout << "Objects retrieved by query: " << retrieved.size() << std::endl;
-
-        // for (size_t i = 0; i < retrieved.size(); ++i) {
-        //     std::cout << " - Object at (" << retrieved[i]->getPosition().x
-        //         << ", " << retrieved[i]->getPosition().y << ")\n";
-        // }
-
-        // auto all = m_quadtree.findAllIntersections();
-        // std::cout << "All intersections: " << all.size() << std::endl;
-        // for (size_t i = 0; i < all.size(); ++i)
-        // {
-        //     std::cout << " - " << all[i].first->Name << " at (" << all[i].first->getPosition().x << ", " << all[i].first->getPosition().y << ") collided with " << all[i].second->Name << " at (" << all[i].second->getPosition().x << ", " << all[i].second->getPosition().y << ")\n";
-        // }
+        for (const auto& [a, b] : collisions)
+        {
+            a->OnCollision(b);
+            b->OnCollision(a);
+        }
     }
 }

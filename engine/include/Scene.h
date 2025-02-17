@@ -37,7 +37,7 @@ namespace shak
 
         void HandleInput(const sf::Event& event);
 
-        void TestQuadtree(sf::FloatRect area);
+        void CheckCollisions();
 
     private:
         Quadtree m_quadtree;

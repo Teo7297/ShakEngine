@@ -104,6 +104,8 @@ namespace shak
 
             m_scene->ForwardAwake();
 
+            m_scene->CheckCollisions();
+
             m_scene->Update(dt);
 
             m_scene->Render();

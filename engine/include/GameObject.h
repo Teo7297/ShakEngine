@@ -114,9 +114,12 @@ namespace shak
 
         void EnablePhysics() { m_physicsEnabled = true; }
         void DisablePhysics() { m_physicsEnabled = false; }
+        bool IsPhysicsEnabled() const { return m_physicsEnabled; }
 
         bool NeedAwake() const { return m_needAwake; }
         void ForwardAwake();
+
+        virtual void OnCollision(const std::shared_ptr<GameObject>& other) {};
 
         virtual void Awake();
 
