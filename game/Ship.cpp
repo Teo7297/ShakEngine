@@ -1,13 +1,16 @@
 #include "Ship.h"
 #include "components/Health.h"
+#include "components/AbilitySystem.h"
+#include "components/abilities/TestAbility.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf::Vector2f> lasersOffsets, const std::shared_ptr<shak::TextureAtlas> deathAnimation)
+Ship::Ship(const json::JSON& shipData)
     : GameObject(),
-    m_atlas(atlas),
-    m_atlasTexturesCount{ atlas->GetCount() },
+    m_controlledByPlayer{ false },
+    m_atlas(nullptr),
+    m_atlasTexturesCount{ 0 },
     m_direction{ 1.f, 0.f }, // spawn looking right
     m_lookDirection{ 1.f, 0.f }, // spawn looking right
     m_lookAngle{ sf::Angle::Zero },
@@ -15,46 +18,50 @@ Ship::Ship(const std::shared_ptr<shak::TextureAtlas> atlas, const std::vector<sf
     m_destination{ 0.f, 0.f },
     m_damageNumberPool(20),
     m_laserShotPool(20),
+    m_laserTexture(nullptr),
+    m_laserShader(nullptr),
     m_target{ nullptr },
     m_lasers{ },
-    m_laserOffsets{ lasersOffsets },
     m_laserIndex{ 0 },
-    m_speed{ 1000.f },
-    m_damage{ 1000.f },
-    m_deathAnimation{ std::make_shared<shak::Animation>(deathAnimation, 2.f) }
+    m_lookAtTarget{ false },
+    m_shooting{ false },
+    m_targetWasSelected{ false },
+    m_baseStats{ },
+    m_speed{ 0.f },
+    m_damage{ 0.f },
+    m_deathAnimation{ nullptr }
 {
-    auto coords = atlas->GetTextureCoords(1);
-    m_vertices = std::make_shared<sf::VertexArray>(sf::PrimitiveType::TriangleStrip, 4);
-    (*m_vertices)[0].position = sf::Vector2f(0.f, 0.f);
-    (*m_vertices)[1].position = sf::Vector2f(0.f, 250.f);
-    (*m_vertices)[2].position = sf::Vector2f(250.f, 0.f);
-    (*m_vertices)[3].position = sf::Vector2f(250.f, 250.f);
-    (*m_vertices)[0].color = sf::Color::White;
-    (*m_vertices)[1].color = sf::Color::White;
-    (*m_vertices)[2].color = sf::Color::White;
-    (*m_vertices)[3].color = sf::Color::White;
-    (*m_vertices)[0].texCoords = coords.topLeft;
-    (*m_vertices)[1].texCoords = coords.bottomLeft;
-    (*m_vertices)[2].texCoords = coords.topRight;
-    (*m_vertices)[3].texCoords = coords.bottomRight;
+    auto rm = m_engine->GetResourceManager();
+    m_atlas = rm.LoadTextureAtlas(shipData.at("atlas").ToString(), shipData.at("atlas_name").ToString());
+    m_atlasTexturesCount = m_atlas->GetCount();
 
-    this->SetTexture(atlas->GetAtlasTexture());
+    this->InitQuadVertexArray({ 250.f, 250.f }, sf::Color::White);
+
+    this->SetTexture(m_atlas->GetAtlasTexture());
     m_angleBetweenTextures = sf::degrees(360.f / static_cast<float>(m_atlasTexturesCount));
 
-    auto origin = m_vertices->getBounds().getCenter();
-    this->setOrigin(origin);
-    // this->rotate(sf::degrees(-5));
+    this->CenterOrigin();
 
-    // Setup child points
-    for (int i = 0; i < lasersOffsets.size(); i++)
+    auto laser_offsets = shipData.at("laser_offsets").ArrayRange();
+    for (const auto& offset : laser_offsets)
     {
+        auto v2offset = sf::Vector2f(offset.at("x").ToFloat(), offset.at("y").ToFloat());
         auto laser = std::make_shared<shak::GameObject>();
-        laser->setPosition(this->getPosition() + lasersOffsets[i]);
+        laser->setPosition(this->getPosition() + v2offset);
         m_lasers.push_back(laser);
         this->AddChild(laser);
     }
 
+    m_laserTexture = rm.LoadTexture(shipData.at("laser_texture").ToString(), shipData.at("laser_texture_name").ToString());
+    m_laserShader = rm.LoadShader("", shipData.at("laser_shader").ToString(), shipData.at("laser_shader_name").ToString());
+    m_laserShader->setUniform("u_texture", *m_laserTexture);
+    m_laserShader->setUniform("u_resolution", sf::Glsl::Vec2{ m_engine->GetWindowSize().x, m_engine->GetWindowSize().y });
+
+    m_baseStats = shipData.at("base_stats");
+
     // Setup death animation
+    auto deathAtlas = rm.LoadTextureAtlas(shipData.at("death_anim").ToString(), shipData.at("death_anim_name").ToString());
+    m_deathAnimation = std::make_shared<shak::Animation>(deathAtlas, 2.f);
     this->AddChild(m_deathAnimation);
     m_deathAnimation->SetFollowParent(false);
 
@@ -72,23 +79,65 @@ void Ship::Awake()
     m_aimSprite->SetZIndex(0);
     this->AddChild(m_aimSprite);
 
+    // Setup initial base stats
+    m_speed = m_baseStats.at("speed").ToFloat();
+    m_damage = m_baseStats.at("damage").ToFloat();
+    auto maxHealth = m_baseStats.at("health").ToFloat();
 
     std::shared_ptr<Health> health = this->AddComponent<Health>();
-    health->SetMaxHealth(50000.f);
+    health->SetMaxHealth(maxHealth);
     health->OnDamage.Add(std::bind(&Ship::SpawnDamageNumber, this, std::placeholders::_1));
     health->OnDeath.Add(std::bind(&Ship::DisableAimSprite, this));
     health->OnDeath.Add(std::bind(&Ship::PlayDeathAnimation, this));
     health->OnDeath.Add(std::bind(&Ship::ResetHealth, this));
+
+    // Setup abilities
+    auto as = AddComponent<AbilitySystem>();
+    as->AddAbility<TestAbility>("TestAbility");
 }
 
 void Ship::Update(float dt)
 {
+    if (m_controlledByPlayer)
+        UpdatePlayerMovementDestination();
+    else
+        UpdateAIMovementDestination();
+
+    this->UpdateDirection();
+    this->UpdateLookDirection();
+    this->UpdateTextureCoords();
     if (m_distanceToDestination > 10.f)
     {
         const auto offset = m_direction * m_speed * dt;
         this->move(offset);
         m_distanceToDestination -= offset.length();
     }
+
+    // Shader uniforms
+    m_laserShader->setUniform("u_time", m_engine->GetTime());
+}
+
+void Ship::HandleInput(const sf::Event& event)
+{
+}
+
+void Ship::SetTarget(const std::shared_ptr<Ship>& target)
+{
+    if (m_target)
+    {
+        if (target->Id == m_target->Id)
+            return;
+        else
+        {
+            // Stop shooting and deactivate aim
+            m_shooting = false;
+            m_target->ToggleAimSprite(false);
+        }
+    }
+
+    m_target = target;
+    m_target->ToggleAimSprite(true);
+    m_targetWasSelected = true;
 }
 
 int Ship::GetTextureByDirection() const
@@ -135,9 +184,14 @@ void Ship::UpdateTextureCoords()
     (*m_vertices)[3].texCoords = coords.bottomRight;
 }
 
-void Ship::SetTarget(const std::shared_ptr<Ship>& target)
+void Ship::UpdatePlayerMovementDestination()
 {
-    m_target = target;
+
+}
+
+void Ship::UpdateAIMovementDestination()
+{
+
 }
 
 void Ship::ToggleAimSprite(bool show)

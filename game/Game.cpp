@@ -38,11 +38,24 @@ void game()
         // camera1->SetBackgroundSize({ (float)(bgsize.x * 100), (float)(bgsize.y * 100) });
 
 
-        auto player = engine->AddGameObject<Player>(goliathPlus, laserTxt, laserSh, explosionAtlas);
+        std::ifstream file("assets/json/ships/DPS.json");
+        if (!file.is_open()) {
+            std::cerr << "Failed to open file.\n";
+        }
 
-        player->AddChild(camera1);
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        std::string content = buffer.str();
 
-        camera1->move(player->GetVertexArray()->getBounds().size / 2.f);
+        json::JSON jsonData = json::JSON::Load(content);
+        auto playerShip = std::make_shared<Ship>(jsonData);
+        auto player = engine->AddGameObject<PlayerObj>();
+        player->SetShip(playerShip);
+        // auto player = engine->AddGameObject<Player>(goliathPlus, laserTxt, laserSh, explosionAtlas);
+
+        playerShip->AddChild(camera1);
+
+        camera1->move(playerShip->GetVertexArray()->getBounds().size / 2.f);
         // auto chicken = rm.LoadTexture("assets/textures/abstract1.png", "chicken", true, true);
         // auto psShader = rm.LoadShader("", "assets/shaders/laserShot.fs", "particle");
         // psShader->setUniform("u_texture", *chicken);
@@ -62,14 +75,14 @@ void game()
 
         // for (int i = 0; i < 3; i++)
         // {
-        //     auto alien = engine->AddGameObject<Alien>(goliathPlus, player, explosionAtlas);
+        //     auto alien = engine->AddGameObject<Alien>(jsonData, player);
         //     alien->Name = "Alien" + std::to_string(i);
         // }
 
         auto rocketTxt = rm.LoadTexture("assets/textures/rocket.png", "rocket");
         auto rocketShd = rm.LoadShader("", "assets/shaders/rocket.fs", "rocket");
         auto rocket = engine->AddGameObject<Rocket>(rocketTxt, rocketShd);
-        rocket->Init({ 0.f, 0.f }, player);
+        rocket->Init({ 0.f, 0.f }, playerShip);
 
         // engine->AddGameObject<TestGO>();
 
@@ -100,14 +113,30 @@ void ShaderTest()
     engine->Start();
 }
 
-// #include "../StripTrailExample.h"
-// #include "../LineTrailExample.h"
+#include "JSON.h"
+
+int jsontest() {
+    std::ifstream file("assets/json/ships/DPS.json");
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file.\n";
+        return 1;
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string content = buffer.str();
+
+    json::JSON jsonData = json::JSON::Load(content);
+    std::cout << jsonData.dump() << std::endl;
+
+    return 0;
+}
 
 int main()
 {
     game();
     // ShaderTest();
-    // StripTrailExample();
-    // LineTrailExample();
+    // jsontest();
+
     return 0;
 }

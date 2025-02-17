@@ -9,8 +9,10 @@
 #include "TrailRenderer.h"
 #include "ParticleSystem.h"
 
-Player::Player(std::shared_ptr<shak::TextureAtlas> atlas, std::shared_ptr<sf::Texture> laserTexture, std::shared_ptr<sf::Shader> laserShader, std::shared_ptr<shak::TextureAtlas> deathAnimation)
-    : Ship(atlas, { { 75.f, -31.f }, { 15.f, -26.f }, { 75.f, +41.f }, { 16.f, +23.f } }, deathAnimation), m_laserTexture(laserTexture), m_laserShader(laserShader)
+
+
+Player::Player(const json::JSON& shipData)
+    : Ship(shipData)
 {
     Name = "Player";
 }
@@ -146,17 +148,6 @@ void Player::Update(float dt)
         m_totalDamage += dmg;
         m_dps = m_totalDamage / m_dpsTimer;
     }
-
-    // if (fcount % 100 == 0.f)
-    // {
-    //     auto vec = m_engine->FindGameObjectsByType<Ship>();
-    //     for (auto& ship : vec)
-    //     {
-    //         if (ship->Name == "Player")
-    //             continue;
-    //         std::dynamic_pointer_cast<Ship>(ship)->TakeDamage(m_damage + std::rand() % 10000);
-    //     }
-    // }
 
     if (!m_shooting)
         m_lookAtTarget = false;

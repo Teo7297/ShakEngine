@@ -29,6 +29,7 @@ namespace shak
         void scale(sf::Vector2f factor);
 
         void setOrigin(const sf::Vector2f& origin);
+        void CenterOrigin();
 
         // Children
         void AddChild(const std::shared_ptr<GameObject>& child);
@@ -98,6 +99,7 @@ namespace shak
 
         void SetVertexArray(const std::shared_ptr<sf::VertexArray> va) { m_vertices = va; }
         std::shared_ptr<sf::VertexArray> GetVertexArray() { return m_vertices; }
+        void InitQuadVertexArray(sf::Vector2f size, sf::Color color);
 
         void SetTexture(const std::shared_ptr<sf::Texture> texture) { m_texture = texture; }
         std::shared_ptr<sf::Texture> GetTexture() { return m_texture; }

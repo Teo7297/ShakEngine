@@ -140,6 +140,11 @@ namespace shak
         this->move(origin);
     }
 
+    void GameObject::CenterOrigin()
+    {
+        this->setOrigin(m_vertices->getBounds().getCenter());
+    }
+
     void GameObject::AddChild(const GameObjectPtr& child)
     {
         if (m_children.contains(child->Id))
@@ -234,6 +239,19 @@ namespace shak
         for (const auto& [id, comp] : m_components)
             result.emplace_back(comp);
         return result;
+    }
+
+    void GameObject::InitQuadVertexArray(sf::Vector2f size, sf::Color color)
+    {
+        m_vertices = std::make_shared<sf::VertexArray>(sf::PrimitiveType::TriangleStrip, 4);
+        (*m_vertices)[0].position = sf::Vector2f(0.f, 0.f);
+        (*m_vertices)[1].position = sf::Vector2f(0.f, 250.f);
+        (*m_vertices)[2].position = sf::Vector2f(250.f, 0.f);
+        (*m_vertices)[3].position = sf::Vector2f(250.f, 250.f);
+        (*m_vertices)[0].color = sf::Color::White;
+        (*m_vertices)[1].color = sf::Color::White;
+        (*m_vertices)[2].color = sf::Color::White;
+        (*m_vertices)[3].color = sf::Color::White;
     }
 
     void GameObject::SetColor(const sf::Color& color) const
