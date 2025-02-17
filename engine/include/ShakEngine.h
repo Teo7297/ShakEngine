@@ -60,12 +60,6 @@ namespace shak
 
         float GetTime();
 
-        void TestQuadtree()
-        {
-            auto c = m_cameras.at("camera1")->GetView();
-            m_scene->TestQuadtree({ c->getCenter() - sf::Vector2f{1920.f, 1080.f} / 2.f, {1920.f, 1080.f} });
-        }
-
     private:
         // Private constructor to prevent instantiation
         ShakEngine();
