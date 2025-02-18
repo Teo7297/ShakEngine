@@ -1,5 +1,6 @@
 #include "Ship.h"
 #include "components/Health.h"
+#include "components/Energy.h"
 #include "components/AbilitySystem.h"
 
 #define _USE_MATH_DEFINES
@@ -22,6 +23,8 @@ Ship::Ship(const json::JSON& shipData)
     m_laserIndex{ 0 },
     m_lookAtTarget{ false },
     m_targetWasSelected{ false },
+    m_laserShooting{ false },
+    m_isAutoAttacking{ false },
     m_baseStats{ },
     m_speed{ 0.f },
     m_damage{ 0.f },
@@ -75,17 +78,34 @@ void Ship::Awake()
     // Setup initial base stats
     m_speed = m_baseStats.at("speed").ToFloat();
     m_damage = m_baseStats.at("damage").ToFloat();
-    auto maxHealth = m_baseStats.at("health").ToFloat();
 
+    auto maxHealth = m_baseStats.at("health").ToFloat();
+    auto healthRegen = m_baseStats.at("health_regen").ToFloat();
     std::shared_ptr<Health> health = this->AddComponent<Health>();
     health->SetMaxHealth(maxHealth);
-    health->OnDamage.Add(std::bind(&Ship::SpawnDamageNumber, this, std::placeholders::_1));
-    health->OnDeath.Add(std::bind(&Ship::DisableAimSprite, this));
-    health->OnDeath.Add(std::bind(&Ship::PlayDeathAnimation, this));
-    health->OnDeath.Add(std::bind(&Ship::ResetHealth, this));
+    health->SetHealthRegen(healthRegen);
+    health->OnDamage += std::bind(&Ship::SpawnDamageNumber, this, std::placeholders::_1);
+    health->OnDeath += std::bind(&Ship::DisableAimSprite, this);
+    health->OnDeath += std::bind(&Ship::PlayDeathAnimation, this);
+    health->OnDeath += std::bind(&Ship::ResetHealth, this);
 
-    // Setup abilities
     AddComponent<AbilitySystem>();
+
+    auto maxEnergy = m_baseStats.at("energy").ToFloat();
+    auto energyRegen = m_baseStats.at("energy_regen").ToFloat();
+    std::shared_ptr<Energy> energy = this->AddComponent<Energy>();
+    energy->SetMaxEnergy(maxEnergy);
+    energy->SetEnergyRegen(energyRegen);
+
+    OnAutoAttackStarted += [this](const GameObjectPtr& target)
+        {
+            m_isAutoAttacking = true;
+        };
+    OnAutoAttackStopped += [this]()
+        {
+            m_isAutoAttacking = false;
+        };
+
 }
 
 void Ship::Update(float dt)
@@ -119,6 +139,7 @@ void Ship::SetTarget(const std::shared_ptr<Ship>& target)
     }
 
     m_target = target;
+    OnTargetChanged();
     m_target->ToggleAimSprite(true);
     m_targetWasSelected = true;
 }

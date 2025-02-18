@@ -25,3 +25,14 @@ void AbilitySystem::UseAbility(const std::string& abilityName, const GameObjectP
         OnAbilityUsed(abilityName);
     }
 }
+
+void AbilitySystem::ToggleAbility(const std::string& abilityName, const GameObjectPtr& target, const sf::Vector2f& targetPos)
+{
+    auto it = m_abilities.find(abilityName);
+    if (it != m_abilities.end())
+    {
+        bool activated = it->second->Toggle(target, targetPos);
+        if (activated)
+            OnAbilityUsed(abilityName);
+    }
+}

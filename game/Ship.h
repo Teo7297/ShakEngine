@@ -32,10 +32,15 @@ public:
     void ResetTargetWasSelected() { m_targetWasSelected = false; }
     json::JSON GetShipData() const { return m_shipData; }
     void SetLookAtTarget(bool lookAtTarget) { m_lookAtTarget = lookAtTarget; }
+    void StartLaserAttack() { m_laserShooting = true; }
+    void StopLaserAttack() { m_laserShooting = false; }
+    bool IsLaserShooting() const { return m_laserShooting; }
+    bool IsAutoAttacking() const { return m_isAutoAttacking; }
 
     // EVENTS
     shak::Event<const GameObjectPtr&> OnAutoAttackStarted;
     shak::Event<> OnAutoAttackStopped;
+    shak::Event<> OnTargetChanged;
 
 protected:
     int GetTextureByDirection() const;
@@ -74,6 +79,8 @@ protected:
 
     bool m_lookAtTarget;
     bool m_targetWasSelected;
+    bool m_laserShooting;
+    bool m_isAutoAttacking;
 
     // STATS
     json::JSON m_baseStats;

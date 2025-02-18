@@ -4,6 +4,16 @@ void Health::Awake()
 {
 }
 
+void Health::Update(float dt)
+{
+    m_regenTimer += dt;
+    if (m_regenTimer >= m_regenCooldown)
+    {
+        m_regenTimer = 0.f;
+        this->Heal(m_regenPerSecond);
+    }
+}
+
 void Health::SetHealth(float health)
 {
     m_health = health;

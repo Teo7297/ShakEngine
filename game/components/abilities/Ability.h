@@ -26,6 +26,20 @@ public:
     {
     }
 
+    bool Toggle(const GameObjectPtr& target = nullptr, const sf::Vector2f& targetPos = { 0, 0 })
+    {
+        if (m_isActive)
+        {
+            Deactivate();
+            return false;
+        }
+        else
+        {
+            Activate(target, targetPos);
+            return true;
+        }
+    }
+
     void Activate(const GameObjectPtr& target = nullptr, const sf::Vector2f& targetPos = { 0, 0 })
     {
         if (m_isActive || m_currentCooldown > 0.0f)

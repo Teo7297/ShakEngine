@@ -26,6 +26,7 @@ public:
 
     void RemoveAbility(const std::string& abilityName);
     void UseAbility(const std::string& abilityName, const GameObjectPtr& target = nullptr, const sf::Vector2f& targetPos = { 0, 0 });
+    void ToggleAbility(const std::string& abilityName, const GameObjectPtr& target = nullptr, const sf::Vector2f& targetPos = { 0, 0 });
 
     shak::Event<const std::string&> OnAbilityAdded;
     shak::Event<const std::string&> OnAbilityRemoved;

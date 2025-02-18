@@ -4,7 +4,6 @@
 #include "LaserShot.h"
 #include "GameObjectPool.h"
 
-class AbilitySystem;
 class Ship;
 class LaserDPS : public Ability
 {

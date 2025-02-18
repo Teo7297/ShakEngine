@@ -14,12 +14,12 @@ public:
         Large
     };
 
-    LaserShot(const sf::Color laserColor, const Size laserWidth, bool isRainbow, const std::shared_ptr<sf::Texture>& texture, const std::shared_ptr<sf::Shader>& shader = nullptr);
+    LaserShot(const std::shared_ptr<sf::Texture>& texture, const std::shared_ptr<sf::Shader>& shader = nullptr);
     ~LaserShot() = default;
 
     void Update(float dt) override;
 
-    void Init(const sf::Vector2f& destination);
+    void Init(const sf::Vector2f& destination, const sf::Color laserColor, const Size laserWidth, bool isRainbow);
 
 public:
     shak::Event<> OnHit;

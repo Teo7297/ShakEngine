@@ -30,10 +30,10 @@
         "speed": 500.0,
         "crit": 0.1,
         "health": 10000.0,
-        "health-regen": 100.0,
+        "health_regen": 100.0,
         "energy": 1000.0,
-        "energy-regen": 100.0,
-        "max-shield": 20000.0
+        "energy_regen": 100.0,
+        "shield": 20000.0
     },
     "active-abilities": {
         "auto-attack": "laser-dps",

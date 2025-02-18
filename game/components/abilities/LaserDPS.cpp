@@ -1,5 +1,3 @@
-#pragma once
-
 #include "LaserDPS.h"
 #include "components/AbilitySystem.h"
 #include "Ship.h"
@@ -41,20 +39,17 @@ void LaserDPS::ShootLaser()
         return;
     }
 
-    auto shipOwner = (Ship*)m_abilitySystem->GetOwner();
-
-    auto laserShot = m_laserShotPool.Get(sf::Color::Red, LaserShot::Size::Medium, false, m_laserTexture, m_laserShader);
-    laserShot->setPosition(shipOwner->getPosition());
-    laserShot->Init(m_target->getPosition());
+    auto laserShot = m_laserShotPool.Get(m_laserTexture, m_laserShader);
+    laserShot->setPosition(m_shipOwner->getPosition());
+    laserShot->Init(m_target->getPosition(), sf::Color::Red, LaserShot::Size::Medium, false);
     laserShot->OnHit += [this]()
         {
             if (!m_target) return; // target changed while laser was in flight
-            auto shipOwner = (Ship*)m_abilitySystem->GetOwner();
-            float damage = shipOwner->GetShipData().at("base_stats").at("damage").ToFloat();
+            float damage = m_shipOwner->GetShipData().at("base_stats").at("damage").ToFloat();
             m_target->GetComponent<Health>()->TakeDamage(damage);
         };
 
-    shipOwner->AddChild(laserShot);
+    m_shipOwner->AddChild(laserShot);
     laserShot->SetFollowParent(false);
 }
 
