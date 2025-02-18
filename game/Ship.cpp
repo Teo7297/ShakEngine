@@ -1,7 +1,6 @@
 #include "Ship.h"
 #include "components/Health.h"
 #include "components/AbilitySystem.h"
-#include "components/abilities/TestAbility.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -17,20 +16,19 @@ Ship::Ship(const json::JSON& shipData)
     m_distanceToDestination{ 0.f },
     m_destination{ 0.f, 0.f },
     m_damageNumberPool(20),
-    m_laserShotPool(20),
-    m_laserTexture(nullptr),
-    m_laserShader(nullptr),
+    m_shipData{ },
     m_target{ nullptr },
     m_lasers{ },
     m_laserIndex{ 0 },
     m_lookAtTarget{ false },
-    m_shooting{ false },
     m_targetWasSelected{ false },
     m_baseStats{ },
     m_speed{ 0.f },
     m_damage{ 0.f },
     m_deathAnimation{ nullptr }
 {
+    m_shipData = shipData;
+
     auto rm = m_engine->GetResourceManager();
     m_atlas = rm.LoadTextureAtlas(shipData.at("atlas").ToString(), shipData.at("atlas_name").ToString());
     m_atlasTexturesCount = m_atlas->GetCount();
@@ -51,11 +49,6 @@ Ship::Ship(const json::JSON& shipData)
         m_lasers.push_back(laser);
         this->AddChild(laser);
     }
-
-    m_laserTexture = rm.LoadTexture(shipData.at("laser_texture").ToString(), shipData.at("laser_texture_name").ToString());
-    m_laserShader = rm.LoadShader("", shipData.at("laser_shader").ToString(), shipData.at("laser_shader_name").ToString());
-    m_laserShader->setUniform("u_texture", *m_laserTexture);
-    m_laserShader->setUniform("u_resolution", sf::Glsl::Vec2{ m_engine->GetWindowSize().x, m_engine->GetWindowSize().y });
 
     m_baseStats = shipData.at("base_stats");
 
@@ -92,17 +85,11 @@ void Ship::Awake()
     health->OnDeath.Add(std::bind(&Ship::ResetHealth, this));
 
     // Setup abilities
-    auto as = AddComponent<AbilitySystem>();
-    as->AddAbility<TestAbility>("TestAbility");
+    AddComponent<AbilitySystem>();
 }
 
 void Ship::Update(float dt)
 {
-    if (m_controlledByPlayer)
-        UpdatePlayerMovementDestination();
-    else
-        UpdateAIMovementDestination();
-
     this->UpdateDirection();
     this->UpdateLookDirection();
     this->UpdateTextureCoords();
@@ -112,9 +99,6 @@ void Ship::Update(float dt)
         this->move(offset);
         m_distanceToDestination -= offset.length();
     }
-
-    // Shader uniforms
-    m_laserShader->setUniform("u_time", m_engine->GetTime());
 }
 
 void Ship::HandleInput(const sf::Event& event)
@@ -129,9 +113,8 @@ void Ship::SetTarget(const std::shared_ptr<Ship>& target)
             return;
         else
         {
-            // Stop shooting and deactivate aim
-            m_shooting = false;
             m_target->ToggleAimSprite(false);
+            OnAutoAttackStopped();
         }
     }
 
@@ -184,32 +167,9 @@ void Ship::UpdateTextureCoords()
     (*m_vertices)[3].texCoords = coords.bottomRight;
 }
 
-void Ship::UpdatePlayerMovementDestination()
-{
-
-}
-
-void Ship::UpdateAIMovementDestination()
-{
-
-}
-
 void Ship::ToggleAimSprite(bool show)
 {
     m_aimSprite->SetTransparency(show ? 255 : 0);
-}
-
-void Ship::OnLaserHit()
-{
-    if (!m_target)
-        return;
-
-    auto health = m_target->GetComponent<Health>();
-    float dmg = m_damage + std::rand() % 10000;
-    if (health)
-    {
-        float dealtDamage = health->TakeDamage(dmg);
-    }
 }
 
 // Events

@@ -20,4 +20,5 @@ public:
 private:
     shak::ShakEngine* m_engine;
     class Ship* m_ownerShip;
+    std::shared_ptr<class AbilitySystem> m_abilitySystem;
 };

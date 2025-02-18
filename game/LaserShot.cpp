@@ -1,7 +1,12 @@
 #include "LaserShot.h"
+#include "MathExtensions.h"
+#include "ShakEngine.h"
 
 LaserShot::LaserShot(const sf::Color laserColor, const Size laserWidth, bool isRainbow, const std::shared_ptr<sf::Texture>& texture, const std::shared_ptr<sf::Shader>& shader)
     : shak::Sprite(texture, shader)
+    , m_speed(5000.f)
+    , m_direction(0.f, 0.f)
+    , m_targetDistance(0.f)
 {
     m_shader->setUniform("u_laserColor", sf::Glsl::Vec4(laserColor));
 
@@ -24,22 +29,29 @@ LaserShot::LaserShot(const sf::Color laserColor, const Size laserWidth, bool isR
 
 void LaserShot::Update(float dt)
 {
-    auto movement = m_direction * m_speed * dt;
+    auto movement = m_speed * m_direction * dt;
+    m_targetDistance -= movement.length();
     this->move(movement);
 
-    m_targetDistance -= movement.length();
     if (m_targetDistance <= 0.f)
     {
         OnHit();
         this->SetActive(false);
-        OnHit.Reset();
+        OnHit.Reset(); // LaserShots are expected to be reused, so we reset the event
+        return;
     }
+
+    // Shader uniforms
+    m_shader->setUniform("u_time", shak::ShakEngine::GetInstance().GetTime()); // TODO: store as member
+
     shak::Sprite::Update(dt);
 }
 
-void LaserShot::Init(const sf::Vector2f& target, sf::Angle angle)
+void LaserShot::Init(const sf::Vector2f& destination)
 {
-    m_targetDistance = (target - this->getPosition()).length();
-    m_direction = sf::Vector2f(1.f, 0.f).rotatedBy(angle);
+    auto diff = destination - this->getPosition();
+    m_targetDistance = diff.length();
+    m_direction = diff / m_targetDistance; // normalize
+    auto angle = m_direction.angle();
     this->setRotation(angle);
 }

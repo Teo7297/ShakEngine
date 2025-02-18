@@ -26,8 +26,30 @@
         }
     ],
     "base_stats": {
-        "health": 10000.0,
         "damage": 1000.0,
-        "speed": 500.0
+        "speed": 500.0,
+        "crit": 0.1,
+        "health": 10000.0,
+        "health-regen": 100.0,
+        "energy": 1000.0,
+        "energy-regen": 100.0,
+        "max-shield": 20000.0
+    },
+    "active-abilities": {
+        "auto-attack": "laser-dps",
+        "ability1": "machine-gun",
+        "ability2": "health-drain",
+        "ability3": "cloak",
+        "ability4": "boost",
+        "ability5": "fire-shower",
+        "ability6": "crit-missile",
+        "ultimate": "deadly-robots"
+    },
+    "passive-abilities": {
+        "ability1": "crit-shield",
+        "ability2": "crit-damage",
+        "ability3": "energy-boost",
+        "ability4": "flame-burst",
+        "ability5": "singularity"
     }
 }

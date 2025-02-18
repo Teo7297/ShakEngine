@@ -27,8 +27,15 @@ public:
 
     void SetDestination(const sf::Vector2f& destination) { m_destination = destination; }
     void SetTarget(const std::shared_ptr<Ship>& target);
+    std::shared_ptr<Ship> GetTarget() const { return m_target; }
     bool GetTargetWasSelected() const { return m_targetWasSelected; }
     void ResetTargetWasSelected() { m_targetWasSelected = false; }
+    json::JSON GetShipData() const { return m_shipData; }
+    void SetLookAtTarget(bool lookAtTarget) { m_lookAtTarget = lookAtTarget; }
+
+    // EVENTS
+    shak::Event<const GameObjectPtr&> OnAutoAttackStarted;
+    shak::Event<> OnAutoAttackStopped;
 
 protected:
     int GetTextureByDirection() const;
@@ -36,13 +43,7 @@ protected:
     void UpdateLookDirection();
     void UpdateTextureCoords();
 
-    void UpdatePlayerMovementDestination();
-    void UpdateAIMovementDestination();
-
     virtual float Shoot() { return 0.f; };
-
-    // CALLBACKS
-    virtual void OnLaserHit();
 
 private:
     void SpawnDamageNumber(float damage);
@@ -62,9 +63,8 @@ protected:
     float m_distanceToDestination;
 
     shak::GameObjectPool<DamageNumber> m_damageNumberPool;
-    shak::GameObjectPool<LaserShot> m_laserShotPool;
-    std::shared_ptr<sf::Texture> m_laserTexture;
-    std::shared_ptr<sf::Shader> m_laserShader;
+
+    json::JSON m_shipData;
 
     std::shared_ptr<Ship> m_target;
 
@@ -73,7 +73,6 @@ protected:
     unsigned int m_laserIndex;
 
     bool m_lookAtTarget;
-    bool m_shooting;
     bool m_targetWasSelected;
 
     // STATS

@@ -16,12 +16,12 @@ void AbilitySystem::RemoveAbility(const std::string& abilityName)
     OnAbilityRemoved(abilityName);
 }
 
-void AbilitySystem::UseAbility(const std::string& abilityName)
+void AbilitySystem::UseAbility(const std::string& abilityName, const GameObjectPtr& target, const sf::Vector2f& targetPos)
 {
     auto it = m_abilities.find(abilityName);
     if (it != m_abilities.end())
     {
-        it->second->Activate();
+        it->second->Activate(target, targetPos);
         OnAbilityUsed(abilityName);
     }
 }

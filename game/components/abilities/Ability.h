@@ -2,6 +2,8 @@
 
 #include "ShakEngine.h"
 #include "ShakEvent.h"
+
+class AbilitySystem;
 class Ability
 {
 protected:
@@ -12,7 +14,7 @@ protected:
     };
 
 public:
-    Ability(const std::string& name, float cooldown, float duration, Type type)
+    Ability(const std::string& name, float cooldown, float duration, Type type, AbilitySystem* abilitySystem)
         : m_name(name)
         , m_cooldown(cooldown)
         , m_currentCooldown(0.0f)
@@ -20,10 +22,11 @@ public:
         , m_currentDuration(0.0f)
         , m_isActive(type == Type::Passive)
         , m_type(type)
+        , m_abilitySystem(abilitySystem)
     {
     }
 
-    void Activate()
+    void Activate(const GameObjectPtr& target = nullptr, const sf::Vector2f& targetPos = { 0, 0 })
     {
         if (m_isActive || m_currentCooldown > 0.0f)
             return;
@@ -35,7 +38,7 @@ public:
         }
 
         m_currentCooldown = m_cooldown;
-        OnActivated();
+        OnActivated(target, targetPos);
     }
 
     void Deactivate()
@@ -73,7 +76,7 @@ public:
 public:
     // EVENTS
     shak::Event<> OnCooldown;
-    shak::Event<> OnActivated;
+    shak::Event<const GameObjectPtr&, const sf::Vector2f&> OnActivated;
     shak::Event<> OnDeactivated;
 
 protected:
@@ -82,5 +85,5 @@ protected:
     float m_cooldown, m_currentCooldown;
     float m_duration, m_currentDuration;
     Type m_type;
-
+    AbilitySystem* m_abilitySystem;
 };

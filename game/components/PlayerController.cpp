@@ -1,11 +1,15 @@
 #include "PlayerController.h"
 #include "Ship.h"
+#include "AbilitySystem.h"
+#include "components/abilities/LaserDPS.h"
 
 void PlayerController::Awake()
 {
     m_owner->Name = "Player";
     m_engine = &shak::ShakEngine::GetInstance();
     m_ownerShip = (Ship*)m_owner;
+    m_abilitySystem = m_owner->GetComponent<AbilitySystem>();
+    m_abilitySystem->AddAbility<LaserDPS>("AutoAttack");
 }
 
 void PlayerController::Update(float dt)
@@ -36,7 +40,12 @@ void PlayerController::HandleInput(const sf::Event& event)
 {
     if (auto key = event.getIf<sf::Event::KeyPressed>())
     {
-
+        if (key->code == sf::Keyboard::Key::Space)
+        {
+            m_ownerShip->OnAutoAttackStarted(m_ownerShip->GetTarget());
+        }
+        if (key->code == sf::Keyboard::Key::R)
+            m_ownerShip->OnAutoAttackStopped();
     }
 
     else if (auto key = event.getIf<sf::Event::MouseButtonPressed>())

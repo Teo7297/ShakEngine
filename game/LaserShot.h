@@ -7,12 +7,6 @@ class LaserShot : public shak::Sprite
 {
 public:
 
-    struct HitInfo
-    {
-        float damage;
-        bool killed;
-    };
-
     enum class Size
     {
         Small,
@@ -25,13 +19,13 @@ public:
 
     void Update(float dt) override;
 
-    void Init(const sf::Vector2f& target, sf::Angle angle);
+    void Init(const sf::Vector2f& destination);
 
 public:
     shak::Event<> OnHit;
 
 private:
-    float m_speed = 5000.f;
-    sf::Vector2f m_direction = { 0.f, -1.f };
-    float m_targetDistance = 0.f;
+    float m_speed;
+    sf::Vector2f m_direction;
+    float m_targetDistance;
 };

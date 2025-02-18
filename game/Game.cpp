@@ -54,10 +54,10 @@ void game()
             alien->Name = "Alien" + std::to_string(i);
         }
 
-        auto rocketTxt = rm.LoadTexture("assets/textures/rocket.png", "rocket");
-        auto rocketShd = rm.LoadShader("", "assets/shaders/rocket.fs", "rocket");
-        auto rocket = engine->AddGameObject<Rocket>(rocketTxt, rocketShd);
-        rocket->Init({ 0.f, 0.f }, player);
+        // auto rocketTxt = rm.LoadTexture("assets/textures/rocket.png", "rocket");
+        // auto rocketShd = rm.LoadShader("", "assets/shaders/rocket.fs", "rocket");
+        // auto rocket = engine->AddGameObject<Rocket>(rocketTxt, rocketShd);
+        // rocket->Init({ 0.f, 0.f }, player);
     }
 
     engine->Start();
