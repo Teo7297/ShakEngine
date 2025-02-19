@@ -3,6 +3,7 @@
 #include "EngineDefines.h"
 #include "TextureAtlas.h"
 #include "ShakSprite.h"
+#include "ShakEvent.h"
 
 namespace shak
 {
@@ -18,6 +19,8 @@ namespace shak
         void Resume();
 
         void Update(float dt) override;
+
+        shak::Event<> OnAnimationEnd;
 
     private:
         void SetTextureCoordinates(const shak::TextureCoordinates& coords) const;

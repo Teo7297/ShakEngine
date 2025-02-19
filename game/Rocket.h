@@ -5,6 +5,11 @@
 #include "Ship.h"
 #include "ShakEvent.h"
 
+namespace shak
+{
+    class ParticleSystem;
+}
+
 class Rocket : public shak::Sprite
 {
 public:
@@ -16,7 +21,7 @@ public:
     void Update(float dt) override;
 
 public:
-    shak::Event<> OnHit;
+    shak::Event<const std::shared_ptr<Ship>&> OnHit;
 
 private:
     sf::Vector2f m_start, m_destination;
@@ -25,6 +30,7 @@ private:
     float m_t;
 
     std::shared_ptr<shak::Animation> m_explosion;
+    std::shared_ptr<shak::ParticleSystem> m_ps;
 
     std::shared_ptr<Ship> m_target;
 };

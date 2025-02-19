@@ -10,20 +10,28 @@ Rocket::Rocket(const std::shared_ptr<sf::Texture>& texture, const std::shared_pt
     , m_previousPos(this->getPosition())
     , m_t(0.f)
     , m_explosion(nullptr)
+    , m_ps(nullptr)
     , m_target(nullptr)
 {
     // Setup explosion animation
     auto explosionAtlas = shak::ShakEngine::GetInstance().GetResourceManager().LoadTextureAtlas("assets/animations/explosion.atlas", "deathExplosion");
-    m_explosion = std::make_shared<shak::Animation>(explosionAtlas, 2.f);
-    this->AddChild(m_explosion);
-    m_explosion->SetFollowParent(false);
+    m_explosion = m_engine->AddGameObject<shak::Animation>(explosionAtlas, 2.f);
 }
 
 void Rocket::Init(const sf::Vector2f& start, const std::shared_ptr<Ship>& target)
 {
     m_start = start;
     m_target = target;
-    m_spline = std::make_unique<shak::Spline>(m_start, m_start + sf::Vector2f{ 0.f, -300.f }, m_start + sf::Vector2f{ 250.f, 400.f }, m_target->getPosition());
+    auto dir = (m_target->getPosition() - m_start).normalized();
+    auto perp = dir.rotatedBy(sf::degrees(90.f));
+    bool invert = std::rand() % 2;
+    float intensity = invert ? -300.f : 300.f;
+    sf::Vector2f p1 = m_start + perp * intensity;
+    sf::Vector2f p2 = m_target->getPosition() + perp * intensity;
+    m_spline = std::make_unique<shak::Spline>(m_start, p1, p2, m_target->getPosition());
+    if (m_ps)
+        m_ps->SetSpawnActive(true);
+    this->SetActive(true);
 }
 
 void Rocket::Awake()
@@ -41,15 +49,15 @@ void Rocket::Awake()
     auto back = sf::Vector2f{ 0, 1 };
     auto psMinDir = back.rotatedBy(sf::degrees(-10));
     auto psMaxDir = back.rotatedBy(sf::degrees(10));
-    auto ps = std::make_shared<shak::ParticleSystem>(shak::Particle::Type::Point, 900, 0.f);
-    ps->SetSpawnRate(300.f);
-    ps->SetLifeTimes(0.2f, 0.5f);
-    ps->SetDirections(psMinDir, psMaxDir);
-    ps->SetSpeeds(100.f, 200.f);
-    ps->SetColors(sf::Color::Red, sf::Color::Yellow);
-    ps->SetFade(false);
-    ps->setPosition(this->getPosition());
-    this->AddChild(ps);
+    m_ps = m_engine->AddGameObject<shak::ParticleSystem>(shak::Particle::Type::Point, 900, 0.f);
+    m_ps->SetSpawnRate(300.f);
+    m_ps->SetLifeTimes(0.2f, 0.5f);
+    m_ps->SetDirections(psMinDir, psMaxDir);
+    m_ps->SetSpeeds(100.f, 200.f);
+    m_ps->SetColors(sf::Color::Red, sf::Color::Yellow);
+    m_ps->SetFade(false);
+    m_ps->setPosition(this->getPosition());
+    m_ps->SetSpawnActive(true);
 }
 
 void Rocket::Update(float dt)
@@ -61,12 +69,12 @@ void Rocket::Update(float dt)
     m_t += dt;
     if (m_t > 1.f)
     {
+        OnHit(m_target);
         m_explosion->setPosition(this->getPosition());
         m_explosion->Play();
-
         this->SetActive(false);
+        m_ps->SetSpawnActive(false);
         m_t = 0.f;
-        this->SetActive(true);
     }
 
     auto pos = m_spline->GetPoint(m_t);
@@ -78,4 +86,5 @@ void Rocket::Update(float dt)
 
     m_previousPos = pos;
     this->setPosition(pos);
+    m_ps->setPosition(pos);
 }

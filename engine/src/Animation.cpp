@@ -47,6 +47,7 @@ namespace shak
             m_time = 0.f;
             this->SetTransparency(0);
             m_playing = false;
+            OnAnimationEnd();
             return;
         }
 

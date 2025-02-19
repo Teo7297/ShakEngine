@@ -4,6 +4,7 @@
 #include "components/abilities/LaserDPS.h"
 #include "components/abilities/MachineGun.h"
 #include "components/abilities/LifeDrain.h"
+#include "components/abilities/CritRocket.h"
 
 void PlayerController::Awake()
 {
@@ -14,6 +15,7 @@ void PlayerController::Awake()
     m_abilitySystem->AddAbility<LaserDPS>("AutoAttack");
     m_abilitySystem->AddAbility<MachineGun>("MachineGun");
     m_abilitySystem->AddAbility<LifeDrain>("LifeDrain");
+    m_abilitySystem->AddAbility<CritRocket>("CritRocket");
 }
 
 void PlayerController::Update(float dt)
@@ -57,6 +59,9 @@ void PlayerController::HandleInput(const sf::Event& event)
 
         if (key->code == sf::Keyboard::Key::Num2)
             m_abilitySystem->UseAbility("LifeDrain");
+
+        if (key->code == sf::Keyboard::Key::Num3)
+            m_abilitySystem->UseAbility("CritRocket", m_ownerShip->GetTarget());
     }
 
     else if (auto key = event.getIf<sf::Event::MouseButtonPressed>())

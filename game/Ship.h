@@ -43,6 +43,7 @@ public:
     shak::Event<> OnTargetChanged;
     shak::Event<float> OnDamageDealt;
     shak::Event<float> OnHealReceived;
+    shak::Event<> OnCriticalHitDealt;
 
 protected:
     int GetTextureByDirection() const;
