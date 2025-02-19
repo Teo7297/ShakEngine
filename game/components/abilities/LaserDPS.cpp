@@ -2,17 +2,22 @@
 #include "components/AbilitySystem.h"
 #include "Ship.h"
 #include "components/Health.h"
+#include "components/Energy.h"
 
 LaserDPS::LaserDPS(AbilitySystem* abilitySystem)
-    : Ability("LaserDPS", 0.75f, 0.0f, Type::Active, abilitySystem)
+    : Ability("LaserDPS", 0.75f, 0.0f, 0.f, Type::Active, abilitySystem)
     , m_shipOwner(nullptr)
     , m_shooting(false)
     , m_target(nullptr)
     , m_laserShotPool(10)
     , m_laserTexture(nullptr)
     , m_laserShader(nullptr)
+    , m_energyComponent(nullptr)
+    , m_energyPerShot(100.f)
 {
     m_shipOwner = (Ship*)m_abilitySystem->GetOwner();
+
+    m_energyComponent = m_shipOwner->GetComponent<Energy>();
 
     SetupCallbacks();
     RegisterCallbacks();
@@ -46,7 +51,9 @@ void LaserDPS::ShootLaser()
         {
             if (!m_target) return; // target changed while laser was in flight
             float damage = m_shipOwner->GetShipData().at("base_stats").at("damage").ToFloat();
-            m_target->GetComponent<Health>()->TakeDamage(damage);
+            float dealt = m_target->GetComponent<Health>()->TakeDamage(damage);
+            m_shipOwner->OnDamageDealt(dealt);
+            m_energyComponent->GainEnergy(m_energyPerShot);
         };
 
     m_shipOwner->AddChild(laserShot);

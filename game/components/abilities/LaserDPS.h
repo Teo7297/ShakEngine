@@ -4,6 +4,7 @@
 #include "LaserShot.h"
 #include "GameObjectPool.h"
 
+class Energy;
 class Ship;
 class LaserDPS : public Ability
 {
@@ -33,4 +34,6 @@ private:
     shak::GameObjectPool<LaserShot> m_laserShotPool;
     std::shared_ptr<sf::Texture> m_laserTexture;
     std::shared_ptr<sf::Shader> m_laserShader;
+    std::shared_ptr<Energy> m_energyComponent;
+    float m_energyPerShot;
 };

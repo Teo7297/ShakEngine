@@ -42,4 +42,12 @@ namespace shak
             static_cast<uint8_t>((1 - t) * a.a + t * b.a)
         );
     }
+
+    inline sf::Vector2f randVec2f(float min, float max)
+    {
+        return sf::Vector2f(
+            std::rand() % static_cast<int>(max - min) + min,
+            std::rand() % static_cast<int>(max - min) + min
+        );
+    }
 }

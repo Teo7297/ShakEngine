@@ -3,23 +3,18 @@
 #include "Ship.h"
 #include "components/Health.h"
 #include "components/Energy.h"
+#include "MathExtensions.h"
 
 MachineGun::MachineGun(AbilitySystem* abilitySystem)
-    : Ability("MachineGun", 0.0f, 999999.0f, Type::Active, abilitySystem)
-    , m_energyComponent(nullptr)
-    , m_shipOwner(nullptr)
+    : Ability("MachineGun", 1.0f, 999999.0f, 0.f, Type::Active, abilitySystem)
     , m_target(nullptr)
     , m_laserShotPool(10)
     , m_laserTexture(nullptr)
     , m_laserShader(nullptr)
     , m_projectileTimer(0.f)
-    , m_projectileCooldown(1.f / 5.f)
+    , m_projectileCooldown(1.f / 20.f)
     , m_costPerShot(50.f)
 {
-    m_shipOwner = (Ship*)m_abilitySystem->GetOwner();
-
-    m_energyComponent = m_shipOwner->GetComponent<Energy>();
-
     SetupCallbacks();
     RegisterCallbacks();
 
@@ -34,23 +29,27 @@ MachineGun::MachineGun(AbilitySystem* abilitySystem)
 
 void MachineGun::Update(float dt)
 {
-    if (!m_isActive) return;
-    if (!m_target || !m_energyComponent->HasEngouhEnergy(m_costPerShot)) this->Deactivate();
+    if (!m_isActive)
+        return;
+
+    if (!m_target || !m_energy->HasEngouhEnergy(m_costPerShot))
+        this->Deactivate();
 
     m_projectileTimer += dt;
     if (m_projectileTimer >= m_projectileCooldown)
     {
         m_projectileTimer = 0.f;
-        ShootLaser();
+        this->ShootLaser();
+        this->RestartCooldown(); // Always reset the cooldown with casted abilities
     }
 }
 
 void MachineGun::ShootLaser()
 {
-    m_energyComponent->UseEnergy(m_costPerShot);
+    m_energy->UseEnergy(m_costPerShot);
     auto laserShot = m_laserShotPool.Get(m_laserTexture, m_laserShader);
     laserShot->setPosition(m_shipOwner->getPosition());
-    laserShot->Init(m_target->getPosition(), sf::Color::Yellow, LaserShot::Size::Small, false);
+    laserShot->Init(m_target->getPosition() + shak::randVec2f(-50.f, 50.f), sf::Color::Yellow, LaserShot::Size::Small, false);
     laserShot->OnHit += OnLaserHit;
 
     m_shipOwner->AddChild(laserShot);
@@ -82,7 +81,8 @@ void MachineGun::SetupCallbacks()
             if (!m_target) return; // target changed while laser was in flight
             auto shipOwner = (Ship*)m_abilitySystem->GetOwner();
             float damage = shipOwner->GetShipData().at("base_stats").at("damage").ToFloat();
-            m_target->GetComponent<Health>()->TakeDamage(damage);
+            float dealt = m_target->GetComponent<Health>()->TakeDamage(damage);
+            m_shipOwner->OnDamageDealt(dealt);
         };
 
     DeactivateAbility = [this]()

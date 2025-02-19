@@ -36,6 +36,16 @@ float Health::GetMaxHealth() const
     return m_maxHealth;
 }
 
+void Health::SetHealthRegen(float regenPerSecond)
+{
+    m_regenPerSecond = regenPerSecond;
+}
+
+float Health::GetHealthRegen() const
+{
+    return m_regenPerSecond;
+}
+
 float Health::TakeDamage(float damage)
 {
     if (damage > m_health)

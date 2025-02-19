@@ -41,6 +41,8 @@ public:
     shak::Event<const GameObjectPtr&> OnAutoAttackStarted;
     shak::Event<> OnAutoAttackStopped;
     shak::Event<> OnTargetChanged;
+    shak::Event<float> OnDamageDealt;
+    shak::Event<float> OnHealReceived;
 
 protected:
     int GetTextureByDirection() const;

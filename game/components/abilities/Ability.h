@@ -4,6 +4,8 @@
 #include "ShakEvent.h"
 
 class AbilitySystem;
+class Ship;
+class Energy;
 class Ability
 {
 protected:
@@ -14,78 +16,17 @@ protected:
     };
 
 public:
-    Ability(const std::string& name, float cooldown, float duration, Type type, AbilitySystem* abilitySystem)
-        : m_name(name)
-        , m_cooldown(cooldown)
-        , m_currentCooldown(0.0f)
-        , m_duration(duration)
-        , m_currentDuration(0.0f)
-        , m_isActive(type == Type::Passive)
-        , m_type(type)
-        , m_abilitySystem(abilitySystem)
-    {
-    }
+    Ability(const std::string& name, float cooldown, float duration, float activationCost, Type type, AbilitySystem* abilitySystem);
 
-    bool Toggle(const GameObjectPtr& target = nullptr, const sf::Vector2f& targetPos = { 0, 0 })
-    {
-        if (m_isActive)
-        {
-            Deactivate();
-            return false;
-        }
-        else
-        {
-            Activate(target, targetPos);
-            return true;
-        }
-    }
+    bool Toggle(const GameObjectPtr& target = nullptr, const sf::Vector2f& targetPos = { 0, 0 });
 
-    void Activate(const GameObjectPtr& target = nullptr, const sf::Vector2f& targetPos = { 0, 0 })
-    {
-        if (m_isActive || m_currentCooldown > 0.0f)
-            return;
+    void Activate(const GameObjectPtr& target = nullptr, const sf::Vector2f& targetPos = { 0, 0 });
 
-        if (m_duration > 0.f)
-        {
-            m_isActive = true;
-            m_currentDuration = m_duration;
-        }
+    void Deactivate();
 
-        m_currentCooldown = m_cooldown;
-        OnActivated(target, targetPos);
-    }
+    virtual void Update(float dt);
 
-    void Deactivate()
-    {
-        if (!m_isActive)
-            return;
-
-        m_isActive = false;
-        OnDeactivated();
-    }
-
-    virtual void Update(float dt)
-    {
-        if (m_type == Type::Active && m_currentCooldown > 0.0f)
-        {
-            m_currentCooldown -= dt;
-            if (m_currentCooldown <= 0.0f)
-            {
-                m_currentCooldown = 0.0f;
-                OnCooldown();
-            }
-        }
-
-        if (m_type == Type::Active && m_isActive && m_currentDuration > 0.f)
-        {
-            m_currentDuration -= dt;
-            if (m_currentDuration <= 0.f)
-            {
-                m_currentDuration = 0.0f;
-                Deactivate();
-            }
-        }
-    }
+    void RestartCooldown();
 
 public:
     // EVENTS
@@ -98,6 +39,9 @@ protected:
     bool m_isActive;
     float m_cooldown, m_currentCooldown;
     float m_duration, m_currentDuration;
+    float m_activationCost;
     Type m_type;
     AbilitySystem* m_abilitySystem;
+    Ship* m_shipOwner;
+    std::shared_ptr<Energy> m_energy;
 };

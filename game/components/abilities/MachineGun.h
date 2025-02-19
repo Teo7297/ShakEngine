@@ -30,8 +30,6 @@ private:
 
 
 private:
-    Ship* m_shipOwner;
-    std::shared_ptr<Energy> m_energyComponent;
     GameObjectPtr m_target;
     shak::GameObjectPool<LaserShot> m_laserShotPool;
     std::shared_ptr<sf::Texture> m_laserTexture;
