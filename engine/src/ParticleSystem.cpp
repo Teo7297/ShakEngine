@@ -36,7 +36,7 @@ namespace shak
         {
             m_particles[i].id = i;
             m_particles[i].SetVertices(m_vertices, i);
-            InitParticle(i);
+            m_particles[i].active = false;
         }
     }
 
@@ -114,10 +114,6 @@ namespace shak
     {
         auto& p = m_particles[index];
 
-        // auto dir = m_minDir + sf::Vector2f(
-        //     static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (m_maxDir.x - m_minDir.x),
-        //     static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (m_maxDir.y - m_minDir.y)
-        // );
         auto dir = shak::slerp(m_minDir, m_maxDir, static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
         auto speed = m_minSpeed + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (m_maxSpeed - m_minSpeed);
         p.velocity = dir * speed;
@@ -130,12 +126,7 @@ namespace shak
 
         p.maxLifeTime = m_minLifeTime + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (m_maxLifeTime - m_minLifeTime);
 
-        p.startColor =
-        {
-            static_cast<unsigned char>(m_startColor.r + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (m_endColor.r - m_startColor.r)),
-            static_cast<unsigned char>(m_startColor.g + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (m_endColor.g - m_startColor.g)),
-            static_cast<unsigned char>(m_startColor.b + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (m_endColor.b - m_startColor.b))
-        };
+        p.startColor = shak::lerp(m_startColor, m_endColor, static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
 
         p.endColor = p.startColor;
 

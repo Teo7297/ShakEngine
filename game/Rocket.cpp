@@ -87,4 +87,5 @@ void Rocket::Update(float dt)
     m_previousPos = pos;
     this->setPosition(pos);
     m_ps->setPosition(pos);
+    m_ps->setRotation(this->getRotation());
 }
