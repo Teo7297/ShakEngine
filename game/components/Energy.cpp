@@ -2,6 +2,15 @@
 
 void Energy::Awake()
 {
+    OnEnergyGained += [this](float amount)
+        {
+            OnEnergyChange(m_energy, m_maxEnergy);
+        };
+
+    OnEnergyUsed += [this](float amount)
+        {
+            OnEnergyChange(m_energy, m_maxEnergy);
+        };
 }
 
 void Energy::Update(float dt)

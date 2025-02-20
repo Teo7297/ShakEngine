@@ -35,6 +35,7 @@ public:
 
     shak::Event<float> OnEnergyUsed;
     shak::Event<float> OnEnergyGained;
+    shak::Event<float, float> OnEnergyChange; // current, total
 
 private:
     float m_energy, m_maxEnergy;

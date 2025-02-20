@@ -1,6 +1,7 @@
 #include "PlayerController.h"
 #include "Ship.h"
 #include "AbilitySystem.h"
+#include "components/EnergyBar.h"
 #include "components/abilities/LaserDPS.h"
 #include "components/abilities/MachineGun.h"
 #include "components/abilities/LifeDrain.h"
@@ -11,6 +12,9 @@ void PlayerController::Awake()
     m_owner->Name = "Player";
     m_engine = &shak::ShakEngine::GetInstance();
     m_ownerShip = (Ship*)m_owner;
+
+    m_owner->AddComponent<EnergyBar>();
+
     m_abilitySystem = m_owner->GetComponent<AbilitySystem>();
     m_abilitySystem->AddAbility<LaserDPS>("AutoAttack");
     m_abilitySystem->AddAbility<MachineGun>("MachineGun");
