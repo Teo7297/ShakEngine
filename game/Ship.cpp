@@ -3,6 +3,7 @@
 #include "components/Energy.h"
 #include "components/AbilitySystem.h"
 #include "components/BuffList.h"
+#include "components/HealthBar.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -109,6 +110,7 @@ void Ship::Awake()
         };
 
     this->AddComponent<BuffList>();
+    this->AddComponent<HealthBar>();
 
 }
 
@@ -185,8 +187,8 @@ void Ship::UpdateLookDirection()
     this->setRotation(-(m_lookAngle % m_angleBetweenTextures));
 
     sf::Angle lasersAngle = prevLookDirection.angleTo(m_lookDirection);
-    for (auto& laser : m_lasers)
-        laser->rotateAround(lasersAngle, this->getPosition());
+    // for (auto& laser : m_lasers)
+        // laser->rotateAround(lasersAngle, this->getPosition());
 }
 
 void Ship::UpdateTextureCoords()

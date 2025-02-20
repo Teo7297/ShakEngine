@@ -18,6 +18,7 @@ namespace shak
 
         virtual void Awake() { m_needAwake = false; }
         virtual void Update(float dt) {}
+        virtual void LateUpdate(float dt) {}
         virtual void HandleInput(const sf::Event& event) {}
         virtual void OnDestroy() {}
 

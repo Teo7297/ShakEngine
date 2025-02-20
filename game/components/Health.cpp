@@ -2,6 +2,23 @@
 
 void Health::Awake()
 {
+    OnDamage += [this](float damage)
+        {
+            if (OnHealthChange)
+                OnHealthChange(m_health, m_maxHealth);
+        };
+
+    OnCritDamage += [this](float damage)
+        {
+            if (OnHealthChange)
+                OnHealthChange(m_health, m_maxHealth);
+        };
+
+    OnHeal += [this](float amount)
+        {
+            if (OnHealthChange)
+                OnHealthChange(m_health, m_maxHealth);
+        };
 }
 
 void Health::Update(float dt)

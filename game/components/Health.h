@@ -36,6 +36,7 @@ public:
     shak::Event<float> OnDamage;
     shak::Event<float> OnCritDamage;
     shak::Event<float> OnHeal;
+    shak::Event<float, float> OnHealthChange; // current, total
 
 private:
     float m_health, m_maxHealth;

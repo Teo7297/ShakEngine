@@ -21,6 +21,7 @@ namespace shak
         , m_active(true)
         , m_needAwake(true)
         , m_followParent(true)
+        , m_rotateWithParent(true)
         , m_zIndex(100)
         , m_physicsEnabled(false)
         , m_movedThisFrame(false)
@@ -67,7 +68,7 @@ namespace shak
         Transformable::rotate(angle);
         for (const auto& [id, child] : m_children)
         {
-            if (!child->GetFollowParent()) continue;
+            if (!child->GetRotateWithParent()) continue;
 
             sf::Vector2f relativePos = child->getPosition() - this->getPosition();
 
@@ -90,12 +91,13 @@ namespace shak
         Transformable::setRotation(angle);
         for (const auto& [id, child] : m_children)
         {
-            if (!child->GetFollowParent()) continue;
+            if (!child->GetRotateWithParent()) continue;
 
             sf::Vector2f relativePos = child->getPosition() - this->getPosition();
 
             // Calculate the new position after rotation (remember, we are using global coordinates, with global axis for translation!)
-            float radians = angle.asRadians();
+            auto actualAngle = angle - child->getRotation();
+            float radians = actualAngle.asRadians();
             float cosAngle = std::cos(radians);
             float sinAngle = std::sin(radians);
             sf::Vector2f rotatedPos(
@@ -330,6 +332,28 @@ namespace shak
         {
             m_shader->setUniform("u_time", m_engine->GetTime());
             m_shader->setUniform("u_resolution", sf::Glsl::Vec2{ m_engine->GetWindowSize().x, m_engine->GetWindowSize().y });
+        }
+    }
+
+    void GameObject::LateUpdate(float dt)
+    {
+        TrySafeCopy();
+        for (const auto& comp : m_safeComponents)
+        {
+            if (comp->IsActive())
+            {
+                comp->LateUpdate(dt);
+                comp->shak::Component::LateUpdate(dt);
+            }
+        }
+
+        for (const auto& child : m_safeChildren)
+        {
+            if (child->IsActive())
+            {
+                child->LateUpdate(dt);
+                child->shak::GameObject::LateUpdate(dt);
+            }
         }
     }
 

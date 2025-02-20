@@ -59,6 +59,11 @@ namespace shak
         m_renderer->RemoveCamera(name);
     }
 
+    sf::Vector2i ShakEngine::GetPointInScreenCoords(const sf::Vector2f& worldPos) const
+    {
+        return m_window->mapCoordsToPixel(worldPos);
+    }
+
     sf::Vector2f ShakEngine::GetMousePixelPos() const
     {
         return { static_cast<float>(sf::Mouse::getPosition(*m_window).x), static_cast<float>(m_window->getSize().y - sf::Mouse::getPosition(*m_window).y) };

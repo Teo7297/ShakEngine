@@ -52,6 +52,7 @@ namespace shak
 
         void RemoveCamera(const std::string& name);
 
+        sf::Vector2i GetPointInScreenCoords(const sf::Vector2f& worldPos) const;
         sf::Vector2f GetMousePixelPos() const;
         sf::Vector2f GetMouseWorldPos() const;
         sf::Vector2f GetWindowSize() const;

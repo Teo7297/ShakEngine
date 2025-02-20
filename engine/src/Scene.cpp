@@ -54,6 +54,8 @@ namespace shak
 
         m_root->Update(dt);
         m_quadtree.update();
+
+        m_root->LateUpdate(dt);
     }
 
     void Scene::Render()

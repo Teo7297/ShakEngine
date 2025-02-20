@@ -24,10 +24,10 @@ void game()
 
         engine->AddCamera("camera1", camera1);
 
-        auto bg = engine->AddGameObject<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
-        camera1->SetBackground(bg);
-        auto bgsize = rm.GetTexture("bg1")->getSize();
-        camera1->SetBackgroundSize({ (float)(bgsize.x * 100), (float)(bgsize.y * 100) });
+        // auto bg = engine->AddGameObject<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
+        // camera1->SetBackground(bg);
+        // auto bgsize = rm.GetTexture("bg1")->getSize();
+        // camera1->SetBackgroundSize({ (float)(bgsize.x * 100), (float)(bgsize.y * 100) });
 
         json::JSON jsonData = json::JSON::LoadFromDisk("assets/json/ships/DPS.json");
 
@@ -38,7 +38,7 @@ void game()
         camera1->move(player->GetVertexArray()->getBounds().size / 2.f);
 
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 1; i++)
         {
             auto alien = engine->AddGameObject<Ship>(jsonData);
             alien->AddComponent<AIController>();
@@ -61,8 +61,8 @@ void ShaderTest()
         camera1->move({ 1920.f / 2.f, 1080.f / 2.f });
 
         // auto testTexture = rm.LoadTexture("assets/textures/abstract1.png", "testTexture", true, true);
-        auto testTexture = rm.LoadTexture("assets/textures/rocket.png", "testTexture", false, true);
-        engine->AddGameObject<ShaderDevHelper>("rocket", testTexture);
+        // auto testTexture = rm.LoadTexture("assets/textures/rocket.png", "testTexture", false, true);
+        engine->AddGameObject<ShaderDevHelper>("healthbar", nullptr);
     }
 
     engine->Start();

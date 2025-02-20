@@ -24,11 +24,14 @@ public:
 
         // tex
         m_texture = texture;
-        auto size = texture->getSize();
-        (*m_vertices)[0].texCoords = sf::Vector2f(0.f, 0.f);
-        (*m_vertices)[1].texCoords = sf::Vector2f(0.f, size.y);
-        (*m_vertices)[2].texCoords = sf::Vector2f(size.x, 0.f);
-        (*m_vertices)[3].texCoords = sf::Vector2f(size.x, size.y);
+        if (texture)
+        {
+            auto size = texture->getSize();
+            (*m_vertices)[0].texCoords = sf::Vector2f(0.f, 0.f);
+            (*m_vertices)[1].texCoords = sf::Vector2f(0.f, size.y);
+            (*m_vertices)[2].texCoords = sf::Vector2f(size.x, 0.f);
+            (*m_vertices)[3].texCoords = sf::Vector2f(size.x, size.y);
+        }
     }
     ~ShaderDevHelper() {}
 
@@ -40,7 +43,7 @@ public:
         {
             m_shader = newShader;
             m_shader->setUniform("u_texture", *m_texture);
-            m_shader->setUniform("u_resolution", sf::Glsl::Vec2{ 1920, 1080 });
+            // m_shader->setUniform("u_resolution", sf::Glsl::Vec2{ 1920, 1080 });
         }
         m_shader->setUniform("u_time", m_time);
     }

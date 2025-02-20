@@ -104,8 +104,10 @@ namespace shak
         void SetTexture(const std::shared_ptr<sf::Texture> texture) { m_texture = texture; }
         std::shared_ptr<sf::Texture> GetTexture() { return m_texture; }
 
-        void SetFollowParent(bool follow) { m_followParent = follow; }
+        void SetFollowParent(bool follow) { m_followParent = follow; m_rotateWithParent = follow; } //TODO: this should not modify rotation.
         bool GetFollowParent() const { return m_followParent; }
+        void SetRotateWithParent(bool rotate) { m_rotateWithParent = rotate; }
+        bool GetRotateWithParent() const { return m_rotateWithParent; }
 
         void SetColor(const sf::Color& color) const;
         void SetTransparency(uint8_t transparency) const;
@@ -124,6 +126,7 @@ namespace shak
         virtual void Awake();
 
         virtual void Update(float dt);
+        virtual void LateUpdate(float dt);
 
         // This function is the last one called in the game loop. It is meant to be used to reset flags, etc.
         virtual void Cleanup();
@@ -166,7 +169,7 @@ namespace shak
         std::vector<std::shared_ptr<Component>> m_safeComponents;
         bool m_active;
         bool m_needAwake;
-        bool m_followParent;
+        bool m_followParent, m_rotateWithParent;
         int m_zIndex;
         bool m_physicsEnabled;
         bool m_movedThisFrame;
