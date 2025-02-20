@@ -29,11 +29,12 @@ public:
     void SetHealthRegen(float regenPerSecond);
     float GetHealthRegen() const;
 
-    float TakeDamage(float damage);
+    float TakeDamage(float damage, bool isCrit);
     float Heal(float amount);
 
     shak::Event<> OnDeath;
     shak::Event<float> OnDamage;
+    shak::Event<float> OnCritDamage;
     shak::Event<float> OnHeal;
 
 private:

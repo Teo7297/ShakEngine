@@ -28,7 +28,7 @@
     "base_stats": {
         "damage": 1000.0,
         "speed": 500.0,
-        "crit": 0.1,
+        "crit": 0.3,
         "health": 10000.0,
         "health_regen": 100.0,
         "energy": 1000.0,

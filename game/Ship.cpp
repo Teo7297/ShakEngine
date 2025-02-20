@@ -2,6 +2,7 @@
 #include "components/Health.h"
 #include "components/Energy.h"
 #include "components/AbilitySystem.h"
+#include "components/BuffList.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -85,11 +86,12 @@ void Ship::Awake()
     health->SetMaxHealth(maxHealth);
     health->SetHealthRegen(healthRegen);
     health->OnDamage += std::bind(&Ship::SpawnDamageNumber, this, std::placeholders::_1);
+    health->OnCritDamage += std::bind(&Ship::SpawnCritDamageNumber, this, std::placeholders::_1);
     health->OnDeath += std::bind(&Ship::DisableAimSprite, this);
     health->OnDeath += std::bind(&Ship::PlayDeathAnimation, this);
     health->OnDeath += std::bind(&Ship::ResetHealth, this);
 
-    AddComponent<AbilitySystem>();
+    this->AddComponent<AbilitySystem>();
 
     auto maxEnergy = m_baseStats.at("energy").ToFloat();
     auto energyRegen = m_baseStats.at("energy_regen").ToFloat();
@@ -105,6 +107,8 @@ void Ship::Awake()
         {
             m_isAutoAttacking = false;
         };
+
+    this->AddComponent<BuffList>();
 
 }
 
@@ -142,6 +146,12 @@ void Ship::SetTarget(const std::shared_ptr<Ship>& target)
     OnTargetChanged();
     m_target->ToggleAimSprite(true);
     m_targetWasSelected = true;
+}
+
+bool Ship::IsCritHit() const
+{
+    float critChance = m_shipData.at("base_stats").at("crit").ToFloat();
+    return (static_cast<double>(std::rand()) / RAND_MAX) <= critChance;
 }
 
 int Ship::GetTextureByDirection() const
@@ -197,7 +207,14 @@ void Ship::ToggleAimSprite(bool show)
 void Ship::SpawnDamageNumber(float damage)
 {
     auto damageNumber = m_damageNumberPool.Get();
-    damageNumber->Reset(static_cast<int>(damage), this->getPosition());
+    damageNumber->Reset(static_cast<int>(damage), this->getPosition(), sf::Color::Red, 10);
+    m_engine->GetScene()->AddGameObject(damageNumber);
+}
+
+void Ship::SpawnCritDamageNumber(float damage)
+{
+    auto damageNumber = m_damageNumberPool.Get();
+    damageNumber->Reset(static_cast<int>(damage), this->getPosition(), sf::Color::Yellow, 15);
     m_engine->GetScene()->AddGameObject(damageNumber);
 }
 

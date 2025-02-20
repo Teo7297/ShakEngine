@@ -37,6 +37,10 @@ public:
     bool IsLaserShooting() const { return m_laserShooting; }
     bool IsAutoAttacking() const { return m_isAutoAttacking; }
 
+    /// @brief Compute result with current crit chance
+    /// @return bool result
+    bool IsCritHit() const;
+
     // EVENTS
     shak::Event<const GameObjectPtr&> OnAutoAttackStarted;
     shak::Event<> OnAutoAttackStopped;
@@ -55,6 +59,7 @@ protected:
 
 private:
     void SpawnDamageNumber(float damage);
+    void SpawnCritDamageNumber(float damage);
     void DisableAimSprite();
     void PlayDeathAnimation();
     void ResetHealth();

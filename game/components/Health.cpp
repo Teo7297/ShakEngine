@@ -46,14 +46,16 @@ float Health::GetHealthRegen() const
     return m_regenPerSecond;
 }
 
-float Health::TakeDamage(float damage)
+float Health::TakeDamage(float damage, bool isCrit)
 {
     if (damage > m_health)
         damage = m_health;
 
     m_health -= damage;
 
-    if (OnDamage)
+    if (isCrit)
+        OnCritDamage(damage);
+    else
         OnDamage(damage);
 
     if (m_health <= 0.f && OnDeath)

@@ -51,7 +51,10 @@ void LaserDPS::ShootLaser()
         {
             if (!m_target) return; // target changed while laser was in flight
             float damage = m_shipOwner->GetShipData().at("base_stats").at("damage").ToFloat();
-            float dealt = m_target->GetComponent<Health>()->TakeDamage(damage);
+            bool isCrit = m_shipOwner->IsCritHit();
+            damage = isCrit ? damage * 2 : damage;
+
+            float dealt = m_target->GetComponent<Health>()->TakeDamage(damage, isCrit);
             m_shipOwner->OnDamageDealt(dealt);
             m_energyComponent->GainEnergy(m_energyPerShot);
         };

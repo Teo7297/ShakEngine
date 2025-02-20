@@ -59,15 +59,15 @@ public:
             this->SetActive(false);
     }
 
-    void Reset(int damage, sf::Vector2f position)
+    void Reset(int damage, sf::Vector2f position, sf::Color color = sf::Color::Red, int size = 15)
     {
         this->setPosition({ 0.f, 0.f }); // Needed because we update the text position not the GameObject position. Hence if this gets deactivated and reactivated, the text will be in the wrong position because the GameObject position does not get updated while inactive.
         m_text->setOrigin({ m_text->getLocalBounds().size.x / 2.f, m_text->getLocalBounds().size.y / 2.f });
         m_text->setPosition(position);
         m_text->setScale({ 1.f, 1.f });
         m_text->setString(std::to_string(damage));
-        m_text->setCharacterSize(15);
-        m_text->setFillColor(sf::Color::Red);
+        m_text->setCharacterSize(size);
+        m_text->setFillColor(color);
         m_text->setOutlineThickness(1.f);
         m_text->setOutlineColor(sf::Color::Black);
 

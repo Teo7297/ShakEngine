@@ -18,7 +18,6 @@ private:
     void RegisterCallbacks();
     std::function<void(const GameObjectPtr& target, const sf::Vector2f& pos)> ShootRocketCB;
     std::function<void(const std::shared_ptr<Ship>&)> OnTargetHit;
-    std::function<void()> OnCritHit;
 
 private:
     std::shared_ptr<sf::Texture> m_rocketTexture;
