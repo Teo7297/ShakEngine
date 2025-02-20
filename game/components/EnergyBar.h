@@ -16,7 +16,6 @@ public:
     ~EnergyBar() override;
 
     void Awake() override;
-    void LateUpdate(float dt) override;
 
 private:
     std::function<void(float, float)> m_onEnergyChange;

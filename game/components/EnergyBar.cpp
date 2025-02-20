@@ -47,8 +47,3 @@ void EnergyBar::Awake()
     // Get initial energy
     m_onEnergyChange(m_energy->GetEnergy(), m_energy->GetMaxEnergy());
 }
-
-void EnergyBar::LateUpdate(float dt)
-{
-
-}

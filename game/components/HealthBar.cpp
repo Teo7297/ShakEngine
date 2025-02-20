@@ -57,8 +57,3 @@ void HealthBar::Awake()
     // Get initial health
     m_onHealthChange(m_health->GetHealth(), m_health->GetMaxHealth());
 }
-
-void HealthBar::LateUpdate(float dt)
-{
-
-}
