@@ -104,39 +104,101 @@ namespace shak
         return std::nullopt;
     }
 
-    bool Scene::RaycastOne(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, GameObjectPtr& outHit)
+    void Scene::RaycastOne(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, RaycastHit& outHit, bool drawDebug)
     {
         sf::FloatRect searchArea(origin, direction * maxDistance);
-        static auto square = std::make_shared<Square>(searchArea, sf::Color::Yellow);
-        square->setPosition(origin);
-        m_root->RemoveChild(square->Id);
-        m_root->AddChild(square);
-
         auto candidates = m_quadtree.query(searchArea);
+
+        bool somethingHit = false;
         for (const auto& obj : candidates)
         {
             if (obj->Name == "Player")continue;
-            std::cout << "Query: " << obj->Name << std::endl;
-            // const sf::FloatRect rect = obj->GetVertexArray()->getBounds();
-            // const sf::FloatRect bounds({ obj->getPosition() - obj->getOrigin(), rect.size });
-            // std::cout << bounds.position.x << " - " << bounds.position.y << " ||| " << bounds.size.x << " - " << bounds.size.y << std::endl;
-            // auto opt = getLineRectIntersectionPoint(origin, direction, maxDistance, bounds);
-            // if (opt.has_value())
-            // {
-            //     auto hitPt = opt.value();
-            //     outHit = obj;
-            //     auto line = std::make_shared<Line>(origin, hitPt, sf::Color::Red);
-            //     m_root->AddChild(line);
-            //     return;
-            // }
-            return true;
+            const sf::FloatRect bounds({ obj->getPosition() - obj->getOrigin(), obj->GetVertexArray()->getBounds().size });
+
+            if (auto opt = getLineRectIntersectionPoint(origin, direction, maxDistance, bounds))
+            {
+                auto hitPt = opt.value();
+                outHit =
+                {
+                    .hitObject = obj,
+                    .hitPoint = hitPt,
+                    .normal = {0, 0}, // TODO: implement
+                    .distance = (hitPt - origin).length()
+                };
+                somethingHit = true;
+                break;
+            }
         }
-        return false;
+
+        if (drawDebug)
+        {
+            auto hitLine = std::make_shared<Line>(
+                origin,
+                somethingHit ? outHit.hitPoint : origin + direction * maxDistance,
+                somethingHit ? sf::Color::Green : sf::Color::Red
+            );
+            m_root->AddChild(hitLine);
+            if (somethingHit)
+            {
+                auto hitSquare = std::make_shared<Square>(sf::FloatRect{ outHit.hitPoint, {10.f, 10.f} }, sf::Color::Green);
+                m_root->AddChild(hitSquare);
+            }
+        }
     }
 
-    void Scene::RaycastAll(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, std::vector<GameObjectPtr>& outHits)
+    void Scene::RaycastAll(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, std::vector<RaycastHit>& outHits, bool drawDebug)
     {
-        // TODO:
+        // Make sure this is empty
+        outHits.clear();
+        outHits.shrink_to_fit();
+
+        sf::FloatRect searchArea(origin, direction * maxDistance);
+        auto candidates = m_quadtree.query(searchArea);
+
+        for (const auto& obj : candidates)
+        {
+            if (obj->Name == "Player")continue;
+            const sf::FloatRect bounds({ obj->getPosition() - obj->getOrigin(), obj->GetVertexArray()->getBounds().size });
+
+            if (auto opt = getLineRectIntersectionPoint(origin, direction, maxDistance, bounds))
+            {
+                auto hitPt = opt.value();
+                RaycastHit hitData =
+                {
+                    .hitObject = obj,
+                    .hitPoint = hitPt,
+                    .normal = {0, 0}, // TODO: implement
+                    .distance = (hitPt - origin).length()
+                };
+                outHits.push_back(hitData);
+            }
+        }
+
+        if (drawDebug)
+        {
+            if (outHits.empty())
+            {
+                auto hitLine = std::make_shared<Line>(
+                    origin,
+                    origin + direction * maxDistance,
+                    sf::Color::Red
+                );
+                m_root->AddChild(hitLine);
+            }
+
+            for (const auto& hitData : outHits)
+            {
+                auto hitLine = std::make_shared<Line>(
+                    origin,
+                    hitData.hitPoint,
+                    sf::Color::Green
+                );
+                m_root->AddChild(hitLine);
+
+                auto hitSquare = std::make_shared<Square>(sf::FloatRect{ hitData.hitPoint, {10.f, 10.f} }, sf::Color::Green);
+                m_root->AddChild(hitSquare);
+            }
+        }
     }
 
     void Scene::ForwardAwake()

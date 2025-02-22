@@ -1,6 +1,8 @@
 #include "PlayerController.h"
 #include "Ship.h"
 #include "AbilitySystem.h"
+#include "Scene.h"
+
 #include "components/EnergyBar.h"
 #include "components/abilities/LaserDPS.h"
 #include "components/abilities/MachineGun.h"
@@ -47,15 +49,6 @@ void PlayerController::Update(float dt)
             }
         }
     }
-
-    // TEST RAYCAST
-    GameObjectPtr hit;
-    bool found = m_engine->GetScene()->RaycastOne(this->GetOwner()->getPosition(), sf::Vector2f{ 0.5f, 0.5f }, 1000, hit);
-    std::cout << this->GetOwner()->getPosition().x << " - " << this->GetOwner()->getPosition().y << std::endl;
-    static auto testLine = std::make_shared<shak::Line>(this->GetOwner()->getPosition(), this->GetOwner()->getPosition() + sf::Vector2f{ 500, 500 }, sf::Color::Green);
-    testLine->SetRotateWithParent(false);
-    this->GetOwner()->RemoveChild(testLine->Id);
-    this->GetOwner()->AddChild(testLine);
 }
 
 void PlayerController::HandleInput(const sf::Event& event)
@@ -68,6 +61,13 @@ void PlayerController::HandleInput(const sf::Event& event)
                 m_ownerShip->OnAutoAttackStarted(m_ownerShip->GetTarget());
             else if (m_ownerShip->IsAutoAttacking())
                 m_ownerShip->OnAutoAttackStopped();
+        }
+
+        if (key->code == sf::Keyboard::Key::D)
+        {
+            // TEST RAYCAST
+            std::vector<shak::RaycastHit> hits;
+            m_engine->GetScene()->RaycastAll(this->GetOwner()->getPosition(), sf::Vector2f{ 0.5f, 0.5f }, 1500, hits, true);
         }
 
         if (key->code == sf::Keyboard::Key::Num1)

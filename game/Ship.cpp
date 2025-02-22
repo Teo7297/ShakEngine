@@ -115,7 +115,7 @@ void Ship::Awake()
     this->AddComponent<HealthBar>();
 
     // DEBUG
-    auto square = std::make_shared<shak::Square>(sf::FloatRect(this->getPosition() - this->getOrigin(), this->GetVertexArray()->getBounds().size), sf::Color::Blue);
+    auto square = std::make_shared<shak::Square>(sf::FloatRect(this->getPosition() - this->getOrigin(), this->GetVertexArray()->getBounds().size), sf::Color::Blue, shak::Square::Type::Outlined);
     square->SetRotateWithParent(false);
     this->AddChild(square);
 }

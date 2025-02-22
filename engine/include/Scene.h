@@ -7,6 +7,14 @@
 
 namespace shak
 {
+    struct RaycastHit
+    {
+        GameObjectPtr hitObject;
+        sf::Vector2f hitPoint;
+        sf::Vector2f normal;
+        float distance;
+    };
+
     class Scene
     {
     public:
@@ -20,8 +28,8 @@ namespace shak
 
         GameObjectPtr FindGameObject(const std::string& name) const;
         GameObjectPtr FindGameObject(int id) const;
-        bool RaycastOne(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, GameObjectPtr& outHit);
-        void RaycastAll(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, std::vector<GameObjectPtr>& outHits);
+        void RaycastOne(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, RaycastHit& outHit, bool drawDebug = false);
+        void RaycastAll(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, std::vector<RaycastHit>& outHits, bool drawDebug = false);
 
         template<typename T>
         std::vector<GameObjectPtr> FindGameObjectsByType() const

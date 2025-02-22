@@ -39,7 +39,7 @@ void game()
         // camera1->move(player->GetVertexArray()->getBounds().size / 2.f);
 
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 3; i++)
         {
             auto alien = engine->AddGameObject<Ship>(jsonData);
             alien->AddComponent<AIController>();
