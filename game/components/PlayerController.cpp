@@ -7,6 +7,9 @@
 #include "components/abilities/LifeDrain.h"
 #include "components/abilities/CritRocket.h"
 
+#include "shapes/Line.h"
+#include "shapes/Square.h"
+
 void PlayerController::Awake()
 {
     m_owner->Name = "Player";
@@ -44,6 +47,15 @@ void PlayerController::Update(float dt)
             }
         }
     }
+
+    // TEST RAYCAST
+    GameObjectPtr hit;
+    bool found = m_engine->GetScene()->RaycastOne(this->GetOwner()->getPosition(), sf::Vector2f{ 0.5f, 0.5f }, 1000, hit);
+    std::cout << this->GetOwner()->getPosition().x << " - " << this->GetOwner()->getPosition().y << std::endl;
+    static auto testLine = std::make_shared<shak::Line>(this->GetOwner()->getPosition(), this->GetOwner()->getPosition() + sf::Vector2f{ 500, 500 }, sf::Color::Green);
+    testLine->SetRotateWithParent(false);
+    this->GetOwner()->RemoveChild(testLine->Id);
+    this->GetOwner()->AddChild(testLine);
 }
 
 void PlayerController::HandleInput(const sf::Event& event)

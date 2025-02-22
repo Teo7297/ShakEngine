@@ -17,13 +17,19 @@ namespace shak
             , m_view{ std::make_shared<sf::View>(viewport) }
         {
             this->setOrigin(viewport.size / 2.f);
-            this->move(-viewport.size);
         }
         ~Camera() { std::cout << "destroyed camera" << std::endl; }
 
         void move(sf::Vector2f offset) override
         {
             m_view->move(offset);
+            GameObject::move(offset);
+        }
+
+        void setPosition(sf::Vector2f position) override
+        {
+            m_view->setCenter(position);
+            GameObject::setPosition(position);
         }
 
         std::shared_ptr<sf::View> GetView() const

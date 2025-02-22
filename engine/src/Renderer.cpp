@@ -1,4 +1,6 @@
 #include "Renderer.h"
+#include "imgui.h"
+#include "imgui-SFML.h"
 
 namespace shak
 {
@@ -17,12 +19,16 @@ namespace shak
             std::cerr << "[Render thread] OpenGL context could not be activated" << std::endl;
         m_window->setVerticalSyncEnabled(false);
         m_window->setFramerateLimit(170);
+
+        ImGui::SFML::Init(*m_window);
+
         return m_window;
     }
 
     void Renderer::CloseWindow()
     {
         m_window->close();
+        ImGui::SFML::Shutdown();
     }
 
     void Renderer::AddCamera(const std::string& name, std::shared_ptr<sf::View> camera)
@@ -41,6 +47,7 @@ namespace shak
 
         // glDisable(GL_BLEND);
 
+        // Render scene
         if (!m_cameras.empty())
         {
             for (const auto& camera : m_cameras)
@@ -52,6 +59,10 @@ namespace shak
         else
             Draw(drawables);
 
+        // Render GUI
+        ImGui::SFML::Render(*m_window);
+
+        // Draw on screen the rendered frame
         m_window->display();
     }
 

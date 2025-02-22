@@ -20,6 +20,8 @@ namespace shak
 
         GameObjectPtr FindGameObject(const std::string& name) const;
         GameObjectPtr FindGameObject(int id) const;
+        bool RaycastOne(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, GameObjectPtr& outHit);
+        void RaycastAll(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, std::vector<GameObjectPtr>& outHits);
 
         template<typename T>
         std::vector<GameObjectPtr> FindGameObjectsByType() const

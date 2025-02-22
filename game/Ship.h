@@ -19,6 +19,7 @@ public:
     virtual void Awake() override;
     virtual void Update(float dt) override;
     void HandleInput(const sf::Event& event);
+    void OnCollision(const std::shared_ptr<GameObject>& other) override;
 
     void ToggleAimSprite(bool show);
 

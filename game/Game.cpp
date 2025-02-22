@@ -34,8 +34,9 @@ void game()
         auto player = engine->AddGameObject<Ship>(jsonData);
         player->AddComponent<PlayerController>();
         player->AddChild(camera1);
+        camera1->setPosition(player->getPosition());
 
-        camera1->move(player->GetVertexArray()->getBounds().size / 2.f);
+        // camera1->move(player->GetVertexArray()->getBounds().size / 2.f);
 
 
         for (int i = 0; i < 1; i++)

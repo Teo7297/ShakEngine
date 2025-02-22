@@ -1,5 +1,8 @@
 #include "Scene.h"
 
+#include "shapes/Line.h"
+#include "shapes/Square.h"
+
 namespace shak
 {
     Scene::Scene(std::shared_ptr<shak::Renderer> renderer)
@@ -37,6 +40,103 @@ namespace shak
     GameObjectPtr Scene::FindGameObject(int id) const
     {
         return m_root->FindChildRecursive(id);
+    }
+
+    // Returns true if the line segment (origin -> origin + direction * maxDistance)
+    // intersects the axis-aligned rectangle 'rect'
+    std::optional<sf::Vector2f> getLineRectIntersectionPoint(const sf::Vector2f& origin,
+        const sf::Vector2f& direction,
+        float maxDistance,
+        const sf::FloatRect& rect)
+    {
+        // Calculate rectangle boundaries
+        float leftEdge = rect.position.x;
+        float rightEdge = rect.position.x + rect.size.x;
+        float topEdge = rect.position.y;
+        float bottomEdge = rect.position.y + rect.size.y;
+
+        // Initialize the parametric interval [t0, t1]
+        float t0 = 0.f;
+        float t1 = maxDistance;
+
+        // X-axis test
+        if (std::abs(direction.x) < 1e-6f)
+        {
+            if (origin.x < leftEdge || origin.x > rightEdge)
+                return std::nullopt;
+        }
+        else
+        {
+            float invDx = 1.f / direction.x;
+            float tNear = (leftEdge - origin.x) * invDx;
+            float tFar = (rightEdge - origin.x) * invDx;
+            if (tNear > tFar)
+                std::swap(tNear, tFar);
+            t0 = std::max(t0, tNear);
+            t1 = std::min(t1, tFar);
+            if (t0 > t1)
+                return std::nullopt;
+        }
+
+        // Y-axis test
+        if (std::abs(direction.y) < 1e-6f)
+        {
+            if (origin.y < topEdge || origin.y > bottomEdge)
+                return std::nullopt;
+        }
+        else
+        {
+            float invDy = 1.f / direction.y;
+            float tNear = (topEdge - origin.y) * invDy;
+            float tFar = (bottomEdge - origin.y) * invDy;
+            if (tNear > tFar)
+                std::swap(tNear, tFar);
+            t0 = std::max(t0, tNear);
+            t1 = std::min(t1, tFar);
+            if (t0 > t1)
+                return std::nullopt;
+        }
+
+        // If t0 is within the valid range, compute the intersection point.
+        if (t0 <= maxDistance)
+            return origin + direction * t0;
+
+        return std::nullopt;
+    }
+
+    bool Scene::RaycastOne(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, GameObjectPtr& outHit)
+    {
+        sf::FloatRect searchArea(origin, direction * maxDistance);
+        static auto square = std::make_shared<Square>(searchArea, sf::Color::Yellow);
+        square->setPosition(origin);
+        m_root->RemoveChild(square->Id);
+        m_root->AddChild(square);
+
+        auto candidates = m_quadtree.query(searchArea);
+        for (const auto& obj : candidates)
+        {
+            if (obj->Name == "Player")continue;
+            std::cout << "Query: " << obj->Name << std::endl;
+            // const sf::FloatRect rect = obj->GetVertexArray()->getBounds();
+            // const sf::FloatRect bounds({ obj->getPosition() - obj->getOrigin(), rect.size });
+            // std::cout << bounds.position.x << " - " << bounds.position.y << " ||| " << bounds.size.x << " - " << bounds.size.y << std::endl;
+            // auto opt = getLineRectIntersectionPoint(origin, direction, maxDistance, bounds);
+            // if (opt.has_value())
+            // {
+            //     auto hitPt = opt.value();
+            //     outHit = obj;
+            //     auto line = std::make_shared<Line>(origin, hitPt, sf::Color::Red);
+            //     m_root->AddChild(line);
+            //     return;
+            // }
+            return true;
+        }
+        return false;
+    }
+
+    void Scene::RaycastAll(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, std::vector<GameObjectPtr>& outHits)
+    {
+        // TODO:
     }
 
     void Scene::ForwardAwake()

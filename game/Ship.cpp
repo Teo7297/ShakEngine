@@ -5,6 +5,8 @@
 #include "components/BuffList.h"
 #include "components/HealthBar.h"
 
+#include "shapes/Square.h"
+
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -112,6 +114,10 @@ void Ship::Awake()
     this->AddComponent<BuffList>();
     this->AddComponent<HealthBar>();
 
+    // DEBUG
+    auto square = std::make_shared<shak::Square>(sf::FloatRect(this->getPosition() - this->getOrigin(), this->GetVertexArray()->getBounds().size), sf::Color::Blue);
+    square->SetRotateWithParent(false);
+    this->AddChild(square);
 }
 
 void Ship::Update(float dt)
@@ -129,6 +135,12 @@ void Ship::Update(float dt)
 
 void Ship::HandleInput(const sf::Event& event)
 {
+}
+
+void Ship::OnCollision(const std::shared_ptr<GameObject>& other)
+{
+    // if (this->Name == "Player")
+        // std::cout << "Ship collided with " << other->Name << std::endl;
 }
 
 void Ship::SetTarget(const std::shared_ptr<Ship>& target)

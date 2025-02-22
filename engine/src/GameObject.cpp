@@ -139,7 +139,7 @@ namespace shak
     void GameObject::setOrigin(const sf::Vector2f& origin)
     {
         Transformable::setOrigin(origin);
-        this->move(origin);
+        // this->move(origin);
     }
 
     void GameObject::CenterOrigin()
@@ -422,13 +422,13 @@ namespace shak
 
     bool GameObject::IsCollidingWithGameObject(const GameObjectPtr& other) const
     {
-        const auto zeroPosition = other->getPosition() - this->getPosition();
+        const auto zeroPosition = (other->getPosition() - other->getOrigin()) - (this->getPosition() - this->getOrigin());
         return m_vertices->getBounds().findIntersection({ zeroPosition, other->GetVertexArray()->getBounds().size }).has_value();
     }
 
     bool GameObject::IsCollidingWitRect(const sf::FloatRect& rect) const
     {
-        const auto zeroPosition = rect.position - this->getPosition();
+        const auto zeroPosition = rect.position - (this->getPosition() - this->getOrigin());
         return m_vertices->getBounds().findIntersection({ zeroPosition, rect.size }).has_value();
     }
 
