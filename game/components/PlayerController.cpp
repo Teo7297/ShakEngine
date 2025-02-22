@@ -67,7 +67,7 @@ void PlayerController::HandleInput(const sf::Event& event)
         {
             // TEST RAYCAST
             std::vector<shak::RaycastHit> hits;
-            m_engine->GetScene()->RaycastAll(this->GetOwner()->getPosition(), sf::Vector2f{ 0.5f, 0.5f }, 1500, hits, true);
+            m_engine->GetScene()->Raycast(this->GetOwner()->getPosition(), sf::Vector2f{ 0.5f, 0.5f }, 1500, hits, true);
         }
 
         if (key->code == sf::Keyboard::Key::Num1)

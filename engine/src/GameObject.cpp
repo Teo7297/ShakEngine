@@ -139,7 +139,6 @@ namespace shak
     void GameObject::setOrigin(const sf::Vector2f& origin)
     {
         Transformable::setOrigin(origin);
-        // this->move(origin);
     }
 
     void GameObject::CenterOrigin()

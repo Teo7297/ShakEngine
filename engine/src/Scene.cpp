@@ -104,49 +104,7 @@ namespace shak
         return std::nullopt;
     }
 
-    void Scene::RaycastOne(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, RaycastHit& outHit, bool drawDebug)
-    {
-        sf::FloatRect searchArea(origin, direction * maxDistance);
-        auto candidates = m_quadtree.query(searchArea);
-
-        bool somethingHit = false;
-        for (const auto& obj : candidates)
-        {
-            if (obj->Name == "Player")continue;
-            const sf::FloatRect bounds({ obj->getPosition() - obj->getOrigin(), obj->GetVertexArray()->getBounds().size });
-
-            if (auto opt = getLineRectIntersectionPoint(origin, direction, maxDistance, bounds))
-            {
-                auto hitPt = opt.value();
-                outHit =
-                {
-                    .hitObject = obj,
-                    .hitPoint = hitPt,
-                    .normal = {0, 0}, // TODO: implement
-                    .distance = (hitPt - origin).length()
-                };
-                somethingHit = true;
-                break;
-            }
-        }
-
-        if (drawDebug)
-        {
-            auto hitLine = std::make_shared<Line>(
-                origin,
-                somethingHit ? outHit.hitPoint : origin + direction * maxDistance,
-                somethingHit ? sf::Color::Green : sf::Color::Red
-            );
-            m_root->AddChild(hitLine);
-            if (somethingHit)
-            {
-                auto hitSquare = std::make_shared<Square>(sf::FloatRect{ outHit.hitPoint, {10.f, 10.f} }, sf::Color::Green);
-                m_root->AddChild(hitSquare);
-            }
-        }
-    }
-
-    void Scene::RaycastAll(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, std::vector<RaycastHit>& outHits, bool drawDebug)
+    void Scene::Raycast(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, std::vector<RaycastHit>& outHits, bool drawDebug)
     {
         // Make sure this is empty
         outHits.clear();
@@ -173,6 +131,12 @@ namespace shak
                 outHits.push_back(hitData);
             }
         }
+
+        // Sort by distance
+        std::ranges::sort(outHits, [](const RaycastHit& a, const RaycastHit& b)
+            {
+                return a.distance < b.distance;
+            });
 
         if (drawDebug)
         {

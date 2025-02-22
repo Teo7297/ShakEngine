@@ -4,7 +4,7 @@
 
 namespace shak
 {
-    class Square : public GameObject
+    class TestRotate : public GameObject
     {
     public:
         enum class Type
@@ -13,7 +13,7 @@ namespace shak
             Outlined
         };
 
-        Square(const sf::FloatRect& square, const sf::Color& color = sf::Color::White, const Type& type = Type::Filled)
+        TestRotate(const sf::FloatRect& square, const sf::Color& color = sf::Color::White, const Type& type = Type::Filled)
         {
             if (type == Type::Filled)
             {
@@ -43,9 +43,14 @@ namespace shak
                 }
             }
             this->setOrigin(square.size / 2.f);
+            this->EnablePhysics();
         }
-        ~Square() override = default;
+        ~TestRotate() override = default;
 
+        void Update(float dt) override
+        {
+            this->rotate(sf::degrees(.5f));
+        }
 
     private:
     };
