@@ -70,6 +70,13 @@ void PlayerController::HandleInput(const sf::Event& event)
             m_engine->GetScene()->Raycast(this->GetOwner()->getPosition(), sf::Vector2f{ 0.5f, 0.5f }, 1500, hits, true);
         }
 
+        if (key->code == sf::Keyboard::Key::A)
+        {
+            // TEST CIRCLECAST
+            std::vector<shak::RaycastHit> hits;
+            m_engine->GetScene()->Circlecast(this->GetOwner()->getPosition(), 500.f, hits, true);
+        }
+
         if (key->code == sf::Keyboard::Key::Num1)
             m_abilitySystem->ToggleAbility("MachineGun", m_ownerShip->GetTarget());
 

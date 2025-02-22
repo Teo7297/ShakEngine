@@ -9,8 +9,8 @@
 #include "components/PlayerController.h"
 #include "components/AIController.h"
 
-#include "TestRotate.h"
 #include "shapes/Square.h"
+#include "shapes/Circle.h"
 
 #include "ShaderDevHelper.h"
 #include "TestGO.h"
@@ -42,14 +42,12 @@ void game()
         // camera1->move(player->GetVertexArray()->getBounds().size / 2.f);
 
 
-        // for (int i = 0; i < 3; i++)
-        // {
-        //     auto alien = engine->AddGameObject<Ship>(jsonData);
-        //     alien->AddComponent<AIController>();
-        //     alien->Name = "Alien" + std::to_string(i);
-        // }
-
-        auto test = engine->AddGameObject<shak::TestRotate>(sf::FloatRect({ 0.f,0.f }, { 300.f, 300.f }), sf::Color::Red, shak::TestRotate::Type::Outlined);
+        for (int i = 0; i < 3; i++)
+        {
+            auto alien = engine->AddGameObject<Ship>(jsonData);
+            alien->AddComponent<AIController>();
+            alien->Name = "Alien" + std::to_string(i);
+        }
     }
 
     engine->Start();
