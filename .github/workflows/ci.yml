@@ -38,7 +38,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Configure
-      run: cmake -B build ${{matrix.platform.flags}} ${{matrix.config.flags}}
+      run: cmake -B build -DIMGUI_SFML_FIND_SFML=OFF ${{matrix.platform.flags}} ${{matrix.config.flags}}
 
     - name: Build
       run: cmake --build build --config Release
