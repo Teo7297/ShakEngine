@@ -36,7 +36,7 @@ public:
         player->AddChild(camera1);
         camera1->setPosition(player->getPosition());
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 30; i++)
         {
             auto alien = m_engine->AddGameObject<Ship>(jsonData);
             alien->AddComponent<AIController>();

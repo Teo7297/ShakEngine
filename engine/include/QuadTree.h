@@ -27,7 +27,8 @@ namespace shak
 
         void clear()
         {
-            //TODO:
+            clearNode(mRoot.get());
+            mRoot = std::make_unique<Node>();
         }
 
         void update()
@@ -61,6 +62,7 @@ namespace shak
 
         struct Node
         {
+            ~Node() { std::cout << "Node destroyed" << std::endl; }
             std::array<std::unique_ptr<Node>, 4> children;
             std::vector<GameObjectPtr> values;
         };
@@ -243,7 +245,6 @@ namespace shak
 
         void updateAll(Node* node)
         {
-            // std::cout << "update qtree of size " << node->values.size() << std::endl;
             for (auto i = std::size_t(0); i < node->values.size(); ++i)
             {
                 auto obj = node->values[i];
@@ -258,6 +259,24 @@ namespace shak
                 for (const auto& child : node->children)
                     updateAll(child.get());
             }
+        }
+
+        void clearNode(Node* node)
+        {
+            if (!node)
+                return;
+
+            // First, clear all children recursively
+            for (auto& child : node->children)
+            {
+                if (child)
+                {
+                    clearNode(child.get());
+                    child.reset();
+                }
+            }
+            // Then clear the values at this node
+            node->values.clear();
         }
 
         void query(Node* node, const sf::FloatRect& box, const sf::FloatRect& queryBox, std::vector<GameObjectPtr>& values) const
