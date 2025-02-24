@@ -23,6 +23,10 @@ void CritRocket::Update(float dt)
 
 void CritRocket::ShootRocket(const GameObjectPtr& target)
 {
+    if (!target || !target->GetComponent<Health>()->IsAlive())
+    {
+        return;
+    }
     auto rocket = std::make_shared<Rocket>(m_rocketTexture, m_rocketShader);
     m_shipOwner->AddChild(rocket);
     rocket->SetFollowParent(false);
@@ -42,7 +46,7 @@ void CritRocket::SetupCallbacks()
             auto buffs = m_shipOwner->GetComponent<BuffList>();
             auto critRocketStacks = buffs->GetBuffStacks("CritRocket");
             float damage = m_damage + (critRocketStacks * 100.f); //! We should decide if stacks effect is applied before or after crit
-            
+
             bool isCrit = m_shipOwner->IsCritHit();
             damage = isCrit ? damage * 2 : damage;
 
