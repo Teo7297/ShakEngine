@@ -161,6 +161,9 @@ namespace shak
         if (!m_children.contains(id))
             return false;
 
+        m_children[id]->OnDestroy();
+        m_children[id]->InternalDestroy();
+        m_children[id]->RemoveChildrenRecursive(); // delete all hierarchy below
         m_children.erase(id);
         return true;
     }
@@ -175,6 +178,20 @@ namespace shak
                     return true;
 
         return false;
+    }
+
+    void GameObject::RemoveChildrenRecursive()
+    {
+        for (const auto& [_, child] : m_children)
+        {
+            child->RemoveChildrenRecursive();
+            child->RemoveChildren();
+        }
+    }
+
+    void GameObject::RemoveChildren()
+    {
+        m_children.clear();
     }
 
     GameObjectPtr GameObject::FindChildRecursive(const std::string& name) const
@@ -305,7 +322,7 @@ namespace shak
         m_needAwake = false;
     }
 
-    void GameObject::Update(float dt)
+    void GameObject::InternalUpdate(float dt)
     {
         TrySafeCopy();
         for (const auto& comp : m_safeComponents)
@@ -322,7 +339,7 @@ namespace shak
             if (child->IsActive())
             {
                 child->Update(dt);
-                child->shak::GameObject::Update(dt);
+                child->InternalUpdate(dt);
             }
         }
 
@@ -334,7 +351,7 @@ namespace shak
         }
     }
 
-    void GameObject::LateUpdate(float dt)
+    void GameObject::InternalLateUpdate(float dt)
     {
         TrySafeCopy();
         for (const auto& comp : m_safeComponents)
@@ -351,22 +368,22 @@ namespace shak
             if (child->IsActive())
             {
                 child->LateUpdate(dt);
-                child->shak::GameObject::LateUpdate(dt);
+                child->InternalLateUpdate(dt);
             }
         }
     }
 
-    void GameObject::Cleanup()
+    void GameObject::InternalCleanup()
     {
         m_safeCopyDone = false;
         for (const auto& [id, child] : m_children)
         {
             child->Cleanup();
-            child->shak::GameObject::Cleanup();
+            child->InternalCleanup();
         }
     }
 
-    void GameObject::HandleInput(const sf::Event& event)
+    void GameObject::InternalHandleInput(const sf::Event& event)
     {
         TrySafeCopy();
         for (const auto& comp : m_safeComponents)
@@ -383,12 +400,12 @@ namespace shak
             if (child->IsActive())
             {
                 child->HandleInput(event);
-                child->shak::GameObject::HandleInput(event);
+                child->InternalHandleInput(event);
             }
         }
     }
 
-    void GameObject::OnDestroy()
+    void GameObject::InternalDestroy()
     {
         TrySafeCopy();
         for (const auto& comp : m_safeComponents)
@@ -405,7 +422,7 @@ namespace shak
             if (child->IsActive())
             {
                 child->OnDestroy();
-                child->shak::GameObject::OnDestroy();
+                child->InternalDestroy();
             }
         }
     }

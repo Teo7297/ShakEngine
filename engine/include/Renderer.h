@@ -17,7 +17,7 @@ namespace shak
         void AddCamera(const std::string& name, std::shared_ptr<sf::View> camera);
         void RemoveCamera(const std::string& name);
 
-        inline void SetClearColor(sf::Color color) { m_clearColor = color; }
+        void SetClearColor(sf::Color color) { m_clearColor = color; }
 
         void Render(const std::vector<GameObjectPtr>& drawables);
     private:

@@ -16,43 +16,10 @@
 #include "TestGO.h"
 #include "UI/HUD.h"
 
-void game()
-{
-    shak::ShakEngine* engine = &shak::ShakEngine::GetInstance();
-    engine->Initialize();
-    {
-        auto& rm = engine->GetResourceManager();
-        auto goliathPlus = rm.LoadTextureAtlas("assets/textures/New_Goliath_plus/ship106.atlas", "goliathPlus");
+#include "SceneManager.h"
+#include "scenes/TestGameScene.h"
+#include "scenes/TestGameScene2.h"
 
-        auto camera1 = std::make_shared<shak::Camera>(sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
-
-        engine->AddCamera("camera1", camera1);
-
-        // auto bg = engine->AddGameObject<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
-        // camera1->SetBackground(bg);
-        // auto bgsize = rm.GetTexture("bg1")->getSize();
-        // camera1->SetBackgroundSize({ (float)(bgsize.x * 100), (float)(bgsize.y * 100) });
-
-        json::JSON jsonData = json::JSON::LoadFromDisk("assets/json/ships/DPS.json");
-
-        auto player = engine->AddGameObject<Ship>(jsonData);
-        player->AddComponent<PlayerController>();
-        player->AddChild(camera1);
-        camera1->setPosition(player->getPosition());
-
-        for (int i = 0; i < 3; i++)
-        {
-            auto alien = engine->AddGameObject<Ship>(jsonData);
-            alien->AddComponent<AIController>();
-            alien->Name = "Alien" + std::to_string(i);
-        }
-
-        engine->AddUIElement<HUD>("HUD");
-        engine->SelectActiveUI("HUD");
-    }
-
-    engine->Start();
-}
 
 void ShaderTest()
 {
@@ -62,7 +29,7 @@ void ShaderTest()
         auto& rm = engine->GetResourceManager();
 
         auto camera1 = std::make_shared<shak::Camera>(sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
-        engine->AddCamera("camera1", camera1);
+        // engine->AddCamera("camera1", camera1);
         camera1->move({ 1920.f / 2.f, 1080.f / 2.f });
 
         // auto testTexture = rm.LoadTexture("assets/textures/abstract1.png", "testTexture", true, true);
@@ -73,11 +40,21 @@ void ShaderTest()
     engine->Start();
 }
 
+void game()
+{
+    shak::ShakEngine* engine = &shak::ShakEngine::GetInstance();
+    engine->Initialize();
+    auto sm = engine->GetSceneManager();
+    sm->AddScene("test", std::make_shared<TestGameScene>());
+    sm->AddScene("test2", std::make_shared<TestGameScene2>());
+    sm->ActivateScene("test2");
+    engine->Start();
+}
+
 
 int main()
 {
     game();
     // ShaderTest();
-
     return 0;
 }

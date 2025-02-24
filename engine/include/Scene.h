@@ -15,13 +15,17 @@ namespace shak
         float distance;
     };
 
+    class ShakEngine;
     class UIElement;
     class UIManager;
     class Scene
     {
     public:
-        Scene(std::shared_ptr<shak::Renderer> renderer);
+        Scene();
         virtual ~Scene() = default;
+
+        virtual void Init() = 0;
+        virtual void Clear();
 
         // GAMEOBJECTS MANAGEMENT
         void AddGameObject(const GameObjectPtr gameObject);
@@ -59,7 +63,8 @@ namespace shak
         void CheckCollisions();
         void DrawUI();
 
-    private:
+    protected:
+        ShakEngine* m_engine;
         Quadtree m_quadtree;
         GameObjectPtr m_root;
         std::vector<GameObjectPtr> m_drawables;

@@ -3,7 +3,8 @@
 #include "EngineDefines.h"
 #include "ResourceManager.h"
 #include "Scene.h"
-#include "Camera.h"
+#include "SceneManager.h"
+#include "ShakEvent.h"
 
 namespace shak
 {
@@ -25,12 +26,14 @@ namespace shak
 
         void Initialize(const std::string& windowTitle = "ShakEngine");
 
+        std::shared_ptr<Renderer> GetRenderer() const { return m_renderer; }
+
         template<typename T, typename... Args>
         std::shared_ptr<T> AddGameObject(Args&& ... args)
         {
             static_assert(std::is_base_of<GameObject, T>::value, "T must be a GameObject");
             const std::shared_ptr<T> tPtr = std::make_shared<T>(std::forward<Args>(args)...);
-            m_scene->AddGameObject(tPtr);
+            m_sceneManager->GetActiveScene()->AddGameObject(tPtr);
             return tPtr;
         }
         void Destroy(const GameObjectPtr& gameObject);
@@ -42,14 +45,14 @@ namespace shak
         std::vector<GameObjectPtr> FindGameObjectsByType() const
         {
             static_assert(std::is_base_of<GameObject, T>::value, "T must be a GameObject");
-            return m_scene->FindGameObjectsByType<T>();
+            return m_sceneManager->GetActiveScene()->FindGameObjectsByType<T>();
         }
 
         template <typename T>
         void AddUIElement(const std::string& name)
         {
             static_assert(std::is_base_of<UIElement, T>::value, "T must be a UIElement");
-            m_scene->AddUIElement(name, std::make_shared<T>());
+            m_sceneManager->GetActiveScene()->AddUIElement(name, std::make_shared<T>());
         }
         void RemoveUIElement(const std::string& name);
         std::shared_ptr<UIElement> FindUIElementByName(const std::string& name) const;
@@ -58,13 +61,9 @@ namespace shak
         std::shared_ptr<UIElement> GetActiveUI() const;
 
         ResourceManager& GetResourceManager();
-        std::shared_ptr<Scene> GetScene() const { return m_scene; }
 
-        void AddCamera(const std::string& name, const std::shared_ptr<Camera>& camera);
-
-        std::shared_ptr<Camera> GetCamera(const std::string& name) const;
-
-        void RemoveCamera(const std::string& name);
+        std::shared_ptr<SceneManager> GetSceneManager() const { return m_sceneManager; }
+        std::shared_ptr<Scene> GetScene() const { return m_sceneManager->GetActiveScene(); }
 
         sf::Vector2i GetPointInScreenCoords(const sf::Vector2f& worldPos) const;
         sf::Vector2f GetMousePixelPos() const;
@@ -75,6 +74,10 @@ namespace shak
 
         float GetTime();
 
+    public:
+        //EVENTS
+        Event<const sf::Vector2u> OnResize;
+
     private:
         // Private constructor to prevent instantiation
         ShakEngine();
@@ -84,9 +87,8 @@ namespace shak
         std::shared_ptr<Renderer> m_renderer;
         std::shared_ptr<sf::RenderWindow> m_window;
         ResourceManager m_resourceManager;
-        std::shared_ptr<Scene> m_scene;
+        std::shared_ptr<SceneManager> m_sceneManager;
         sf::Clock m_clock;
-        std::unordered_map<std::string, std::shared_ptr<Camera>> m_cameras;
         unsigned int m_nextGameObjectId;
         float m_time;
     };

@@ -3,6 +3,7 @@
 #include "EngineDefines.h"
 #include "GameObject.h"
 #include "Background.h"
+#include "ShakEngine.h"
 
 namespace shak
 {
@@ -53,6 +54,14 @@ namespace shak
         constexpr void SetBackgroundSize(const sf::Vector2f& size)
         {
             m_bgSize = sf::Vector2f{ 1.f, 1.f }.componentWiseDiv(size);
+        }
+
+        void Awake() override
+        {
+            shak::ShakEngine::GetInstance().OnResize += [this](const sf::Vector2u& size)
+                {
+                    this->SetSize({ (float)size.x /* / m_cameras.size()*/, (float)size.y }); //TODO: find a way to have multiple cameras (try to avoid Camera ref in renderer.. if possible)
+                };
         }
 
         void Update(float dt) override

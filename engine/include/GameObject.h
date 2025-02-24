@@ -35,6 +35,9 @@ namespace shak
         void AddChild(const std::shared_ptr<GameObject>& child);
         bool RemoveChild(int id);
         bool RemoveChildRecursive(int id);
+        void RemoveChildrenRecursive();
+        void RemoveChildren();
+
         std::shared_ptr<GameObject> FindChildRecursive(const std::string& name) const;
         std::shared_ptr<GameObject> FindChildRecursive(int id) const;
 
@@ -121,21 +124,27 @@ namespace shak
         bool NeedAwake() const { return m_needAwake; }
         void ForwardAwake();
 
-        virtual void OnCollision(const std::shared_ptr<GameObject>& other) {};
+        virtual void OnCollision(const std::shared_ptr<GameObject>& other) {}
 
-        virtual void Awake();
+        virtual void Awake(); // TODO: forward awake is the same as internal stuff. this awake gets called twice if not overridden. this should be fixed but its not that bad.
 
-        virtual void Update(float dt);
-        virtual void LateUpdate(float dt);
+        void InternalUpdate(float dt);
+        virtual void Update(float dt) {}
 
+        void InternalLateUpdate(float dt);
+        virtual void LateUpdate(float dt) {}
+
+        void InternalCleanup();
         // This function is the last one called in the game loop. It is meant to be used to reset flags, etc.
-        virtual void Cleanup();
+        virtual void Cleanup() {}
 
+        void InternalHandleInput(const sf::Event& event);
         /// @brief Forwards the input event from the root object. This is NOT called if a GUI element is being interacted with
         /// @param event 
-        virtual void HandleInput(const sf::Event& event);
+        virtual void HandleInput(const sf::Event& event) {}
 
-        virtual void OnDestroy();
+        void InternalDestroy();
+        virtual void OnDestroy() { std::cout << "Destroyed: " << Name << std::endl; }
 
         // Physics
         // Check if a point in world coordinates is inside the object bounding box

@@ -1,5 +1,6 @@
 #include "Scene.h"
 
+#include "ShakEngine.h"
 #include "UIManager.h"
 #include "UIElement.h"
 
@@ -9,18 +10,24 @@
 
 namespace shak
 {
-    Scene::Scene(std::shared_ptr<shak::Renderer> renderer)
-        : m_quadtree({ {0, 0}, {10000, 10000} })
+    Scene::Scene()
+        : m_engine(&shak::ShakEngine::GetInstance())
+        , m_quadtree({ {0, 0}, {10000, 10000} })
         , m_root(std::make_shared<GameObject>())
         , m_drawables()
-        , m_renderer(renderer)
+        , m_renderer(m_engine->GetRenderer())
         , m_awakeDone(false)
         , m_ui(std::make_shared<shak::UIManager>())
     {
         m_root->Name = "Root";
     }
 
-    void Scene::AddGameObject(const GameObjectPtr gameObject)
+    void Scene::Clear()
+    {
+        
+    }
+
+void Scene::AddGameObject(const GameObjectPtr gameObject)
     {
         m_root->AddChild(gameObject);
     }
@@ -323,10 +330,10 @@ namespace shak
             m_awakeDone = true;
         }
 
-        m_root->Update(dt);
+        m_root->InternalUpdate(dt);
         m_quadtree.update();
 
-        m_root->LateUpdate(dt);
+        m_root->InternalLateUpdate(dt);
     }
 
     void Scene::Render()
@@ -346,12 +353,12 @@ namespace shak
 
     void Scene::Cleanup()
     {
-        m_root->Cleanup();
+        m_root->InternalCleanup();
     }
 
     void Scene::HandleInput(const sf::Event& event)
     {
-        m_root->HandleInput(event);
+        m_root->InternalHandleInput(event);
     }
 
     void Scene::CheckCollisions()

@@ -12,9 +12,8 @@ namespace shak
         : m_renderer(nullptr)
         , m_window(nullptr)
         , m_resourceManager()
-        , m_scene(nullptr)
+        , m_sceneManager(nullptr)
         , m_clock()
-        , m_cameras()
         , m_nextGameObjectId(0)
         , m_time(0.f)
     {
@@ -24,67 +23,48 @@ namespace shak
     {
         m_renderer = std::make_shared<shak::Renderer>();
         m_window = m_renderer->CreateSFWindow(windowTitle);
-        m_scene = std::make_shared<Scene>(m_renderer);
+        m_sceneManager = std::make_shared<SceneManager>();
     }
 
     void ShakEngine::Destroy(const GameObjectPtr& gameObject)
     {
         gameObject->OnDestroy();
-        m_scene->RemoveGameObject(gameObject->Id);
+        m_sceneManager->GetActiveScene()->RemoveGameObject(gameObject->Id);
     }
 
     GameObjectPtr ShakEngine::FindGameObjectByName(const std::string& name) const
     {
-        return m_scene->FindGameObject(name);
+        return m_sceneManager->GetActiveScene()->FindGameObject(name);
     }
 
     void ShakEngine::RemoveUIElement(const std::string& name)
     {
-        m_scene->RemoveUIElement(name);
+        m_sceneManager->GetActiveScene()->RemoveUIElement(name);
     }
 
     std::shared_ptr<UIElement> ShakEngine::FindUIElementByName(const std::string& name) const
     {
-        return m_scene->GetUIElement(name);
+        return m_sceneManager->GetActiveScene()->GetUIElement(name);
     }
 
     void ShakEngine::SelectActiveUI(const std::string& name)
     {
-        m_scene->SelectActiveUI(name);
+        m_sceneManager->GetActiveScene()->SelectActiveUI(name);
     }
 
     void ShakEngine::DeselectActiveUI()
     {
-        m_scene->DeselectActiveUI();
+        m_sceneManager->GetActiveScene()->DeselectActiveUI();
     }
 
     std::shared_ptr<UIElement> ShakEngine::GetActiveUI() const
     {
-        return m_scene->GetActiveUI();
+        return m_sceneManager->GetActiveScene()->GetActiveUI();
     }
 
     shak::ResourceManager& ShakEngine::GetResourceManager()
     {
         return m_resourceManager;
-    }
-
-    void ShakEngine::AddCamera(const std::string& name, const std::shared_ptr<shak::Camera>& camera)
-    {
-        m_cameras[name] = camera;
-        m_renderer->AddCamera(name, camera->GetView());
-    }
-
-    std::shared_ptr<shak::Camera> ShakEngine::GetCamera(const std::string& name) const
-    {
-        if (!m_cameras.contains(name))
-            return nullptr;
-        return m_cameras.at(name);
-    }
-
-    void ShakEngine::RemoveCamera(const std::string& name)
-    {
-        m_cameras.erase(name);
-        m_renderer->RemoveCamera(name);
     }
 
     sf::Vector2i ShakEngine::GetPointInScreenCoords(const sf::Vector2f& worldPos) const
@@ -123,38 +103,33 @@ namespace shak
                 }
                 else if (event->is<sf::Event::Resized>())
                 {
-                    auto val = event->getIf<sf::Event::Resized>();
-                    for (auto& [name, camera] : m_cameras)
-                    {
-                        //TODO: make this more flexible, this now only works with horizontal split screen
-                        camera->SetSize({ (float)val->size.x / m_cameras.size(), (float)val->size.y });
-                    }
+                    OnResize(event->getIf<sf::Event::Resized>()->size);
                 }
 
-                m_scene->HandleInput(event.value());
+                m_sceneManager->GetActiveScene()->HandleInput(event.value());
             }
 
             // Calculate delta time
             float dt = m_clock.restart().asSeconds();
             m_time += dt;
 
-            m_scene->ForwardAwake();
+            m_sceneManager->GetActiveScene()->ForwardAwake();
 
-            m_scene->TryInitActiveUI();
+            m_sceneManager->GetActiveScene()->TryInitActiveUI();
 
-            m_scene->CheckCollisions();
+            m_sceneManager->GetActiveScene()->CheckCollisions();
 
-            m_scene->Update(dt);
+            m_sceneManager->GetActiveScene()->Update(dt);
 
             // TEST
             // Update mouse and touch position on screen before drawing the UI
             ImGui::SFML::Update(*m_window, sf::seconds(dt));
 
-            m_scene->DrawUI();
+            m_sceneManager->GetActiveScene()->DrawUI();
 
-            m_scene->Render();
+            m_sceneManager->GetActiveScene()->Render();
 
-            m_scene->Cleanup();
+            m_sceneManager->GetActiveScene()->Cleanup();
         }
     }
 

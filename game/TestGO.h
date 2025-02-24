@@ -3,19 +3,18 @@
 #include "GameObject.h"
 #include "ParticleSystem.h"
 
-class TestGO : public shak::GameObject
+class TestGO : public shak::Component
 {
 public:
-    TestGO()
-        : shak::GameObject()
+    TestGO(shak::GameObject* owner)
+        : shak::Component(owner)
     {
-        Name = "TestGO";
     }
     ~TestGO() override = default;
 
     void Awake() override
     {
-        
+
     }
 
     void Update(float dt) override {};
@@ -25,12 +24,18 @@ public:
         {
             if (key->code == sf::Keyboard::Key::E)
             {
-                this->rotate(sf::degrees(5.f));
+                std::cout << "E pressed on " << m_owner->Name << std::endl;
+                auto cid = m_owner->Id;
+                // auto cid = m_owner->GetChildren()[0]->Id;
+                shak::ShakEngine::GetInstance().GetScene()->RemoveGameObject(cid);
             }
 
             if (key->code == sf::Keyboard::Key::Q)
             {
-                this->rotate(sf::degrees(-5.f));
+                for (const auto& child : m_owner->GetChildren())
+                {
+                    std::cout << "Child: " << child->Name << std::endl;
+                }
             }
         }
     }
