@@ -74,8 +74,10 @@ public:
         ImGui::BeginChild("BottomLeft", ImVec2(400, 150), false);
         ImGui::Text("Inventory");
         // Add inventory widgets...
-        if (ImGui::Button("Click Me"))
-            std::cout << "Clicked!" << std::endl;
+        if (ImGui::Button("Change Scene"))
+        {
+            shak::ShakEngine::GetInstance().GetSceneManager()->ActivateScene("test2");
+        }
         ImGui::EndChild();
 
         ImGui::End();

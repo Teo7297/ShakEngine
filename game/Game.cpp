@@ -47,7 +47,7 @@ void game()
     auto sm = engine->GetSceneManager();
     sm->AddScene("test", std::make_shared<TestGameScene>());
     sm->AddScene("test2", std::make_shared<TestGameScene2>());
-    sm->ActivateScene("test2");
+    sm->ActivateScene("test");
     engine->Start();
 }
 

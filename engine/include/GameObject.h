@@ -144,7 +144,7 @@ namespace shak
         virtual void HandleInput(const sf::Event& event) {}
 
         void InternalDestroy();
-        virtual void OnDestroy() { std::cout << "Destroyed: " << Name << std::endl; }
+        virtual void OnDestroy() {}
 
         // Physics
         // Check if a point in world coordinates is inside the object bounding box
