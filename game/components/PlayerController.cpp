@@ -84,9 +84,6 @@ void PlayerController::HandleInput(const sf::Event& event)
         if (key->code == sf::Keyboard::Key::W)
             m_owner->GetComponent<Health>()->TakeDamage(100.f, false);
 
-        if (key->code == sf::Keyboard::Key::S)
-            m_engine->GetSceneManager()->ActivateScene("test2");
-
         if (key->code == sf::Keyboard::Key::Num1)
             m_abilitySystem->ToggleAbility("MachineGun", m_ownerShip->GetTarget());
 

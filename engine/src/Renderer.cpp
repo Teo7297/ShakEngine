@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "Camera.h"
 #include "imgui.h"
 #include "imgui-SFML.h"
 
@@ -20,7 +21,8 @@ namespace shak
         m_window->setVerticalSyncEnabled(false);
         m_window->setFramerateLimit(170);
 
-        ImGui::SFML::Init(*m_window);
+        if (!ImGui::SFML::Init(*m_window))
+            std::cerr << "[Renderer] Could not initialize ImGui::SFML" << std::endl;
 
         return m_window;
     }
@@ -31,9 +33,12 @@ namespace shak
         ImGui::SFML::Shutdown();
     }
 
-    void Renderer::AddCamera(const std::string& name, std::shared_ptr<sf::View> camera)
+    std::shared_ptr<shak::Camera> Renderer::AddCamera(const std::string& name, const sf::FloatRect& viewport)
     {
+        auto camera = std::make_shared<shak::Camera>(viewport);
+        camera->Name = name;
         m_cameras[name] = camera;
+        return camera;
     }
 
     void Renderer::RemoveCamera(const std::string& name)
@@ -52,7 +57,7 @@ namespace shak
         {
             for (const auto& camera : m_cameras)
             {
-                m_window->setView(*camera.second);
+                m_window->setView(*camera.second->GetView());
                 Draw(drawables);
             }
         }

@@ -37,6 +37,7 @@ namespace shak
             return tPtr;
         }
         void Destroy(const GameObjectPtr& gameObject);
+        void Destroy(const std::string& name); //TODO: id removal and search
         inline unsigned int GetNextGameObjectId() { return m_nextGameObjectId++; }
 
         GameObjectPtr FindGameObjectByName(const std::string& name) const;

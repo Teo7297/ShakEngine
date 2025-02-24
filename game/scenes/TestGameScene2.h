@@ -19,9 +19,7 @@ public:
 
     void Init() override
     {
-        auto camera1 = std::make_shared<shak::Camera>(sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
-
-        m_renderer->AddCamera("camera1", camera1->GetView());
+        auto camera1 = m_renderer->AddCamera("camera1", sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
 
         auto player = m_engine->AddGameObject<shak::Square>(sf::FloatRect({ 0.f,0.f }, { 100.f, 100.f }));
         player->Name = "Player";
@@ -40,9 +38,9 @@ public:
         child2->Name = "Child2";
         child2->setPosition(player->getPosition() + sf::Vector2f{ -300.f, 0.f });
         player->AddChild(child2);
-        
+
         return;
-        
+
         auto child3 = std::make_shared<shak::Square>(sf::FloatRect({ 0.f,0.f }, { 50.f, 50.f }), sf::Color::Red);
         child3->Name = "Child3";
         child3->setPosition(player->getPosition() + sf::Vector2f{ 0.f, 300.f });

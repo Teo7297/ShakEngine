@@ -65,6 +65,9 @@ float Health::GetHealthRegen() const
 
 float Health::TakeDamage(float damage, bool isCrit)
 {
+    if (!IsAlive())
+        return 0.f;
+
     if (damage > m_health)
         damage = m_health;
 
@@ -83,6 +86,9 @@ float Health::TakeDamage(float damage, bool isCrit)
 
 float Health::Heal(float amount)
 {
+    if (!IsAlive())
+        return 0.f;
+
     if (amount + m_health > m_maxHealth)
         amount = m_maxHealth - m_health;
     m_health += amount;
@@ -91,5 +97,10 @@ float Health::Heal(float amount)
         OnHeal(amount);
 
     return amount;
+}
+
+bool Health::IsAlive() const
+{
+    return m_health > 0.f;
 }
 

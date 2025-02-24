@@ -28,8 +28,12 @@ namespace shak
 
     void ShakEngine::Destroy(const GameObjectPtr& gameObject)
     {
-        gameObject->OnDestroy();
         m_sceneManager->GetActiveScene()->RemoveGameObject(gameObject->Id);
+    }
+
+    void ShakEngine::Destroy(const std::string& name)
+    {
+        Destroy(FindGameObjectByName(name));
     }
 
     GameObjectPtr ShakEngine::FindGameObjectByName(const std::string& name) const

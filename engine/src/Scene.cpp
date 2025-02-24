@@ -13,21 +13,34 @@ namespace shak
     Scene::Scene()
         : m_engine(&shak::ShakEngine::GetInstance())
         , m_quadtree({ {0, 0}, {10000, 10000} })
-        , m_root(std::make_shared<GameObject>())
+        , m_root(nullptr)
         , m_drawables()
         , m_renderer(m_engine->GetRenderer())
         , m_awakeDone(false)
-        , m_ui(std::make_shared<shak::UIManager>())
+        , m_ui(nullptr)
     {
+    }
+
+    void Scene::InternalInit()
+    {
+        m_root = std::make_shared<GameObject>();
         m_root->Name = "Root";
+        m_ui = std::make_shared<shak::UIManager>();
+        m_awakeDone = false;
+        this->Init();
     }
 
-    void Scene::Clear()
+    void Scene::InternalClear()
     {
-        
+        this->Clear();
+        m_root->RemoveChildrenRecursive();
+        m_root->InternalDestroy();
+        m_root = nullptr;
+
+        m_quadtree.clear();
     }
 
-void Scene::AddGameObject(const GameObjectPtr gameObject)
+    void Scene::AddGameObject(const GameObjectPtr gameObject)
     {
         m_root->AddChild(gameObject);
     }

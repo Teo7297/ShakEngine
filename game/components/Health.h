@@ -32,6 +32,8 @@ public:
     float TakeDamage(float damage, bool isCrit);
     float Heal(float amount);
 
+    bool IsAlive() const;
+
     shak::Event<> OnDeath;
     shak::Event<float> OnDamage;
     shak::Event<float> OnCritDamage;
@@ -41,5 +43,4 @@ public:
 private:
     float m_health, m_maxHealth;
     float m_regenPerSecond, m_regenTimer, m_regenCooldown;
-
 };

@@ -11,15 +11,15 @@ namespace shak
     {
 
     public:
-        Camera(sf::FloatRect viewport, std::shared_ptr<sf::VertexArray> va = nullptr, std::shared_ptr<sf::Texture> texture = nullptr)
-            : GameObject(va, texture)
+        Camera(sf::FloatRect viewport)
+            : GameObject()
             , m_bg{ nullptr }
             , m_bgSize{ 0.f, 0.f }
             , m_view{ std::make_shared<sf::View>(viewport) }
         {
             this->setOrigin(viewport.size / 2.f);
         }
-        ~Camera() { std::cout << "destroyed camera" << std::endl; }
+        ~Camera() { std::cout << "destroyed camera " << Name << std::endl; }
 
         void move(sf::Vector2f offset) override
         {

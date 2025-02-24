@@ -25,6 +25,11 @@ namespace shak
             remove(mRoot.get(), mBox, value);
         }
 
+        void clear()
+        {
+            //TODO:
+        }
+
         void update()
         {
             updateAll(mRoot.get());
@@ -238,6 +243,7 @@ namespace shak
 
         void updateAll(Node* node)
         {
+            // std::cout << "update qtree of size " << node->values.size() << std::endl;
             for (auto i = std::size_t(0); i < node->values.size(); ++i)
             {
                 auto obj = node->values[i];

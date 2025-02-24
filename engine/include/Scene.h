@@ -24,8 +24,10 @@ namespace shak
         Scene();
         virtual ~Scene() = default;
 
-        virtual void Init() = 0;
-        virtual void Clear();
+        void InternalInit();
+        virtual void Init() {};
+        void InternalClear();
+        virtual void Clear() {};
 
         // GAMEOBJECTS MANAGEMENT
         void AddGameObject(const GameObjectPtr gameObject);

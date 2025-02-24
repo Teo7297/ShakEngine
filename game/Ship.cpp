@@ -61,9 +61,11 @@ Ship::Ship(const json::JSON& shipData)
 
     // Setup death animation
     auto deathAtlas = rm.LoadTextureAtlas(shipData.at("death_anim").ToString(), shipData.at("death_anim_name").ToString());
-    m_deathAnimation = std::make_shared<shak::Animation>(deathAtlas, 2.f);
-    this->AddChild(m_deathAnimation);
-    m_deathAnimation->SetFollowParent(false);
+    m_deathAnimation = m_engine->AddGameObject<shak::Animation>(deathAtlas, 2.f);
+    m_deathAnimation->OnAnimationEnd += [this]()
+        {
+            m_engine->Destroy(m_deathAnimation);
+        };
 
     this->EnablePhysics();
 }
@@ -131,6 +133,11 @@ void Ship::Update(float dt)
         this->move(offset);
         m_distanceToDestination -= offset.length();
     }
+
+    if (m_target && !m_target->GetComponent<Health>()->IsAlive())
+    {
+        this->SetTarget(nullptr);
+    }
 }
 
 void Ship::HandleInput(const sf::Event& event)
@@ -147,7 +154,7 @@ void Ship::SetTarget(const std::shared_ptr<Ship>& target)
 {
     if (m_target)
     {
-        if (target->Id == m_target->Id)
+        if (target && target->Id == m_target->Id)
             return;
         else
         {
@@ -158,8 +165,12 @@ void Ship::SetTarget(const std::shared_ptr<Ship>& target)
 
     m_target = target;
     OnTargetChanged();
-    m_target->ToggleAimSprite(true);
-    m_targetWasSelected = true;
+
+    if (m_target)
+    {
+        m_targetWasSelected = true;
+        m_target->ToggleAimSprite(true);
+    }
 }
 
 bool Ship::IsCritHit() const
@@ -245,6 +256,10 @@ void Ship::PlayDeathAnimation()
 
 void Ship::ResetHealth()
 {
+    //TODO: test
+    m_engine->Destroy(Name);
+    return;
+
     auto health = this->GetComponent<Health>();
     if (health)
     {

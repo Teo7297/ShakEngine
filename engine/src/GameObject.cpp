@@ -161,7 +161,6 @@ namespace shak
         if (!m_children.contains(id))
             return false;
 
-        m_children[id]->OnDestroy();
         m_children[id]->InternalDestroy();
         m_children[id]->RemoveChildrenRecursive(); // delete all hierarchy below
         m_children.erase(id);
@@ -200,8 +199,12 @@ namespace shak
         {
             if (child->Name == name)
                 return child;
-            else if (auto found = child->FindChildRecursive(name))
-                return found;
+            else
+            {
+                auto found = child->FindChildRecursive(name);
+                if (found)
+                    return found;
+            } 
         }
         return nullptr;
     }

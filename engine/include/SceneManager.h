@@ -30,9 +30,9 @@ namespace shak
         void ActivateScene(const std::string& name)
         {
             if (m_activeScene)
-                m_activeScene->Clear();
+                m_activeScene->InternalClear();
             m_activeScene = GetScene(name);
-            m_activeScene->Init();
+            m_activeScene->InternalInit();
         }
 
         std::shared_ptr<Scene> GetActiveScene()

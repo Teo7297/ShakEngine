@@ -32,10 +32,7 @@ public:
 
             if (key->code == sf::Keyboard::Key::Q)
             {
-                for (const auto& child : m_owner->GetChildren())
-                {
-                    std::cout << "Child: " << child->Name << std::endl;
-                }
+                shak::ShakEngine::GetInstance().GetSceneManager()->ActivateScene("test");
             }
         }
     }
