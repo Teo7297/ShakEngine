@@ -131,6 +131,8 @@ namespace shak
         // This function is the last one called in the game loop. It is meant to be used to reset flags, etc.
         virtual void Cleanup();
 
+        /// @brief Forwards the input event from the root object. This is NOT called if a GUI element is being interacted with
+        /// @param event 
         virtual void HandleInput(const sf::Event& event);
 
         virtual void OnDestroy();

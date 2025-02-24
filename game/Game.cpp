@@ -14,6 +14,7 @@
 
 #include "ShaderDevHelper.h"
 #include "TestGO.h"
+#include "UI/HUD.h"
 
 void game()
 {
@@ -39,15 +40,15 @@ void game()
         player->AddChild(camera1);
         camera1->setPosition(player->getPosition());
 
-        // camera1->move(player->GetVertexArray()->getBounds().size / 2.f);
-
-
         for (int i = 0; i < 3; i++)
         {
             auto alien = engine->AddGameObject<Ship>(jsonData);
             alien->AddComponent<AIController>();
             alien->Name = "Alien" + std::to_string(i);
         }
+
+        engine->AddUIElement<HUD>("HUD");
+        engine->SelectActiveUI("HUD");
     }
 
     engine->Start();

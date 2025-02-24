@@ -28,6 +28,7 @@ namespace shak
         template<typename T, typename... Args>
         std::shared_ptr<T> AddGameObject(Args&& ... args)
         {
+            static_assert(std::is_base_of<GameObject, T>::value, "T must be a GameObject");
             const std::shared_ptr<T> tPtr = std::make_shared<T>(std::forward<Args>(args)...);
             m_scene->AddGameObject(tPtr);
             return tPtr;
@@ -40,8 +41,21 @@ namespace shak
         template <typename T>
         std::vector<GameObjectPtr> FindGameObjectsByType() const
         {
+            static_assert(std::is_base_of<GameObject, T>::value, "T must be a GameObject");
             return m_scene->FindGameObjectsByType<T>();
         }
+
+        template <typename T>
+        void AddUIElement(const std::string& name)
+        {
+            static_assert(std::is_base_of<UIElement, T>::value, "T must be a UIElement");
+            m_scene->AddUIElement(name, std::make_shared<T>());
+        }
+        void RemoveUIElement(const std::string& name);
+        std::shared_ptr<UIElement> FindUIElementByName(const std::string& name) const;
+        void SelectActiveUI(const std::string& name);
+        void DeselectActiveUI();
+        std::shared_ptr<UIElement> GetActiveUI() const;
 
         ResourceManager& GetResourceManager();
         std::shared_ptr<Scene> GetScene() const { return m_scene; }

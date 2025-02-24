@@ -1,5 +1,8 @@
 #include "Scene.h"
 
+#include "UIManager.h"
+#include "UIElement.h"
+
 #include "shapes/Line.h"
 #include "shapes/Square.h"
 #include "shapes/Circle.h"
@@ -12,6 +15,7 @@ namespace shak
         , m_drawables()
         , m_renderer(renderer)
         , m_awakeDone(false)
+        , m_ui(std::make_shared<shak::UIManager>())
     {
         m_root->Name = "Root";
     }
@@ -41,6 +45,36 @@ namespace shak
     GameObjectPtr Scene::FindGameObject(int id) const
     {
         return m_root->FindChildRecursive(id);
+    }
+
+    void Scene::AddUIElement(const std::string& name, const std::shared_ptr<UIElement>& element)
+    {
+        m_ui->AddUIElement(name, element);
+    }
+
+    void Scene::RemoveUIElement(const std::string& name)
+    {
+        m_ui->RemoveUIElement(name);
+    }
+
+    std::shared_ptr<UIElement> Scene::GetUIElement(const std::string& name)
+    {
+        return m_ui->GetUIElement(name);
+    }
+
+    void Scene::SelectActiveUI(const std::string& name)
+    {
+        m_ui->SelectActiveUI(name);
+    }
+
+    void Scene::DeselectActiveUI()
+    {
+        m_ui->DeselectActiveUI();
+    }
+
+    std::shared_ptr<UIElement> Scene::GetActiveUI()
+    {
+        return m_ui->GetActiveUI();
     }
 
     std::optional<sf::Vector2f> getRotatedRectIntersectionPoint(
@@ -152,27 +186,21 @@ namespace shak
 
         if (drawDebug)
         {
-            if (outHits.empty())
-            {
-                auto hitLine = std::make_shared<Line>(
-                    origin,
-                    origin + direction * maxDistance,
-                    sf::Color::Red
-                );
-                m_root->AddChild(hitLine);
-            }
+            sf::Color lineColor = outHits.empty() ? sf::Color::Red : sf::Color::Green;
+
+            auto hitLine = std::make_shared<Line>(
+                origin,
+                origin + direction * maxDistance,
+                lineColor
+            );
+            hitLine->SetZIndex(1500);
+            m_root->AddChild(hitLine);
 
             for (const auto& hitData : outHits)
             {
-                auto hitLine = std::make_shared<Line>(
-                    origin,
-                    hitData.hitPoint,
-                    sf::Color::Green
-                );
-                m_root->AddChild(hitLine);
-
                 auto hitSquare = std::make_shared<Square>(sf::FloatRect{ hitData.hitPoint, {10.f, 10.f} }, sf::Color::Green);
                 m_root->AddChild(hitSquare);
+                hitSquare->SetZIndex(1500);
             }
         }
     }
@@ -277,6 +305,16 @@ namespace shak
         m_root->ForwardAwake();
     }
 
+    void Scene::TryInitActiveUI()
+    {
+        const auto& activeUI = m_ui->GetActiveUI();
+        if (activeUI && !activeUI->InitDone)
+        {
+            activeUI->Init();
+            activeUI->InitDone = true; //? I prefer doing it here and avoid UIElement::Init() in every UI element instance
+        }
+    }
+
     void Scene::Update(float dt)
     {
         if (!m_awakeDone)
@@ -325,5 +363,10 @@ namespace shak
             a->OnCollision(b);
             b->OnCollision(a);
         }
+    }
+
+    void Scene::DrawUI()
+    {
+        m_ui->DrawUI();
     }
 }

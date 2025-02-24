@@ -1,6 +1,7 @@
 #include "ShakEngine.h"
 #include "Renderer.h"
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "imgui-SFML.h"
 
 namespace shak
@@ -35,6 +36,31 @@ namespace shak
     GameObjectPtr ShakEngine::FindGameObjectByName(const std::string& name) const
     {
         return m_scene->FindGameObject(name);
+    }
+
+    void ShakEngine::RemoveUIElement(const std::string& name)
+    {
+        m_scene->RemoveUIElement(name);
+    }
+
+    std::shared_ptr<UIElement> ShakEngine::FindUIElementByName(const std::string& name) const
+    {
+        return m_scene->GetUIElement(name);
+    }
+
+    void ShakEngine::SelectActiveUI(const std::string& name)
+    {
+        m_scene->SelectActiveUI(name);
+    }
+
+    void ShakEngine::DeselectActiveUI()
+    {
+        m_scene->DeselectActiveUI();
+    }
+
+    std::shared_ptr<UIElement> ShakEngine::GetActiveUI() const
+    {
+        return m_scene->GetActiveUI();
     }
 
     shak::ResourceManager& ShakEngine::GetResourceManager()
@@ -114,58 +140,17 @@ namespace shak
 
             m_scene->ForwardAwake();
 
+            m_scene->TryInitActiveUI();
+
             m_scene->CheckCollisions();
 
             m_scene->Update(dt);
 
             // TEST
+            // Update mouse and touch position on screen before drawing the UI
             ImGui::SFML::Update(*m_window, sf::seconds(dt));
 
-            // Before creating the window, tell ImGui where you want it:
-            ImGui::SetNextWindowPos(ImVec2(0, 0));
-            ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
-
-            // Push style colors for transparent background and borders
-            ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));  // Fully transparent background
-            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));  // Fully transparent borders
-
-            ImGui::Begin("HUD Overlay", nullptr, ImGuiWindowFlags_NoResize |
-                ImGuiWindowFlags_NoTitleBar |
-                ImGuiWindowFlags_NoMove |
-                ImGuiWindowFlags_NoCollapse |
-                ImGuiWindowFlags_NoBackground);
-
-            // Top left region (for example, player stats)
-            ImGui::BeginChild("TopLeft", ImVec2(300, 150), false);
-            ImGui::Text("Health: 100");
-            if (ImGui::IsItemHovered())
-            {
-                ImGui::BeginTooltip();
-                ImGui::Text("This is the tooltip for the health text");
-                ImGui::EndTooltip();
-            }
-            ImGui::Text("Energy: 100");
-            // Add more widgets...
-            ImGui::EndChild();
-
-            // Top right region (for example, minimap)
-            ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 310); // 300 width + margin
-            ImGui::BeginChild("TopRight", ImVec2(300, 300), false);
-            ImGui::Text("Minimap");
-            // Add minimap widget...
-            ImGui::EndChild();
-
-            // Bottom left region (inventory, etc.)
-            ImGui::SetCursorPosY(ImGui::GetWindowSize().y - 150);
-            ImGui::BeginChild("BottomLeft", ImVec2(400, 150), false);
-            ImGui::Text("Inventory");
-            // Add inventory widgets...
-            ImGui::EndChild();
-
-            ImGui::End();
-            ImGui::PopStyleColor(2);
-
-            // ImGui::ShowDemoWindow(); // Ctrl + Tab to focus the demo window if behind HUD
+            m_scene->DrawUI();
 
             m_scene->Render();
 

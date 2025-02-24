@@ -15,21 +15,21 @@ namespace shak
         float distance;
     };
 
+    class UIElement;
+    class UIManager;
     class Scene
     {
     public:
         Scene(std::shared_ptr<shak::Renderer> renderer);
         virtual ~Scene() = default;
 
+        // GAMEOBJECTS MANAGEMENT
         void AddGameObject(const GameObjectPtr gameObject);
         void AddGameObjectToQuadtree(const GameObjectPtr& gameObject);
-
         void RemoveGameObject(int id);
 
         GameObjectPtr FindGameObject(const std::string& name) const;
         GameObjectPtr FindGameObject(int id) const;
-        void Raycast(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, std::vector<RaycastHit>& outHits, bool drawDebug = false);
-        void Circlecast(const sf::Vector2f& center, float radius, std::vector<RaycastHit>& outHits, bool drawDebug = false);
 
         template<typename T>
         std::vector<GameObjectPtr> FindGameObjectsByType() const
@@ -37,17 +37,27 @@ namespace shak
             return m_root->FindChildrenByTypeRecursive<T>();
         }
 
+        // UI MANAGEMENT
+        void AddUIElement(const std::string& name, const std::shared_ptr<UIElement>& element);
+        void RemoveUIElement(const std::string& name);
+        std::shared_ptr<UIElement> GetUIElement(const std::string& name);
+        void SelectActiveUI(const std::string& name);
+        void DeselectActiveUI();
+        std::shared_ptr<UIElement> GetActiveUI();
+
+        // CASTING
+        void Raycast(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, std::vector<RaycastHit>& outHits, bool drawDebug = false);
+        void Circlecast(const sf::Vector2f& center, float radius, std::vector<RaycastHit>& outHits, bool drawDebug = false);
+
+        // GAME LOOP
         void ForwardAwake();
-
+        void TryInitActiveUI();
         void Update(float dt);
-
         void Render();
-
         void Cleanup();
-
         void HandleInput(const sf::Event& event);
-
         void CheckCollisions();
+        void DrawUI();
 
     private:
         Quadtree m_quadtree;
@@ -55,5 +65,6 @@ namespace shak
         std::vector<GameObjectPtr> m_drawables;
         std::shared_ptr<shak::Renderer> m_renderer;
         bool m_awakeDone;
+        std::shared_ptr<shak::UIManager> m_ui;
     };
 }

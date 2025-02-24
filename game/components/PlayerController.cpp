@@ -4,6 +4,7 @@
 #include "Scene.h"
 
 #include "components/EnergyBar.h"
+#include "components/Health.h"
 #include "components/abilities/LaserDPS.h"
 #include "components/abilities/MachineGun.h"
 #include "components/abilities/LifeDrain.h"
@@ -11,6 +12,8 @@
 
 #include "shapes/Line.h"
 #include "shapes/Square.h"
+
+#include "imgui.h"
 
 void PlayerController::Awake()
 {
@@ -31,7 +34,8 @@ void PlayerController::Update(float dt)
 {
     if (!m_ownerShip->GetTargetWasSelected()) // we can move
     {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+        // Check we are not interacting with UI
+        if (!ImGui::GetIO().WantCaptureMouse && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
         {
             // Move if click outside of ship
             auto mousePos = m_engine->GetMouseWorldPos();
@@ -77,6 +81,10 @@ void PlayerController::HandleInput(const sf::Event& event)
             m_engine->GetScene()->Circlecast(this->GetOwner()->getPosition(), 500.f, hits, true);
         }
 
+        if (key->code == sf::Keyboard::Key::W)
+            m_owner->GetComponent<Health>()->TakeDamage(100.f, false);
+
+
         if (key->code == sf::Keyboard::Key::Num1)
             m_abilitySystem->ToggleAbility("MachineGun", m_ownerShip->GetTarget());
 
@@ -86,6 +94,10 @@ void PlayerController::HandleInput(const sf::Event& event)
         if (key->code == sf::Keyboard::Key::Num3)
             m_abilitySystem->UseAbility("CritRocket", m_ownerShip->GetTarget());
     }
+
+    // MOUSE CONTROLS
+    else if (ImGui::GetIO().WantCaptureMouse)
+        return;
 
     else if (auto key = event.getIf<sf::Event::MouseButtonPressed>())
     {
@@ -105,6 +117,7 @@ void PlayerController::HandleInput(const sf::Event& event)
             }
         }
     }
+
     else if (auto key = event.getIf<sf::Event::MouseButtonReleased>())
     {
         if (key->button == sf::Mouse::Button::Left)
