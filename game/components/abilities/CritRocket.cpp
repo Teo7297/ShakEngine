@@ -13,8 +13,8 @@ CritRocket::CritRocket(AbilitySystem* abilitySystem)
     RegisterCallbacks();
 
     auto rm = shak::ShakEngine::GetInstance().GetResourceManager();
-    m_rocketTexture = rm.LoadTexture("assets/textures/rocket.png", "rocket");
-    m_rocketShader = rm.LoadShader("", "assets/shaders/rocket.fs", "rocket");
+    m_rocketTexture = rm->LoadTexture("assets/textures/rocket.png", "rocket");
+    m_rocketShader = rm->LoadShader("", "assets/shaders/rocket.fs", "rocket");
 }
 
 void CritRocket::Update(float dt)

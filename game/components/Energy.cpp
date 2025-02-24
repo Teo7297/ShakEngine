@@ -69,7 +69,6 @@ float Energy::UseEnergy(float amount)
         OnEnergyUsed(amount);
         used = amount;
     }
-    std::cout << "Energy remaining: " << m_energy << std::endl;
     return used;
 }
 

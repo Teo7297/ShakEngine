@@ -26,7 +26,7 @@ void ShaderTest()
     shak::ShakEngine* engine = &shak::ShakEngine::GetInstance();
     engine->Initialize();
     {
-        auto& rm = engine->GetResourceManager();
+        auto rm = engine->GetResourceManager();
 
         auto camera1 = std::make_shared<shak::Camera>(sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
         // engine->AddCamera("camera1", camera1);

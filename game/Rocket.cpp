@@ -14,7 +14,7 @@ Rocket::Rocket(const std::shared_ptr<sf::Texture>& texture, const std::shared_pt
     , m_target(nullptr)
 {
     // Setup explosion animation
-    auto explosionAtlas = shak::ShakEngine::GetInstance().GetResourceManager().LoadTextureAtlas("assets/animations/explosion.atlas", "deathExplosion");
+    auto explosionAtlas = shak::ShakEngine::GetInstance().GetResourceManager()->LoadTextureAtlas("assets/animations/explosion.atlas", "deathExplosion");
     m_explosion = m_engine->AddGameObject<shak::Animation>(explosionAtlas, 2.f);
 }
 
@@ -38,7 +38,7 @@ void Rocket::Awake()
 {
     auto trail = std::make_shared<shak::TrailRenderer>(shak::TrailRenderer::TrailType::Strip);
     trail->setPosition(this->getPosition());
-    // trail->SetShader(shak::ShakEngine::GetInstance().GetResourceManager().LoadShader("", "assets/shaders/particle.fs", "trail"));
+    // trail->SetShader(shak::ShakEngine::GetInstance().GetResourceManager->LoadShader("", "assets/shaders/particle.fs", "trail"));
     trail->SetZIndex(this->GetZIndex() - 10);
     trail->SetTTL(0.3f);
     trail->SetFade(true);

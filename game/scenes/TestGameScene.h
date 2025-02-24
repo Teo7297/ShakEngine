@@ -18,11 +18,10 @@ public:
 
     void Init() override
     {
-        auto& rm = m_engine->GetResourceManager();
-        auto goliathPlus = rm.LoadTextureAtlas("assets/textures/New_Goliath_plus/ship106.atlas", "goliathPlus");
 
         auto camera1 = m_renderer->AddCamera("camera1", sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
 
+        // auto& rm = m_engine->GetResourceManager();
         // auto bg = m_engine->AddGameObject<shak::Background>(rm.LoadTexture("assets/textures/bg1.jpg", "bg1", true), sf::Vector2f(1920.f, 1080.f));
         // camera1->SetBackground(bg);
         // auto bgsize = rm.GetTexture("bg1")->getSize();
@@ -49,7 +48,6 @@ public:
 
     void Clear() override
     {
-        std::cout << "Test scene clear called" << std::endl;
         m_renderer->RemoveCamera("camera1");
     }
 };

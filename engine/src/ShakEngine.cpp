@@ -11,7 +11,7 @@ namespace shak
     ShakEngine::ShakEngine()
         : m_renderer(nullptr)
         , m_window(nullptr)
-        , m_resourceManager()
+        , m_resourceManager(nullptr)
         , m_sceneManager(nullptr)
         , m_clock()
         , m_nextGameObjectId(0)
@@ -24,6 +24,7 @@ namespace shak
         m_renderer = std::make_shared<shak::Renderer>();
         m_window = m_renderer->CreateSFWindow(windowTitle);
         m_sceneManager = std::make_shared<SceneManager>();
+        m_resourceManager = std::make_shared<ResourceManager>();
     }
 
     void ShakEngine::Destroy(const GameObjectPtr& gameObject)
@@ -66,7 +67,7 @@ namespace shak
         return m_sceneManager->GetActiveScene()->GetActiveUI();
     }
 
-    shak::ResourceManager& ShakEngine::GetResourceManager()
+    std::shared_ptr<ResourceManager> ShakEngine::GetResourceManager()
     {
         return m_resourceManager;
     }

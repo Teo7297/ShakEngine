@@ -61,7 +61,7 @@ namespace shak
         void DeselectActiveUI();
         std::shared_ptr<UIElement> GetActiveUI() const;
 
-        ResourceManager& GetResourceManager();
+        std::shared_ptr<ResourceManager> GetResourceManager();
 
         std::shared_ptr<SceneManager> GetSceneManager() const { return m_sceneManager; }
         std::shared_ptr<Scene> GetScene() const { return m_sceneManager->GetActiveScene(); }
@@ -87,7 +87,7 @@ namespace shak
     private:
         std::shared_ptr<Renderer> m_renderer;
         std::shared_ptr<sf::RenderWindow> m_window;
-        ResourceManager m_resourceManager;
+        std::shared_ptr<ResourceManager> m_resourceManager;
         std::shared_ptr<SceneManager> m_sceneManager;
         sf::Clock m_clock;
         unsigned int m_nextGameObjectId;

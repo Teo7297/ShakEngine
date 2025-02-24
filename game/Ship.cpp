@@ -37,7 +37,7 @@ Ship::Ship(const json::JSON& shipData)
     m_shipData = shipData;
 
     auto rm = m_engine->GetResourceManager();
-    m_atlas = rm.LoadTextureAtlas(shipData.at("atlas").ToString(), shipData.at("atlas_name").ToString());
+    m_atlas = rm->LoadTextureAtlas(shipData.at("atlas").ToString(), shipData.at("atlas_name").ToString());
     m_atlasTexturesCount = m_atlas->GetCount();
 
     this->InitQuadVertexArray({ 250.f, 250.f }, sf::Color::White);
@@ -60,7 +60,7 @@ Ship::Ship(const json::JSON& shipData)
     m_baseStats = shipData.at("base_stats");
 
     // Setup death animation
-    auto deathAtlas = rm.LoadTextureAtlas(shipData.at("death_anim").ToString(), shipData.at("death_anim_name").ToString());
+    auto deathAtlas = rm->LoadTextureAtlas(shipData.at("death_anim").ToString(), shipData.at("death_anim_name").ToString());
     m_deathAnimation = m_engine->AddGameObject<shak::Animation>(deathAtlas, 2.f);
     m_deathAnimation->OnAnimationEnd += [this]()
         {
@@ -74,7 +74,7 @@ void Ship::Awake()
 {
     m_destination = this->getPosition();
 
-    auto aimtxt = m_engine->GetResourceManager().LoadTexture("assets/textures/aim.png", "aim");
+    auto aimtxt = m_engine->GetResourceManager()->LoadTexture("assets/textures/aim.png", "aim");
     m_aimSprite = std::make_shared<shak::Sprite>(aimtxt, nullptr, sf::Vector2f(250.f, 250.f), sf::Color::Red);
     m_aimSprite->setPosition(this->getPosition());
     m_aimSprite->SetTransparency(0);

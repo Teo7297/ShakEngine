@@ -25,8 +25,8 @@ LaserDPS::LaserDPS(AbilitySystem* abilitySystem)
     auto engine = &shak::ShakEngine::GetInstance();
     auto rm = engine->GetResourceManager();
     auto shipData = m_shipOwner->GetShipData();
-    m_laserTexture = rm.LoadTexture(shipData.at("laser_texture").ToString(), shipData.at("laser_texture_name").ToString());
-    m_laserShader = rm.LoadShader("", shipData.at("laser_shader").ToString(), shipData.at("laser_shader_name").ToString());
+    m_laserTexture = rm->LoadTexture(shipData.at("laser_texture").ToString(), shipData.at("laser_texture_name").ToString());
+    m_laserShader = rm->LoadShader("", shipData.at("laser_shader").ToString(), shipData.at("laser_shader_name").ToString());
     m_laserShader->setUniform("u_texture", *m_laserTexture);
     m_laserShader->setUniform("u_resolution", sf::Glsl::Vec2{ engine->GetWindowSize().x, engine->GetWindowSize().y }); // TODO: this breaks if window is resized(maybe engine event?)
 }
