@@ -1,12 +1,14 @@
 #pragma once
 #include "EngineDefines.h"
 #include "TextureAtlas.h"
+#include "cmrc/cmrc.hpp"
+
 namespace shak
 {
     class ResourceManager
     {
     public:
-        ResourceManager() = default;
+        ResourceManager();
         ~ResourceManager() = default;
 
         // Texture
@@ -30,6 +32,8 @@ namespace shak
         std::shared_ptr<sf::Font> GetFont(const std::string& name) const;
 
     private:
+        cmrc::embedded_filesystem m_embeddedFilesystem;
+
         std::unordered_map<std::string, std::shared_ptr<sf::Texture>> m_loadedTextures;
         std::unordered_map<std::string, std::shared_ptr<TextureAtlas>> m_loadedAtlases;
         std::unordered_map<std::string, std::shared_ptr<sf::Shader>> m_loadedShaders;

@@ -60,7 +60,6 @@ void PlayerController::HandleInput(const sf::Event& event)
     {
         if (key->code == sf::Keyboard::Key::Space)
         {
-            std::cout << "Space" << std::endl;
             if (!m_ownerShip->IsLaserShooting() && !m_ownerShip->IsAutoAttacking())
                 m_ownerShip->OnAutoAttackStarted(m_ownerShip->GetTarget());
             else if (m_ownerShip->IsAutoAttacking())

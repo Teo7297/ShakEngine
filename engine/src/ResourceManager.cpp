@@ -1,6 +1,15 @@
 #include "ResourceManager.h"
+
+
+CMRC_DECLARE(shak);
+
 namespace shak
 {
+    ResourceManager::ResourceManager()
+        : m_embeddedFilesystem(cmrc::shak::get_filesystem())
+    {
+    }
+
     std::shared_ptr<sf::Texture> ResourceManager::LoadTexture(const std::string& path, const std::string& name, bool repeated, bool smooth)
     {
         if (m_loadedTextures.contains(name))
@@ -64,11 +73,24 @@ namespace shak
         bool success;
 
         if (vpath == "")
-            success = shader->loadFromFile(fpath, sf::Shader::Type::Fragment);
+        {
+            const auto fs = m_embeddedFilesystem.open(fpath.string());
+            success = shader->loadFromMemory(fs.begin(), sf::Shader::Type::Fragment);
+            // success = shader->loadFromFile(fpath, sf::Shader::Type::Fragment);
+        }
         else if (fpath == "")
-            success = shader->loadFromFile(vpath, sf::Shader::Type::Vertex);
+        {
+            const auto vs = m_embeddedFilesystem.open(vpath.string());
+            success = shader->loadFromMemory(vs.begin(), sf::Shader::Type::Vertex);
+            // success = shader->loadFromFile(vpath, sf::Shader::Type::Vertex);
+        }
         else
-            success = shader->loadFromFile(vpath, fpath);
+        {
+            const auto fs = m_embeddedFilesystem.open(fpath.string());
+            const auto vs = m_embeddedFilesystem.open(vpath.string());
+            success = shader->loadFromMemory(vs.begin(), fs.begin());
+            // success = shader->loadFromFile(vpath, fpath);
+        }
 
         if (!success)
         {

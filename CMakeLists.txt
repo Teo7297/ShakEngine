@@ -34,6 +34,20 @@ FetchContent_Declare(ImGui-SFML
     SYSTEM)
 FetchContent_MakeAvailable(ImGui-SFML)
 
+# This library embeds all the resources in the executable as cpp compiled files.
+# Very useful for shaders.
+include(cmake/CMakeRC.cmake)
+
+file(GLOB SHADER_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/*.vs"
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/*.fs"
+)
+cmrc_add_resource_library(shak-resources
+        ALIAS shak::rc
+        NAMESPACE shak
+        ${SHADER_FILES})
+
+
 # Include all .cpp and .h files in src directory
 file(GLOB_RECURSE SOURCES engine/src/*.cpp game/*.cpp)
 
@@ -49,4 +63,5 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     SFML::Network
     opengl32
     ImGui-SFML::ImGui-SFML
+    shak-resources shak::rc
 )
