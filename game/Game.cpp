@@ -20,26 +20,6 @@
 #include "scenes/TestGameScene.h"
 #include "scenes/TestGameScene2.h"
 
-
-void ShaderTest()
-{
-    shak::ShakEngine* engine = &shak::ShakEngine::GetInstance();
-    engine->Initialize();
-    {
-        auto rm = engine->GetResourceManager();
-
-        auto camera1 = std::make_shared<shak::Camera>(sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
-        // engine->AddCamera("camera1", camera1);
-        camera1->move({ 1920.f / 2.f, 1080.f / 2.f });
-
-        // auto testTexture = rm.LoadTexture("assets/textures/abstract1.png", "testTexture", true, true);
-        // auto testTexture = rm.LoadTexture("assets/textures/rocket.png", "testTexture", false, true);
-        engine->AddGameObject<ShaderDevHelper>("healthbar", nullptr);
-    }
-
-    engine->Start();
-}
-
 void game()
 {
     shak::ShakEngine* engine = &shak::ShakEngine::GetInstance();
@@ -55,6 +35,5 @@ void game()
 int main()
 {
     game();
-    // ShaderTest();
     return 0;
 }
