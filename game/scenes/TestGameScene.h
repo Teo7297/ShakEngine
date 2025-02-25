@@ -48,6 +48,7 @@ public:
         auto rm = m_engine->GetResourceManager();
         auto music = rm->LoadMusic("assets/audio/AgainstAllOdds.wav", "AgainstAllOdds");
         music->setLooping(true);
+        music->setVolume(25.f);
         music->play();
     }
 

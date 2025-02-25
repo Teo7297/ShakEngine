@@ -26,6 +26,8 @@ namespace shak
         m_root = std::make_shared<GameObject>();
         m_root->Name = "Root";
         m_ui = std::make_shared<shak::UIManager>();
+        m_engine->GetResourceManager()->Clear();
+
         m_awakeDone = false;
         this->Init();
     }

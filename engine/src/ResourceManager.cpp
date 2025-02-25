@@ -10,6 +10,16 @@ namespace shak
     {
     }
 
+    void ResourceManager::Clear()
+    {
+        m_loadedTextures.clear();
+        m_loadedAtlases.clear();
+        m_loadedShaders.clear();
+        m_loadedFonts.clear();
+        m_loadedSounds.clear();
+        m_loadedMusic.clear();
+    }
+
     std::shared_ptr<sf::Texture> ResourceManager::LoadTexture(const std::string& path, const std::string& name, bool repeated, bool smooth)
     {
         if (m_loadedTextures.contains(name))

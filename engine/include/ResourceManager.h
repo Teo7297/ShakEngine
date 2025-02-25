@@ -11,6 +11,8 @@ namespace shak
         ResourceManager();
         ~ResourceManager() = default;
 
+        void Clear();
+
         // Texture
         std::shared_ptr<sf::Texture> LoadTexture(const std::string& path, const std::string& name, bool repeated = false, bool smooth = false);
         void UnloadTexture(const std::string& name);
