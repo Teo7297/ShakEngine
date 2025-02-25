@@ -143,4 +143,65 @@ namespace shak
             return m_loadedFonts.at(name);
         return nullptr;
     }
+
+    std::shared_ptr<sf::Sound> ResourceManager::LoadSound(const fs::path& path, const std::string& name)
+    {
+        if (m_loadedSounds.contains(name))
+            return m_loadedSounds[name].sound;
+
+        auto buffer = std::make_shared<sf::SoundBuffer>();
+        if (!buffer->loadFromFile(path))
+        {
+            std::cerr << "Failed to load sound [" << name << "] at location: " << path << std::endl;
+            return nullptr;
+        }
+
+        auto sound = std::make_shared<sf::Sound>(*buffer);
+
+        m_loadedSounds[name] = { buffer, sound };
+
+        return sound;
+    }
+
+    void ResourceManager::UnloadSound(const std::string& name)
+    {
+        if (m_loadedSounds.contains(name))
+            m_loadedSounds.erase(name);
+    }
+
+    std::shared_ptr<sf::Sound> ResourceManager::GetSound(const std::string& name) const
+    {
+        if (m_loadedSounds.contains(name))
+            return m_loadedSounds.at(name).sound;
+        return nullptr;
+    }
+
+    std::shared_ptr<sf::Music> ResourceManager::LoadMusic(const fs::path& path, const std::string& name)
+    {
+        if (m_loadedMusic.contains(name))
+            return m_loadedMusic[name];
+
+        auto music = std::make_shared<sf::Music>();
+        if (!music->openFromFile(path))
+        {
+            std::cerr << "Failed to load music [" << name << "] at location: " << path << std::endl;
+            return nullptr;
+        }
+
+        m_loadedMusic[name] = music;
+        return music;
+    }
+
+    void ResourceManager::UnloadMusic(const std::string& name)
+    {
+        if (m_loadedMusic.contains(name))
+            m_loadedMusic.erase(name);
+    }
+
+    std::shared_ptr<sf::Music> ResourceManager::GetMusic(const std::string& name) const
+    {
+        if (m_loadedMusic.contains(name))
+            return m_loadedMusic.at(name);
+        return nullptr;
+    }
 }

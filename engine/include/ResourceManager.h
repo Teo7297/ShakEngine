@@ -31,6 +31,23 @@ namespace shak
         void UnloadFont(const std::string& name);
         std::shared_ptr<sf::Font> GetFont(const std::string& name) const;
 
+        // Sound (short in-memory sounds)
+        std::shared_ptr<sf::Sound> LoadSound(const fs::path& path, const std::string& name);
+        void UnloadSound(const std::string& name);
+        std::shared_ptr<sf::Sound> GetSound(const std::string& name) const;
+
+        // Music (long memory-streamed music)
+        std::shared_ptr<sf::Music> LoadMusic(const fs::path& path, const std::string& name);
+        void UnloadMusic(const std::string& name);
+        std::shared_ptr<sf::Music> GetMusic(const std::string& name) const;
+    
+    private:
+        struct SoundData
+        {
+            std::shared_ptr<sf::SoundBuffer> buffer;
+            std::shared_ptr<sf::Sound> sound;
+        };
+
     private:
         cmrc::embedded_filesystem m_embeddedFilesystem;
 
@@ -38,5 +55,7 @@ namespace shak
         std::unordered_map<std::string, std::shared_ptr<TextureAtlas>> m_loadedAtlases;
         std::unordered_map<std::string, std::shared_ptr<sf::Shader>> m_loadedShaders;
         std::unordered_map<std::string, std::shared_ptr<sf::Font>> m_loadedFonts;
+        std::unordered_map<std::string, SoundData> m_loadedSounds;
+        std::unordered_map<std::string, std::shared_ptr<sf::Music>> m_loadedMusic;
     };
 }

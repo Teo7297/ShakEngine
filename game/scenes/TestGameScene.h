@@ -44,6 +44,11 @@ public:
 
         m_engine->AddUIElement<HUD>("HUD");
         m_engine->SelectActiveUI("HUD");
+
+        auto rm = m_engine->GetResourceManager();
+        auto music = rm->LoadMusic("assets/audio/AgainstAllOdds.wav", "AgainstAllOdds");
+        music->setLooping(true);
+        music->play();
     }
 
     void Clear() override
