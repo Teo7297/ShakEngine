@@ -17,18 +17,6 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-FetchContent_Declare(
-  imgui
-  GIT_REPOSITORY https://github.com/ocornut/imgui
-  GIT_TAG v1.91.1
-  GIT_SHALLOW ON
-  EXCLUDE_FROM_ALL
-  SYSTEM
-)
-FetchContent_MakeAvailable(imgui)
-set(IMGUI_DIR "${CMAKE_BINARY_DIR}/_deps/imgui-src" CACHE PATH "imgui top-level directory") # this is needed by imgui-sfml stupid cmakelists
-message(STATUS "IMGUI_DIR: ${IMGUI_DIR}")
-
 FetchContent_Declare(ImGui-SFML
     GIT_REPOSITORY https://github.com/SFML/imgui-sfml.git
     GIT_TAG v3.0
