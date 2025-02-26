@@ -25,6 +25,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(imgui)
 set(IMGUI_DIR "${CMAKE_CURRENT_BINARY_DIR}/_deps/imgui-src" CACHE PATH "imgui top-level directory") # this is needed by imgui-sfml stupid cmakelists
+message(STATUS "IMGUI_DIR: ${IMGUI_DIR}")
 
 FetchContent_Declare(ImGui-SFML
     GIT_REPOSITORY https://github.com/SFML/imgui-sfml.git
