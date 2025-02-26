@@ -42,12 +42,14 @@ public:
         player->AddChild(child4);
 
         auto rm = m_engine->GetResourceManager();
-        auto shadertest = rm->LoadShader("", "shaderstest/test.fs", "testshader");
+        auto shadertest = rm->LoadShader("", "../../tests/shadertest/test.fs", "testshader");
         if (shadertest)
             std::cout << "Shader loaded" << std::endl;
         else
             std::cerr << "Shader NOT loaded" << std::endl;
         player->SetShader(shadertest);
+
+        m_engine->GetRenderer()->CloseWindow();
     }
 
     void Clear() override
