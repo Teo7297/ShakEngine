@@ -86,20 +86,23 @@ namespace shak
         {
             const auto fs = m_embeddedFilesystem.open(fpath.string());
             success = shader->loadFromMemory(fs.begin(), sf::Shader::Type::Fragment);
-            // success = shader->loadFromFile(fpath, sf::Shader::Type::Fragment);
+            if (!success)
+                success = shader->loadFromFile(fpath, sf::Shader::Type::Fragment);
         }
         else if (fpath == "")
         {
             const auto vs = m_embeddedFilesystem.open(vpath.string());
             success = shader->loadFromMemory(vs.begin(), sf::Shader::Type::Vertex);
-            // success = shader->loadFromFile(vpath, sf::Shader::Type::Vertex);
+            if (!success)
+                success = shader->loadFromFile(vpath, sf::Shader::Type::Vertex);
         }
         else
         {
             const auto fs = m_embeddedFilesystem.open(fpath.string());
             const auto vs = m_embeddedFilesystem.open(vpath.string());
             success = shader->loadFromMemory(vs.begin(), fs.begin());
-            // success = shader->loadFromFile(vpath, fpath);
+            if (!success)
+                success = shader->loadFromFile(vpath, fpath);
         }
 
         if (!success)
