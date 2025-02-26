@@ -30,8 +30,8 @@ FetchContent_MakeAvailable(ImGui-SFML)
 include(cmake/CMakeRC.cmake)
 
 file(GLOB SHADER_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/*.vs"
-    "${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/*.fs"
+    "${CMAKE_SOURCE_DIR}/assets/shaders/*.vs"
+    "${CMAKE_SOURCE_DIR}/assets/shaders/*.fs"
 )
 cmrc_add_resource_library(shak-resources
         ALIAS shak::rc
