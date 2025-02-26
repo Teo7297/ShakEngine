@@ -40,19 +40,4 @@ cmrc_add_resource_library(shak-resources
 
 
 # Include all .cpp and .h files in src directory
-file(GLOB_RECURSE SOURCES src/*.cpp)
-
-add_library(${PROJECT_NAME} SHARED ${SOURCES})
-
-target_include_directories(${PROJECT_NAME} PUBLIC include)
-
-target_link_libraries(${PROJECT_NAME} PUBLIC 
-    SFML::Graphics
-    SFML::Window
-    SFML::System
-    SFML::Audio
-    SFML::Network
-    opengl32
-    ImGui-SFML::ImGui-SFML
-    shak-resources shak::rc
-)
+file(GLOB_RECURSE SHAKENGINE_SOURCES src/*.cpp)
