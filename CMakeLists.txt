@@ -69,3 +69,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     ImGui-SFML::ImGui-SFML
     shak-resources shak::rc
 )
+
+enable_testing()
+add_subdirectory(tests)

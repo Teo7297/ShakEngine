@@ -62,7 +62,6 @@ namespace shak
 
         struct Node
         {
-            ~Node() { std::cout << "Node destroyed" << std::endl; }
             std::array<std::unique_ptr<Node>, 4> children;
             std::vector<GameObjectPtr> values;
         };
