@@ -49,11 +49,11 @@ cmrc_add_resource_library(shak-resources
 
 
 # Include all .cpp and .h files in src directory
-file(GLOB_RECURSE SOURCES engine/src/*.cpp game/*.cpp)
+file(GLOB_RECURSE SOURCES src/*.cpp)
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
-target_include_directories(${PROJECT_NAME} PUBLIC engine/include game)
+target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
     SFML::Graphics
