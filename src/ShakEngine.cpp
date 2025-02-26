@@ -19,7 +19,13 @@ namespace shak
     {
     }
 
-    void ShakEngine::Initialize(const std::string& windowTitle)
+    ShakEngine& ShakEngine::GetInstance()
+    {
+        static ShakEngine instance;
+        return instance;
+    }
+
+void ShakEngine::Initialize(const std::string& windowTitle)
     {
         m_renderer = std::make_shared<shak::Renderer>();
         m_window = m_renderer->CreateSFWindow(windowTitle);

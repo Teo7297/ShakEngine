@@ -18,11 +18,7 @@ namespace shak
         ShakEngine& operator=(ShakEngine&&) = delete;
 
         // Static method to get the singleton instance
-        static ShakEngine& GetInstance()
-        {
-            static ShakEngine instance;
-            return instance;
-        }
+        static ShakEngine& GetInstance();
 
         void Initialize(const std::string& windowTitle = "ShakEngine");
 
