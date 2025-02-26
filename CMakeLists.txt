@@ -9,6 +9,19 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON) # Trick to export everything. Better to only export what is needed in future.
 
 include(FetchContent)
+
+FetchContent_Declare(
+  imgui
+  GIT_REPOSITORY https://github.com/ocornut/imgui
+  GIT_TAG v1.91.1
+  GIT_SHALLOW ON
+  EXCLUDE_FROM_ALL
+  SYSTEM
+)
+FetchContent_MakeAvailable(imgui)
+set(IMGUI_DIR "${CMAKE_BINARY_DIR}/_deps/imgui-src" CACHE PATH "imgui top-level directory") # this is needed by imgui-sfml stupid cmakelists
+message(STATUS "IMGUI_DIR: ${IMGUI_DIR}")
+
 FetchContent_Declare(SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
     GIT_TAG 3.0.0
