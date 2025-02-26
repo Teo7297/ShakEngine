@@ -10,7 +10,7 @@ class TestScene : public shak::Scene
 public:
     ~TestScene() override
     {
-        std::cout << "Test2 scene destroyed" << std::endl;
+        std::cout << "Test scene destroyed" << std::endl;
     }
 
     void Init() override
@@ -42,18 +42,33 @@ public:
         player->AddChild(child4);
 
         auto rm = m_engine->GetResourceManager();
-        auto shadertest = rm->LoadShader("", "../../tests/shadertest/test.fs", "testshader");
+        auto shadertest = rm->LoadShader("", "IDONTCARE/particle.fs", "testshader");
         if (shadertest)
-            std::cout << "Shader loaded" << std::endl;
+            std::cout << "Shader loaded from cache" << std::endl;
         else
-            std::cerr << "Shader NOT loaded" << std::endl;
+        {
+            std::cerr << "Shader NOT loaded from cache" << std::endl;
+            exit(-1);
+        }
         player->SetShader(shadertest);
+
+        shadertest = rm->LoadShader("", "../../tests/shadertest/test.fs", "testshader");
+        if (shadertest)
+            std::cout << "Shader loaded from text file" << std::endl;
+        else
+        {
+            std::cerr << "Shader NOT loaded from text file" << std::endl;
+            exit(-1);
+        }
+        player->SetShader(shadertest);
+
+        Clear();
 
         m_engine->GetRenderer()->CloseWindow();
     }
 
     void Clear() override
     {
-        std::cout << "Test2 scene clear called" << std::endl;
+        std::cout << "Test scene clear called" << std::endl;
     }
 };

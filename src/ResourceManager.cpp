@@ -1,5 +1,6 @@
 #include "ResourceManager.h"
 
+#define SHADERS_PATH "assets/shaders/"
 
 CMRC_DECLARE(shak);
 
@@ -84,9 +85,10 @@ namespace shak
 
         if (vpath == "")
         {
-            if (m_embeddedFilesystem.exists(fpath.string()))
+            std::string internalFragPath = SHADERS_PATH + fpath.filename().string();
+            if (m_embeddedFilesystem.exists(internalFragPath))
             {
-                const auto fs = m_embeddedFilesystem.open(fpath.string());
+                const auto fs = m_embeddedFilesystem.open(internalFragPath);
                 success = shader->loadFromMemory(fs.begin(), sf::Shader::Type::Fragment);
             }
             else
@@ -94,9 +96,10 @@ namespace shak
         }
         else if (fpath == "")
         {
-            if(m_embeddedFilesystem.exists(vpath.string()))
+            std::string internalVertPath = SHADERS_PATH + vpath.filename().string();
+            if(m_embeddedFilesystem.exists(internalVertPath))
             {
-                const auto vs = m_embeddedFilesystem.open(vpath.string());
+                const auto vs = m_embeddedFilesystem.open(internalVertPath);
                 success = shader->loadFromMemory(vs.begin(), sf::Shader::Type::Vertex);
             }
             else
@@ -104,10 +107,13 @@ namespace shak
         }
         else
         {
-            if(m_embeddedFilesystem.exists(fpath.string()) && m_embeddedFilesystem.exists(vpath.string()))
+            std::string internalFragPath = SHADERS_PATH + fpath.filename().string();
+            std::string internalVertPath = SHADERS_PATH + vpath.filename().string();
+
+            if(m_embeddedFilesystem.exists(internalFragPath) && m_embeddedFilesystem.exists(internalVertPath))
             {
-                const auto fs = m_embeddedFilesystem.open(fpath.string());
-                const auto vs = m_embeddedFilesystem.open(vpath.string());
+                const auto fs = m_embeddedFilesystem.open(internalFragPath);
+                const auto vs = m_embeddedFilesystem.open(internalVertPath);
                 success = shader->loadFromMemory(vs.begin(), fs.begin());
             }
             else
