@@ -117,13 +117,14 @@ namespace shak
         void SetZIndex(int zIndex) { m_zIndex = zIndex; }
         int GetZIndex() const { return m_zIndex; }
 
-        void EnablePhysics() { m_physicsEnabled = true; }
+        void EnablePhysics() { m_physicsEnabled = true; } //TODO: this should add the object to the quadtree but we cannot get a shared ptr to self...
         void DisablePhysics() { m_physicsEnabled = false; }
         bool IsPhysicsEnabled() const { return m_physicsEnabled; }
 
         bool NeedAwake() const { return m_needAwake; }
         void ForwardAwake();
 
+        void OnCollisionInternal(const std::shared_ptr<GameObject>& other);
         virtual void OnCollision(const std::shared_ptr<GameObject>& other) {}
 
         virtual void Awake(); // TODO: forward awake is the same as internal stuff. this awake gets called twice if not overridden. this should be fixed but its not that bad.
@@ -154,8 +155,8 @@ namespace shak
 
         bool IsCollidingWitRect(const sf::FloatRect& rect) const;
 
-        inline bool HasMovedThisFrame() const { return m_movedThisFrame; }
-        inline void ResetMovedThisFrame() { m_movedThisFrame = false; }
+        bool HasMovedThisFrame() const { return m_movedThisFrame; }
+        void ResetMovedThisFrame() { m_movedThisFrame = false; }
 
     private:
         void TrySafeCopy();

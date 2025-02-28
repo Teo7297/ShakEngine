@@ -204,7 +204,7 @@ namespace shak
                 auto found = child->FindChildRecursive(name);
                 if (found)
                     return found;
-            } 
+            }
         }
         return nullptr;
     }
@@ -318,6 +318,19 @@ namespace shak
                 child->ForwardAwake();
             }
         }
+    }
+
+    void GameObject::OnCollisionInternal(const std::shared_ptr<GameObject>& other)
+    {
+        TrySafeCopy();
+        for (const auto& comp : m_safeComponents)
+        {
+            if (comp->IsActive())
+            {
+                comp->OnCollision(other);
+            }
+        }
+        this->OnCollision(other);
     }
 
     void GameObject::Awake()

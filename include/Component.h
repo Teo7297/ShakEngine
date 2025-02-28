@@ -20,6 +20,7 @@ namespace shak
         virtual void Update(float dt) {}
         virtual void LateUpdate(float dt) {}
         virtual void HandleInput(const sf::Event& event) {}
+        virtual void OnCollision(const std::shared_ptr<GameObject>& other) {}
         virtual void OnDestroy() {}
 
         void SetActive(bool active) { m_active = active; }
