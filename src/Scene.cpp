@@ -382,8 +382,8 @@ namespace shak
 
         for (const auto& [a, b] : collisions)
         {
-            a->OnCollision(b);
-            b->OnCollision(a);
+            a->OnCollisionInternal(b);
+            b->OnCollisionInternal(a);
         }
     }
 

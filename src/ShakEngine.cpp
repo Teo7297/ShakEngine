@@ -128,9 +128,9 @@ void ShakEngine::Initialize(const std::string& windowTitle)
 
             m_sceneManager->GetActiveScene()->TryInitActiveUI();
 
-            m_sceneManager->GetActiveScene()->CheckCollisions();
-
             m_sceneManager->GetActiveScene()->Update(dt);
+
+            m_sceneManager->GetActiveScene()->CheckCollisions();
 
             // TEST
             // Update mouse and touch position on screen before drawing the UI
