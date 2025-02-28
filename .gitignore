@@ -3,6 +3,5 @@ out
 .cache
 .idea
 .vs
-.vscode
 imgui.*
 Testing
