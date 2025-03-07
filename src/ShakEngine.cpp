@@ -143,6 +143,9 @@ namespace shak
             m_sceneManager->GetActiveScene()->Render();
 
             m_sceneManager->GetActiveScene()->Cleanup();
+
+            // Check if we need to load a new scene
+            m_sceneManager->TryActivateQueuedScene();
         }
     }
 
