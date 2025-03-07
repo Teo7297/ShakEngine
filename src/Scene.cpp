@@ -387,6 +387,11 @@ namespace shak
         }
     }
 
+    void Scene::UpdateUI(float dt)
+    {
+        m_ui->UpdateUI(dt);
+    }
+
     void Scene::DrawUI()
     {
         m_ui->DrawUI();

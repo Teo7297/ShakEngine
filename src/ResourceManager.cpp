@@ -8,6 +8,7 @@ namespace shak
 {
     ResourceManager::ResourceManager()
         : m_embeddedFilesystem(cmrc::shak::get_filesystem())
+        , m_prefix("")
     {
     }
 
@@ -27,9 +28,10 @@ namespace shak
             return m_loadedTextures[name];
 
         auto texture = std::make_shared<sf::Texture>();
-        if (!texture->loadFromFile(path))
+        fs::path actualPath = m_prefix / path;
+        if (!texture->loadFromFile(actualPath))
         {
-            std::cerr << "Failed to load texture [" << name << "] at location: " << path << std::endl;
+            std::cerr << "Failed to load texture [" << name << "] at location: " << actualPath << std::endl;
             return nullptr;
         }
         texture->setRepeated(repeated);
@@ -57,7 +59,8 @@ namespace shak
         if (m_loadedAtlases.contains(name))
             return m_loadedAtlases[name];
 
-        auto atlas = std::make_shared<TextureAtlas>(path);
+        fs::path actualPath = m_prefix / path;
+        auto atlas = std::make_shared<TextureAtlas>(actualPath);
         m_loadedAtlases[name] = atlas;
         return atlas;
     }
@@ -82,7 +85,7 @@ namespace shak
 
         auto shader = std::make_shared<sf::Shader>();
         bool success;
-
+        
         if (vpath == "")
         {
             std::string internalFragPath = SHADERS_PATH + fpath.filename().string();
@@ -97,7 +100,7 @@ namespace shak
         else if (fpath == "")
         {
             std::string internalVertPath = SHADERS_PATH + vpath.filename().string();
-            if(m_embeddedFilesystem.exists(internalVertPath))
+            if (m_embeddedFilesystem.exists(internalVertPath))
             {
                 const auto vs = m_embeddedFilesystem.open(internalVertPath);
                 success = shader->loadFromMemory(vs.begin(), sf::Shader::Type::Vertex);
@@ -110,7 +113,7 @@ namespace shak
             std::string internalFragPath = SHADERS_PATH + fpath.filename().string();
             std::string internalVertPath = SHADERS_PATH + vpath.filename().string();
 
-            if(m_embeddedFilesystem.exists(internalFragPath) && m_embeddedFilesystem.exists(internalVertPath))
+            if (m_embeddedFilesystem.exists(internalFragPath) && m_embeddedFilesystem.exists(internalVertPath))
             {
                 const auto fs = m_embeddedFilesystem.open(internalFragPath);
                 const auto vs = m_embeddedFilesystem.open(internalVertPath);
@@ -149,9 +152,11 @@ namespace shak
             return m_loadedFonts[name];
 
         auto font = std::make_shared<sf::Font>();
-        if (!font->openFromFile(path))
+
+        fs::path actualPath = m_prefix / path;
+        if (!font->openFromFile(actualPath))
         {
-            std::cerr << "Failed to load font [" << name << "] at location: " << path << std::endl;
+            std::cerr << "Failed to load font [" << name << "] at location: " << actualPath << std::endl;
             return nullptr;
         }
 
@@ -177,10 +182,11 @@ namespace shak
         if (m_loadedSounds.contains(name))
             return m_loadedSounds[name].sound;
 
+        fs::path actualPath = m_prefix / path;
         auto buffer = std::make_shared<sf::SoundBuffer>();
-        if (!buffer->loadFromFile(path))
+        if (!buffer->loadFromFile(actualPath))
         {
-            std::cerr << "Failed to load sound [" << name << "] at location: " << path << std::endl;
+            std::cerr << "Failed to load sound [" << name << "] at location: " << actualPath << std::endl;
             return nullptr;
         }
 
@@ -210,9 +216,10 @@ namespace shak
             return m_loadedMusic[name];
 
         auto music = std::make_shared<sf::Music>();
-        if (!music->openFromFile(path))
+        fs::path actualPath = m_prefix / path;
+        if (!music->openFromFile(actualPath))
         {
-            std::cerr << "Failed to load music [" << name << "] at location: " << path << std::endl;
+            std::cerr << "Failed to load music [" << name << "] at location: " << actualPath << std::endl;
             return nullptr;
         }
 

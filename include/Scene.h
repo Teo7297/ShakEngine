@@ -63,6 +63,7 @@ namespace shak
         void Cleanup();
         void HandleInput(const sf::Event& event);
         void CheckCollisions();
+        void UpdateUI(float dt);
         void DrawUI();
 
     protected:

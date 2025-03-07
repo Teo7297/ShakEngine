@@ -44,6 +44,14 @@ namespace shak
             return m_activeUI;
         }
 
+        void UpdateUI(float dt)
+        {
+            if (m_activeUI)
+            {
+                m_activeUI->Update(dt);
+            }
+        }
+
         void DrawUI()
         {
             if (m_activeUI)

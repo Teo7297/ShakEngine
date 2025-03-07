@@ -25,7 +25,7 @@ namespace shak
         return instance;
     }
 
-void ShakEngine::Initialize(const std::string& windowTitle)
+    void ShakEngine::Initialize(const std::string& windowTitle)
     {
         m_renderer = std::make_shared<shak::Renderer>();
         m_window = m_renderer->CreateSFWindow(windowTitle);
@@ -135,6 +135,8 @@ void ShakEngine::Initialize(const std::string& windowTitle)
             // TEST
             // Update mouse and touch position on screen before drawing the UI
             ImGui::SFML::Update(*m_window, sf::seconds(dt));
+
+            m_sceneManager->GetActiveScene()->UpdateUI(dt);
 
             m_sceneManager->GetActiveScene()->DrawUI();
 

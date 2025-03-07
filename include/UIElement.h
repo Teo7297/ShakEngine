@@ -15,6 +15,9 @@ namespace shak
         /// Use this function to get references to objects and their components.
         virtual void Init() = 0;
 
+        /// @brief update the UIElement here. This is called before Draw().
+        virtual void Update(float dt) {};
+
         /// @brief Implement the ImGui UI here.
         virtual void Draw() = 0;
 

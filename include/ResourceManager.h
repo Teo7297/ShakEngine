@@ -12,6 +12,7 @@ namespace shak
         ~ResourceManager() = default;
 
         void Clear();
+        void SetPrefixPath(const fs::path& prefix) { m_prefix = prefix; }
 
         // Texture
         std::shared_ptr<sf::Texture> LoadTexture(const std::string& path, const std::string& name, bool repeated = false, bool smooth = false);
@@ -42,7 +43,7 @@ namespace shak
         std::shared_ptr<sf::Music> LoadMusic(const fs::path& path, const std::string& name);
         void UnloadMusic(const std::string& name);
         std::shared_ptr<sf::Music> GetMusic(const std::string& name) const;
-    
+
     private:
         struct SoundData
         {
@@ -59,5 +60,7 @@ namespace shak
         std::unordered_map<std::string, std::shared_ptr<sf::Font>> m_loadedFonts;
         std::unordered_map<std::string, SoundData> m_loadedSounds;
         std::unordered_map<std::string, std::shared_ptr<sf::Music>> m_loadedMusic;
+
+        fs::path m_prefix;
     };
 }
