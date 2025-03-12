@@ -270,7 +270,6 @@ namespace shak
 
         for (const auto& obj : candidates)
         {
-            if (obj->Name == "Player")continue;
             const sf::FloatRect bounds({ obj->getPosition() - obj->getOrigin(), obj->GetVertexArray()->getBounds().size });
 
             if (auto opt = getRotatedRectCircleIntersectionPoint(center, radius, bounds.getCenter(), bounds.size, obj->getRotation()))
