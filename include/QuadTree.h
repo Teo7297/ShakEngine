@@ -282,7 +282,7 @@ namespace shak
         {
             for (const auto& value : node->values)
             {
-                if (value->IsCollidingWitRect(queryBox))
+                if (value->IsActive() && value->IsCollidingWitRect(queryBox))
                     values.push_back(value);
             }
             if (!isLeaf(node))

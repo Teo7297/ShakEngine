@@ -206,6 +206,7 @@ namespace json {
 
         inline static JSON Load(const string&);
         inline static JSON LoadFromDisk(const string&);
+        inline static void SaveToDisk(const string&, const JSON&);
 
         template <typename T>
         void append(T arg) {
@@ -653,7 +654,7 @@ namespace json {
 
     inline JSON JSON::LoadFromDisk(const string& path)
     {
-        std::ifstream file("assets/json/ships/DPS.json");
+        std::ifstream file(path);
         if (!file.is_open()) {
             std::cerr << "Failed to open JSON file " << path << std::endl;
         }
@@ -662,5 +663,15 @@ namespace json {
         buffer << file.rdbuf();
 
         return json::JSON::Load(buffer.str());
+    }
+
+    inline void JSON::SaveToDisk(const string& path, const JSON& json)
+    {
+        std::ofstream file(path);
+        if (!file.is_open()) {
+            std::cerr << "Failed to open JSON file " << path << std::endl;
+        }
+
+        file << json.dump();
     }
 } // End Namespace json
