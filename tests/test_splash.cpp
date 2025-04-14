@@ -8,6 +8,7 @@ int main()
     auto sm = engine->GetSceneManager();
     engine->GetResourceManager()->SetPrefixPath("../..");
     sm->AddScene("test", std::make_shared<EngineLogoSplash>());
-    sm->ActivateScene("test");
+    sm->QueueScene("test");
+    sm->TryActivateQueuedScene();
     engine->Start();
 }
