@@ -101,6 +101,14 @@ public:
         }
     }
 
+    void HandleInput(const sf::Event& event) override
+    {
+        if (event.is<sf::Event::KeyPressed>())
+        {
+            LoadMainScene();
+        }
+    }
+    
 private:
     void LoadMainScene()
     {
