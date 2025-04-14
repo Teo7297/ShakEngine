@@ -10,7 +10,7 @@
 
 namespace shak
 {
-    Scene::Scene()
+    Scene::Scene(const std::string& name)
         : m_engine(&shak::ShakEngine::GetInstance())
         , m_quadtree({ {0, 0}, {10000, 10000} })
         , m_root(nullptr)
@@ -18,6 +18,7 @@ namespace shak
         , m_renderer(m_engine->GetRenderer())
         , m_awakeDone(false)
         , m_ui(nullptr)
+        , m_name(name)
     {
     }
 

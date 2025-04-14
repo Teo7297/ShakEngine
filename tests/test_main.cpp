@@ -6,7 +6,7 @@ int main()
     shak::ShakEngine* engine = &shak::ShakEngine::GetInstance();
     engine->Initialize();
     auto sm = engine->GetSceneManager();
-    sm->AddScene("test", std::make_shared<TestScene>());
+    sm->AddScene(std::make_shared<TestScene>("test"));
     sm->QueueScene("test");
     sm->TryActivateQueuedScene();
     engine->Start();

@@ -102,6 +102,8 @@ namespace shak
     {
         while (m_window->isOpen())
         {
+            std::shared_ptr<shak::Scene> activeScene = m_sceneManager->GetActiveScene();
+
             while (const std::optional event = m_window->pollEvent())
             {
                 // Process ImGui events
@@ -117,34 +119,33 @@ namespace shak
                     OnResize(event->getIf<sf::Event::Resized>()->size);
                 }
 
-                m_sceneManager->GetActiveScene()->HandleInput(event.value());
+                activeScene->HandleInput(event.value());
             }
 
             // Calculate delta time
             float dt = m_clock.restart().asSeconds();
             m_time += dt;
 
-            m_sceneManager->GetActiveScene()->ForwardAwake();
+            activeScene->ForwardAwake();
 
-            m_sceneManager->GetActiveScene()->TryInitActiveUI();
+            activeScene->TryInitActiveUI();
 
-            m_sceneManager->GetActiveScene()->Update(dt);
+            activeScene->Update(dt);
 
-            m_sceneManager->GetActiveScene()->CheckCollisions();
+            activeScene->CheckCollisions();
 
-            // TEST
             // Update mouse and touch position on screen before drawing the UI
             ImGui::SFML::Update(*m_window, sf::seconds(dt));
 
-            m_sceneManager->GetActiveScene()->UpdateUI(dt);
+            activeScene->UpdateUI(dt);
 
-            m_sceneManager->GetActiveScene()->DrawUI();
+            activeScene->DrawUI();
 
-            m_sceneManager->GetActiveScene()->Render();
+            activeScene->Render();
 
-            m_sceneManager->GetActiveScene()->Cleanup();
+            activeScene->Cleanup();
 
-            // Check if we need to load a new scene
+            // Check if we need to load a new scene, we do this after the render call to avoid breaking logic
             m_sceneManager->TryActivateQueuedScene();
         }
     }

@@ -8,6 +8,10 @@
 class TestScene : public shak::Scene
 {
 public:
+    TestScene(const std::string& name) : Scene(name)
+    {
+        std::cout << "Test scene created" << std::endl;
+    }
     ~TestScene() override
     {
         std::cout << "Test scene destroyed" << std::endl;

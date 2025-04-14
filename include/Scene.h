@@ -21,8 +21,10 @@ namespace shak
     class Scene
     {
     public:
-        Scene();
+        Scene(const std::string& name);
         virtual ~Scene() = default;
+
+        std::string GetName() const { return m_name; }
 
         void InternalInit();
         virtual void Init() {};
@@ -74,5 +76,6 @@ namespace shak
         std::shared_ptr<shak::Renderer> m_renderer;
         bool m_awakeDone;
         std::shared_ptr<shak::UIManager> m_ui;
+        std::string m_name;
     };
 }

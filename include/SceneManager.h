@@ -12,9 +12,9 @@ namespace shak
         ~SceneManager() = default;
 
 
-        void AddScene(const std::string& name, const std::shared_ptr<Scene>& scene)
+        void AddScene(const std::shared_ptr<Scene>& scene)
         {
-            m_scenes[name] = scene;
+            m_scenes[scene->GetName()] = scene;
         }
 
         void RemoveScene(const std::string& name)
@@ -27,11 +27,42 @@ namespace shak
             return m_scenes[name];
         }
 
+        // Request a scene to be activated at the end of the frame.
         void QueueScene(const std::string& name)
         {
             m_sceneToActivate = name;
         }
+        
+        // Request the next scene (in order of creation) to be activated at the end of the frame.
+        void QueueNextScene()
+        {
+            if(m_scenes.size() < 2)
+            {
+                std::cerr << "[SceneManager] Cannot queue next scene, only one scene available." << std::endl;
+                return; // No next scene if there is only one scene
+            }
 
+            auto it = m_scenes.begin();
+            while(it->second != m_activeScene && it != m_scenes.end())
+            {
+                ++it;
+            }
+
+            // Get the next scene in the list
+            ++it;
+
+            if(it != m_scenes.end())
+            {
+                m_sceneToActivate = it->first;
+            }
+            else
+            {
+                m_sceneToActivate = m_scenes.begin()->first; // Loop back to the first scene
+            }
+        }
+
+        // This method force the activation of the scene. DO NOT CALL IT IN THE MIDDLE OF A FRAME.
+        // It is automatically called by the engine at the end of the frame.
         void TryActivateQueuedScene()
         {
             if (m_sceneToActivate == "")
@@ -50,7 +81,7 @@ namespace shak
         }
 
     private:
-        std::unordered_map<std::string, std::shared_ptr<Scene>> m_scenes;
+        std::map<std::string, std::shared_ptr<Scene>> m_scenes;
         std::shared_ptr<Scene> m_activeScene;
         std::string m_sceneToActivate;
     };

@@ -169,7 +169,7 @@ echo     engine-^>Initialize^(^);
 echo.
 echo     // Setup scene
 echo     auto sm = engine-^>GetSceneManager^(^);
-echo     //! sm-^>AddScene^("MyScene", std::make_shared^<MyScene^>^(^)^);
+echo     //! sm-^>AddScene^(std::make_shared^<MyScene^>^("MyScene"^)^);
 echo     sm-^>QueueScene^("MyScene"^);
 echo     sm-^>TryActivateQueuedScene^(^);
 echo.

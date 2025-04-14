@@ -108,18 +108,11 @@ public:
             LoadMainScene();
         }
     }
-    
+
 private:
     void LoadMainScene()
     {
-        auto sm = m_engine->GetSceneManager();
-        if (sm->GetScene("main"))
-            sm->QueueScene("main");
-        else
-        {
-            std::cerr << "Main scene not found! Name the first scene to load with " << std::quoted("main") << " id." << std::endl;
-            exit(0);
-        }
+        m_engine->GetSceneManager()->QueueNextScene();
     }
 
     std::shared_ptr<sf::Sound> m_sound;
@@ -132,6 +125,13 @@ private:
 class EngineLogoSplash : public shak::Scene
 {
 public:
+    EngineLogoSplash(const std::string& name) : Scene(name)
+    {
+    }
+    ~EngineLogoSplash() override
+    {
+    }
+
     void Init() override
     {
         auto camera1 = m_renderer->AddCamera("camera1", sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
