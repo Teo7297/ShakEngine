@@ -27,7 +27,7 @@ namespace shak
             return m_scenes[name];
         }
 
-        void ActivateScene(const std::string& name)
+        void QueueScene(const std::string& name)
         {
             m_sceneToActivate = name;
         }

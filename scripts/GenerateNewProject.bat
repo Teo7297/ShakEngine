@@ -84,7 +84,7 @@ echo             "type": "shell",
 echo             "command": "cmd.exe",
 echo             "args": [
 echo                 "/c",
-echo                 "call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 ^&^& cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config Release --target all -j 14 --"
+echo                 "call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 && cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config Release --target all -j 14 --"
 echo             ],
 echo             "group": "build",
 echo             "problemMatcher": []
@@ -95,7 +95,7 @@ echo             "type": "shell",
 echo             "command": "cmd.exe",
 echo             "args": [
 echo                 "/c",
-echo                 "call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 ^&^& cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config RelWithDebInfo --target all -j 14 --"
+echo                 "call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 && cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config RelWithDebInfo --target all -j 14 --"
 echo             ],
 echo             "group": "build",
 echo             "problemMatcher": []
@@ -106,7 +106,7 @@ echo             "type": "shell",
 echo             "command": "cmd.exe",
 echo             "args": [
 echo                 "/c",
-echo                 "call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 ^&^& cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config Debug --target all -j 14 --"
+echo                 "call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 && cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config Debug --target all -j 14 --"
 echo             ],
 echo             "group": "build",
 echo             "problemMatcher": []
@@ -117,7 +117,7 @@ echo             "type": "shell",
 echo             "command": "cmd.exe",
 echo             "args": [
 echo                 "/c",
-echo                 "cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config Debug --target clean -- ^&^& call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 ^&^& cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config Debug --target all -j 14 --"
+echo                 "cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config Debug --target clean -- && call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 && cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config Debug --target all -j 14 --"
 echo             ],
 echo             "group": "build",
 echo             "problemMatcher": []
@@ -170,7 +170,8 @@ echo.
 echo     // Setup scene
 echo     auto sm = engine-^>GetSceneManager^(^);
 echo     //! sm-^>AddScene^("MyScene", std::make_shared^<MyScene^>^(^)^);
-echo     sm-^>ActivateScene^("MyScene"^);
+echo     sm-^>QueueScene^("MyScene"^);
+echo     sm-^>TryActivateQueuedScene^(^);
 echo.
 echo     // Start engine
 echo     engine-^>Start^(^);
