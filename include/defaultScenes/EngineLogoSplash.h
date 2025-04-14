@@ -106,10 +106,7 @@ private:
     {
         auto sm = m_engine->GetSceneManager();
         if (sm->GetScene("main"))
-        {
             sm->QueueScene("main");
-            sm->TryActivateQueuedScene();
-        }
         else
         {
             std::cerr << "Main scene not found! Name the first scene to load with " << std::quoted("main") << " id." << std::endl;
