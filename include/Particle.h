@@ -31,8 +31,20 @@ namespace shak
 
         void SetPosition(const sf::Vector2f& pos)
         {
-            for (auto& v : vertices)
-                v->position = pos;
+            if (vertices.size() < 6)
+            {
+                vertices[0]->position = pos;
+            }
+            else
+            {
+                float halfSize = size * 0.5f;
+                vertices[0]->position = { pos.x - halfSize, pos.y - halfSize};
+                vertices[1]->position = { pos.x - halfSize, pos.y + halfSize};
+                vertices[2]->position = { pos.x + halfSize, pos.y - halfSize};
+                vertices[3]->position = { pos.x + halfSize, pos.y - halfSize};
+                vertices[4]->position = { pos.x - halfSize, pos.y + halfSize};
+                vertices[5]->position = { pos.x + halfSize, pos.y + halfSize};
+            }
         }
 
         void Move(sf::Vector2f offset)
