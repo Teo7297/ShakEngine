@@ -134,7 +134,7 @@ public:
 
     void Init() override
     {
-        auto camera1 = m_renderer->AddCamera("camera1", sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
+        auto camera1 = m_renderer->AddCamera("camera1", sf::FloatRect({ 0, 0 }, { 1920, 1080 }), shak::CameraResizeBehavior::Letterbox);
 
         auto root = m_engine->AddGameObject<LogoRoot>();
         root->Name = "logoroot";

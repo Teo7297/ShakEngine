@@ -6,6 +6,7 @@ namespace shak
 {
     class GameObject;
     class Camera;
+    enum class CameraResizeBehavior;
     class Renderer
     {
     public:
@@ -15,7 +16,7 @@ namespace shak
         std::shared_ptr<sf::RenderWindow> CreateSFWindow(const std::string& title);
         void CloseWindow();
 
-        std::shared_ptr<shak::Camera> AddCamera(const std::string& name, const sf::FloatRect& viewport);
+        std::shared_ptr<Camera> AddCamera(const std::string& name, const sf::FloatRect& viewport, const CameraResizeBehavior& resizeBehavior);
         void RemoveCamera(const std::string& name);
 
         void SetClearColor(sf::Color color) { m_clearColor = color; }

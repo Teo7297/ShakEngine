@@ -3,6 +3,7 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "imgui-SFML.h"
+#include "Camera.h"
 
 namespace shak
 {
@@ -29,6 +30,7 @@ namespace shak
     {
         m_renderer = std::make_shared<shak::Renderer>();
         m_window = m_renderer->CreateSFWindow(windowTitle);
+        m_windowSize = m_window->getSize();
         m_sceneManager = std::make_shared<SceneManager>();
         m_resourceManager = std::make_shared<ResourceManager>();
     }
@@ -46,6 +48,13 @@ namespace shak
     GameObjectPtr ShakEngine::FindGameObjectByName(const std::string& name) const
     {
         return m_sceneManager->GetActiveScene()->FindGameObject(name);
+    }
+
+    std::shared_ptr<shak::Camera> ShakEngine::AddCamera(const std::string& name, const sf::FloatRect& rectangle, const CameraResizeBehavior& resizeBehavior)
+    {
+        auto camera = m_renderer->AddCamera(name, rectangle, resizeBehavior);
+        this->GetSceneManager()->GetActiveScene()->AddGameObject(std::static_pointer_cast<GameObject>(camera));
+        return camera;
     }
 
     void ShakEngine::RemoveUIElement(const std::string& name)
@@ -88,9 +97,12 @@ namespace shak
         return { static_cast<float>(sf::Mouse::getPosition(*m_window).x), static_cast<float>(m_window->getSize().y - sf::Mouse::getPosition(*m_window).y) };
     }
 
-    sf::Vector2f ShakEngine::GetMouseWorldPos() const
+    sf::Vector2f ShakEngine::GetMouseWorldPos(const std::shared_ptr<sf::View>& targetView) const
     {
-        return m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window));
+        if (targetView)
+            return m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window), *targetView.get());
+        else
+            return m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window));
     }
 
     sf::Vector2f ShakEngine::GetWindowSize() const
@@ -116,7 +128,9 @@ namespace shak
                 }
                 else if (event->is<sf::Event::Resized>())
                 {
-                    OnResize(event->getIf<sf::Event::Resized>()->size);
+                    auto newWindowSize = event->getIf<sf::Event::Resized>()->size;
+                    OnResize(m_windowSize, newWindowSize);
+                    m_windowSize = newWindowSize;
                 }
 
                 activeScene->HandleInput(event.value());

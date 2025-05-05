@@ -8,6 +8,8 @@
 
 namespace shak
 {
+    class Camera;
+    enum class CameraResizeBehavior;
     class ShakEngine
     {
     public:
@@ -45,6 +47,8 @@ namespace shak
             return m_sceneManager->GetActiveScene()->FindGameObjectsByType<T>();
         }
 
+        std::shared_ptr<shak::Camera> AddCamera(const std::string& name, const sf::FloatRect& viewport, const CameraResizeBehavior& resizeBehavior);
+
         template <typename T>
         void AddUIElement(const std::string& name)
         {
@@ -64,7 +68,10 @@ namespace shak
 
         sf::Vector2i GetPointInScreenCoords(const sf::Vector2f& worldPos) const;
         sf::Vector2f GetMousePixelPos() const;
-        sf::Vector2f GetMouseWorldPos() const;
+        /// @brief Obtains the mouse position in world coordinates. Optionally, you can specify a target view to get the mouse position in that view's coordinates.
+        /// @param targetView view to convert the mouse position to. If nullptr, the default view is used.
+        /// @return point in world coordinates
+        sf::Vector2f GetMouseWorldPos(const std::shared_ptr<sf::View>& targetView = nullptr) const;
         sf::Vector2f GetWindowSize() const;
 
         void Start();
@@ -73,7 +80,8 @@ namespace shak
 
     public:
         //EVENTS
-        Event<const sf::Vector2u> OnResize;
+        // <old, new>
+        Event<const sf::Vector2u&, const sf::Vector2u&> OnResize;
 
     private:
         // Private constructor to prevent instantiation
@@ -83,6 +91,7 @@ namespace shak
     private:
         std::shared_ptr<Renderer> m_renderer;
         std::shared_ptr<sf::RenderWindow> m_window;
+        sf::Vector2u m_windowSize;
         std::shared_ptr<ResourceManager> m_resourceManager;
         std::shared_ptr<SceneManager> m_sceneManager;
         sf::Clock m_clock;

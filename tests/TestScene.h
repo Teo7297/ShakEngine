@@ -19,7 +19,7 @@ public:
 
     void Init() override
     {
-        auto camera1 = m_renderer->AddCamera("camera1", sf::FloatRect({ 0, 0 }, { 1920, 1080 }));
+        auto camera1 = m_renderer->AddCamera("camera1", sf::FloatRect({ 0, 0 }, { 1920, 1080 }), shak::CameraResizeBehavior::Letterbox);
 
         auto player = m_engine->AddGameObject<shak::Square>(sf::FloatRect({ 0.f,0.f }, { 100.f, 100.f }));
         player->Name = "Player";

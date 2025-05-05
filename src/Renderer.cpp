@@ -33,9 +33,9 @@ namespace shak
         ImGui::SFML::Shutdown();
     }
 
-    std::shared_ptr<shak::Camera> Renderer::AddCamera(const std::string& name, const sf::FloatRect& viewport)
+    std::shared_ptr<Camera> Renderer::AddCamera(const std::string& name, const sf::FloatRect& rectangle, const CameraResizeBehavior& resizeBehavior)
     {
-        auto camera = std::make_shared<shak::Camera>(viewport);
+        auto camera = std::make_shared<shak::Camera>(rectangle, resizeBehavior);
         camera->Name = name;
         m_cameras[name] = camera;
         return camera;
