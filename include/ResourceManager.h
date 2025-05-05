@@ -24,6 +24,11 @@ namespace shak
         void UnloadTextureAtlas(const std::string& name);
         std::shared_ptr<TextureAtlas> GetTextureAtlas(const std::string& name) const;
 
+        // Image
+        std::shared_ptr<sf::Image> LoadSFImage(const fs::path& path, const std::string& name);
+        void UnloadSFImage(const std::string& name);
+        std::shared_ptr<sf::Image> GetSFImage(const std::string& name) const;
+
         // Shader
         std::shared_ptr<sf::Shader> LoadShader(const fs::path& vpath, const fs::path& fpath, const std::string& name);
         void UnloadShader(const std::string& name);
@@ -56,6 +61,7 @@ namespace shak
 
         std::unordered_map<std::string, std::shared_ptr<sf::Texture>> m_loadedTextures;
         std::unordered_map<std::string, std::shared_ptr<TextureAtlas>> m_loadedAtlases;
+        std::unordered_map<std::string, std::shared_ptr<sf::Image>> m_loadedImages;
         std::unordered_map<std::string, std::shared_ptr<sf::Shader>> m_loadedShaders;
         std::unordered_map<std::string, std::shared_ptr<sf::Font>> m_loadedFonts;
         std::unordered_map<std::string, SoundData> m_loadedSounds;

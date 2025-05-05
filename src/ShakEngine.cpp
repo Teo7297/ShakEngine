@@ -99,7 +99,7 @@ namespace shak
 
     sf::Vector2f ShakEngine::GetMouseWorldPos(const std::shared_ptr<sf::View>& targetView) const
     {
-        if (targetView)
+        if(targetView)
             return m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window), *targetView.get());
         else
             return m_window->mapPixelToCoords(sf::Mouse::getPosition(*m_window));
@@ -110,23 +110,33 @@ namespace shak
         return { static_cast<float>(m_window->getSize().x), static_cast<float>(m_window->getSize().y) };
     }
 
+    void ShakEngine::SetIcon(const sf::Image& image)
+    {
+        m_window->setIcon(image.getSize(), image.getPixelsPtr());
+    }
+
+    void ShakEngine::SetIcon(const sf::Vector2u& size, const std::uint8_t* pixels)
+    {
+        m_window->setIcon(size, pixels);
+    }
+
     void ShakEngine::Start()
     {
-        while (m_window->isOpen())
+        while(m_window->isOpen())
         {
             std::shared_ptr<shak::Scene> activeScene = m_sceneManager->GetActiveScene();
 
-            while (const std::optional event = m_window->pollEvent())
+            while(const std::optional event = m_window->pollEvent())
             {
                 // Process ImGui events
                 ImGui::SFML::ProcessEvent(*m_window, *event);
 
-                if (event->is<sf::Event::Closed>())
+                if(event->is<sf::Event::Closed>())
                 {
                     m_renderer->CloseWindow();
                     exit(0);
                 }
-                else if (event->is<sf::Event::Resized>())
+                else if(event->is<sf::Event::Resized>())
                 {
                     auto newWindowSize = event->getIf<sf::Event::Resized>()->size;
                     OnResize(m_windowSize, newWindowSize);

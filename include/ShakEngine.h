@@ -74,6 +74,11 @@ namespace shak
         sf::Vector2f GetMouseWorldPos(const std::shared_ptr<sf::View>& targetView = nullptr) const;
         sf::Vector2f GetWindowSize() const;
 
+        // Set the window icon using an image
+        void SetIcon(const sf::Image& image);
+        // Set the window icon using raw pixel data
+        void SetIcon(const sf::Vector2u& size, const std::uint8_t *pixels);
+
         void Start();
 
         float GetTime();
