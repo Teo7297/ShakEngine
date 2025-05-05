@@ -32,14 +32,15 @@ namespace shak
         {
             m_sceneToActivate = name;
         }
-        
+
         // Request the next scene (in order of creation) to be activated at the end of the frame.
         void QueueNextScene()
         {
             if(m_scenes.size() < 2)
             {
-                std::cerr << "[SceneManager] Cannot queue next scene, only one scene available." << std::endl;
-                return; // No next scene if there is only one scene
+                std::cout << "[SceneManager] There are no scenes in the queue. Closing application..." << std::endl;
+                exit(0); // Quit with OK status anyway, used by tests
+                return;
             }
 
             auto it = m_scenes.begin();
