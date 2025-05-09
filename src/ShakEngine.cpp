@@ -57,6 +57,12 @@ namespace shak
         return camera;
     }
 
+    void ShakEngine::RemoveCamera(const std::string& name)
+    {
+        m_renderer->RemoveCamera(name);
+        this->Destroy(name);
+    }
+
     void ShakEngine::RemoveUIElement(const std::string& name)
     {
         m_sceneManager->GetActiveScene()->RemoveUIElement(name);
@@ -110,6 +116,8 @@ namespace shak
         return { static_cast<float>(m_window->getSize().x), static_cast<float>(m_window->getSize().y) };
     }
 
+    //! ////////////////////// WINDOW SETTINGS //////////////////////
+
     void ShakEngine::SetIcon(const sf::Image& image)
     {
         m_window->setIcon(image.getSize(), image.getPixelsPtr());
@@ -119,6 +127,18 @@ namespace shak
     {
         m_window->setIcon(size, pixels);
     }
+
+    void ShakEngine::SetWindowTitle(const std::string& title)
+    {
+        m_window->setTitle(title);
+    }
+
+    void ShakEngine::SetWindowFrameLimit(unsigned int limit)
+    {
+        m_window->setFramerateLimit(limit);
+    }
+
+    //! ////////////////////// WINDOW LOOP //////////////////////
 
     void ShakEngine::Start()
     {

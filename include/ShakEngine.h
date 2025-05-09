@@ -48,6 +48,7 @@ namespace shak
         }
 
         std::shared_ptr<shak::Camera> AddCamera(const std::string& name, const sf::FloatRect& viewport, const CameraResizeBehavior& resizeBehavior);
+        void RemoveCamera(const std::string& name);
 
         template <typename T>
         void AddUIElement(const std::string& name)
@@ -73,11 +74,20 @@ namespace shak
         /// @return point in world coordinates
         sf::Vector2f GetMouseWorldPos(const std::shared_ptr<sf::View>& targetView = nullptr) const;
         sf::Vector2f GetWindowSize() const;
-
+        
+        //! ////////////////////// WINDOW SETTINGS //////////////////////
+    
         // Set the window icon using an image
         void SetIcon(const sf::Image& image);
+    
         // Set the window icon using raw pixel data
         void SetIcon(const sf::Vector2u& size, const std::uint8_t *pixels);
+        
+        // Set the window title
+        void SetWindowTitle(const std::string& title);
+
+        // Set the window frame rate limit
+        void SetWindowFrameLimit(unsigned int limit);
 
         void Start();
 

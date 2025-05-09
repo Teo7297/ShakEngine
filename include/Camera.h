@@ -15,6 +15,12 @@ namespace shak
         ViewResize
     };
 
+    enum class CameraRenderTarget
+    {
+        Window,
+        RenderTexture
+    };
+
     class Camera : public GameObject
     {
     public:
@@ -24,6 +30,11 @@ namespace shak
             , m_resolution{ sf::Vector2u{static_cast<unsigned int>(rectangle.size.x), static_cast<unsigned int>(rectangle.size.y) } }
             , m_resizeBehavior{ resizeBehavior }
             , m_defaultViewport{ sf::FloatRect{sf::Vector2f{0.f, 0.f}, {1.f, 1.f}} }
+            , m_renderTarget{ CameraRenderTarget::Window }
+            , m_renderTexture{ nullptr }
+            , m_drawEnabled{ true }
+            , m_priority{ 0 }
+            , m_priorityChanged{ false }
         {
             this->setOrigin(rectangle.size / 2.f);
         }
@@ -87,7 +98,7 @@ namespace shak
             // When the window is resized, apply the letterbox effect
             m_engine->OnResize += [this](const sf::Vector2u& oldSize, const sf::Vector2u& newSize)
                 {
-                    switch (m_resizeBehavior)
+                    switch(m_resizeBehavior)
                     {
                     case CameraResizeBehavior::Letterbox:
                         LetterboxResize(newSize);
@@ -165,6 +176,63 @@ namespace shak
             m_view->setSize({ newX, newY });
         }
 
+        void SetRenderTarget(const CameraRenderTarget target)
+        {
+            m_renderTarget = target;
+            if(m_renderTarget == CameraRenderTarget::RenderTexture)
+            {
+                m_renderTexture = std::make_shared<sf::RenderTexture>(sf::Vector2u{ m_resolution.x, m_resolution.y });
+                m_renderTexture->setSmooth(false);
+                m_renderTexture->setView(*m_view);
+            }
+        }
+
+        CameraRenderTarget GetRenderTarget() const
+        {
+            return m_renderTarget;
+        }
+
+        std::shared_ptr<sf::RenderTexture> GetRenderTexture() const
+        {
+            if(!m_renderTexture)
+            {
+                std::cerr << "[Camera] Render target is not set to RenderTexture / RenderTexture is NULL for this camera" << std::endl;
+                return nullptr;
+            }
+            return m_renderTexture;
+        }
+
+        bool IsDrawEnabled() const
+        {
+            return m_drawEnabled;
+        }
+
+        void SetDrawEnabled(bool enabled)
+        {
+            m_drawEnabled = enabled;
+        }
+
+        bool IsPriorityChanged() const
+        {
+            return m_priorityChanged;
+        }
+
+        void ResetPriorityChanged()
+        {
+            m_priorityChanged = false;
+        }
+
+        void SetPriority(int priority)
+        {
+            m_priority = priority;
+            m_priorityChanged = true;
+        }
+
+        int GetPriority() const
+        {
+            return m_priority;
+        }
+
         // Hack. We like the camera being a GameObj so we can set it as child of other gameObj. But we don't want the draw function to do anything, so this is an empty function.
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override
         {
@@ -175,6 +243,11 @@ namespace shak
         sf::Vector2u m_resolution;
         CameraResizeBehavior m_resizeBehavior;
         sf::FloatRect m_defaultViewport;
+        CameraRenderTarget m_renderTarget;
+        std::shared_ptr<sf::RenderTexture> m_renderTexture; // Used if the render target is set to RenderTexture
+        bool m_drawEnabled;
+        int m_priority;
+        bool m_priorityChanged;
     };
 }
 

@@ -47,7 +47,7 @@ namespace shak
         {
             std::string compName = typeid(T).name();
 
-            if (m_components.contains(compName))
+            if(m_components.contains(compName))
             {
                 std::cerr << "[GameObject] Tried to add a duplicate component of type " << compName << std::endl;
                 return std::dynamic_pointer_cast<T>(m_components[compName]);
@@ -62,7 +62,7 @@ namespace shak
         std::shared_ptr<T> GetComponent()
         {
             std::string compName = typeid(T).name();
-            if (m_components.contains(compName))
+            if(m_components.contains(compName))
                 return std::dynamic_pointer_cast<T>(m_components[compName]);
             return nullptr;
         }
@@ -73,9 +73,9 @@ namespace shak
         std::vector<std::shared_ptr<GameObject>> FindChildrenByTypeRecursive() const
         {
             std::vector<std::shared_ptr<GameObject>> result;
-            for (const auto& [id, child] : m_children)
+            for(const auto& [id, child] : m_children)
             {
-                if (std::dynamic_pointer_cast<T>(child))
+                if(std::dynamic_pointer_cast<T>(child))
                     result.push_back(child);
                 auto found = child->FindChildrenByTypeRecursive<T>();
                 result.insert(result.end(), found.begin(), found.end());
@@ -158,6 +158,11 @@ namespace shak
         bool HasMovedThisFrame() const { return m_movedThisFrame; }
         void ResetMovedThisFrame() { m_movedThisFrame = false; }
 
+        // If the object "contains" a RenderTexture, it will be rendered directly in the window after the rest of the scene is rendered to the texture.
+        // This should never be used by the user, it is automatically set up by RenderSprites.
+        void SetRenderTarget(bool isRenderTarget) { m_isRenderTarget = isRenderTarget; }
+        bool IsRenderTarget() const { return m_isRenderTarget; }
+
     private:
         void TrySafeCopy();
 
@@ -171,6 +176,7 @@ namespace shak
         ShakEngine* m_engine;
         std::shared_ptr<sf::VertexArray> m_vertices;
         std::shared_ptr<sf::Texture> m_texture;
+        std::shared_ptr<sf::RenderTexture> m_renderTexture;
         std::shared_ptr<sf::Shader> m_shader;
         // raw pointer because of double ownership, check doubly linked list implementations
         GameObject* m_parent;
@@ -185,6 +191,7 @@ namespace shak
         int m_zIndex;
         bool m_physicsEnabled;
         bool m_movedThisFrame;
+        bool m_isRenderTarget;
     };
 }
 

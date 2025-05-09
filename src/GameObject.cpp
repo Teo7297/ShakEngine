@@ -11,6 +11,7 @@ namespace shak
     GameObject::GameObject(std::shared_ptr<sf::VertexArray> va, std::shared_ptr<sf::Texture> texture)
         : m_vertices(va)
         , m_texture(texture)
+        , m_renderTexture(nullptr)
         , m_shader(nullptr)
         , m_parent(nullptr)
         , m_safeCopyDone(false)
@@ -25,6 +26,7 @@ namespace shak
         , m_zIndex(100)
         , m_physicsEnabled(false)
         , m_movedThisFrame(false)
+        , m_isRenderTarget(false)
     {
         m_engine = &ShakEngine::GetInstance();
         Id = m_engine->GetNextGameObjectId();
@@ -33,20 +35,22 @@ namespace shak
     void GameObject::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         states.transform *= this->getTransform();
-        if (m_texture)
+        if(m_texture)
             states.texture = m_texture.get();
-        if (m_shader)
+        else if(m_renderTexture)
+            states.texture = &m_renderTexture->getTexture();
+        if(m_shader)
             states.shader = m_shader.get();
-        if (m_vertices)
+        if(m_vertices)
             target.draw(*m_vertices, states);
     }
 
     void GameObject::move(sf::Vector2f offset)
     {
         Transformable::move(offset);
-        for (const auto& [id, child] : m_children)
+        for(const auto& [id, child] : m_children)
         {
-            if (child->GetFollowParent())
+            if(child->GetFollowParent())
                 child->move(offset);
         }
         m_movedThisFrame = true;
@@ -55,9 +59,9 @@ namespace shak
     void GameObject::setPosition(sf::Vector2f position)
     {
         Transformable::setPosition(position);
-        for (const auto& [id, child] : m_children)
+        for(const auto& [id, child] : m_children)
         {
-            if (child->GetFollowParent())
+            if(child->GetFollowParent())
                 child->setPosition(position);
         }
         m_movedThisFrame = true;
@@ -66,9 +70,9 @@ namespace shak
     void GameObject::rotate(sf::Angle angle)
     {
         Transformable::rotate(angle);
-        for (const auto& [id, child] : m_children)
+        for(const auto& [id, child] : m_children)
         {
-            if (!child->GetRotateWithParent()) continue;
+            if(!child->GetRotateWithParent()) continue;
 
             sf::Vector2f relativePos = child->getPosition() - this->getPosition();
 
@@ -89,9 +93,9 @@ namespace shak
     void GameObject::setRotation(sf::Angle angle)
     {
         Transformable::setRotation(angle);
-        for (const auto& [id, child] : m_children)
+        for(const auto& [id, child] : m_children)
         {
-            if (!child->GetRotateWithParent()) continue;
+            if(!child->GetRotateWithParent()) continue;
 
             sf::Vector2f relativePos = child->getPosition() - this->getPosition();
 
@@ -130,7 +134,7 @@ namespace shak
     void GameObject::scale(sf::Vector2f factor)
     {
         Transformable::scale(factor);
-        for (const auto& [id, child] : m_children)
+        for(const auto& [id, child] : m_children)
         {
             child->scale(factor);
         }
@@ -148,17 +152,17 @@ namespace shak
 
     void GameObject::AddChild(const GameObjectPtr& child)
     {
-        if (m_children.contains(child->Id))
+        if(m_children.contains(child->Id))
             return;
         m_children[child->Id] = child;
         child->SetParent(this);
-        if (child->m_physicsEnabled)
+        if(child->m_physicsEnabled)
             m_engine->GetScene()->AddGameObjectToQuadtree(child);
     }
 
     bool GameObject::RemoveChild(int id)
     {
-        if (!m_children.contains(id))
+        if(!m_children.contains(id))
             return false;
 
         m_children[id]->InternalDestroy();
@@ -169,11 +173,11 @@ namespace shak
 
     bool GameObject::RemoveChildRecursive(int id)
     {
-        if (RemoveChild(id))
+        if(RemoveChild(id))
             return true;
         else
-            for (const auto& [_, child] : m_children)
-                if (child->RemoveChildRecursive(id))
+            for(const auto& [_, child] : m_children)
+                if(child->RemoveChildRecursive(id))
                     return true;
 
         return false;
@@ -181,7 +185,7 @@ namespace shak
 
     void GameObject::RemoveChildrenRecursive()
     {
-        for (const auto& [_, child] : m_children)
+        for(const auto& [_, child] : m_children)
         {
             child->RemoveChildrenRecursive();
             child->RemoveChildren();
@@ -195,14 +199,14 @@ namespace shak
 
     GameObjectPtr GameObject::FindChildRecursive(const std::string& name) const
     {
-        for (const auto& [id, child] : m_children)
+        for(const auto& [id, child] : m_children)
         {
-            if (child->Name == name)
+            if(child->Name == name)
                 return child;
             else
             {
                 auto found = child->FindChildRecursive(name);
-                if (found)
+                if(found)
                     return found;
             }
         }
@@ -211,12 +215,12 @@ namespace shak
 
     GameObjectPtr GameObject::FindChildRecursive(int id) const
     {
-        if (m_children.contains(id))
+        if(m_children.contains(id))
             return m_children.at(id);
 
-        for (const auto& [_, child] : m_children)
+        for(const auto& [_, child] : m_children)
         {
-            if (auto found = child->FindChildRecursive(id))
+            if(auto found = child->FindChildRecursive(id))
                 return found;
         }
 
@@ -225,9 +229,9 @@ namespace shak
 
     void GameObject::GetDrawables(std::vector<GameObjectPtr>& drawables) const
     {
-        for (const auto& [id, child] : m_children)
+        for(const auto& [id, child] : m_children)
         {
-            if (child->IsActive())
+            if(child->IsActive())
             {
                 drawables.emplace_back(child);
                 child->GetDrawables(drawables);
@@ -238,7 +242,7 @@ namespace shak
     void GameObject::SetActive(bool active)
     {
         m_active = active;
-        if (m_active)
+        if(m_active)
             OnEnable();
         else
             OnDisable();
@@ -248,7 +252,7 @@ namespace shak
     {
         std::vector<GameObjectPtr> result;
         result.reserve(m_children.size());
-        for (const auto& [id, child] : m_children)
+        for(const auto& [id, child] : m_children)
             result.emplace_back(child);
         return result;
     }
@@ -257,7 +261,7 @@ namespace shak
     {
         std::vector<std::shared_ptr<Component>> result;
         result.reserve(m_components.size());
-        for (const auto& [id, comp] : m_components)
+        for(const auto& [id, comp] : m_components)
             result.emplace_back(comp);
         return result;
     }
@@ -277,7 +281,7 @@ namespace shak
 
     void GameObject::SetColor(const sf::Color& color) const
     {
-        for (size_t i = 0; i < m_vertices->getVertexCount(); i++)
+        for(size_t i = 0; i < m_vertices->getVertexCount(); i++)
         {
             auto& vertex = (*m_vertices)[i];
             vertex.color = color;
@@ -286,7 +290,7 @@ namespace shak
 
     void GameObject::SetTransparency(uint8_t transparency) const
     {
-        for (size_t i = 0; i < m_vertices->getVertexCount(); i++)
+        for(size_t i = 0; i < m_vertices->getVertexCount(); i++)
         {
             auto& vertex = (*m_vertices)[i];
             vertex.color.a = transparency;
@@ -296,20 +300,20 @@ namespace shak
     void GameObject::ForwardAwake()
     {
         TrySafeCopy();
-        for (const auto& comp : m_safeComponents)
+        for(const auto& comp : m_safeComponents)
         {
-            if (comp->IsActive() && comp->NeedAwake())
+            if(comp->IsActive() && comp->NeedAwake())
             {
                 comp->Awake();
                 comp->shak::Component::Awake();
             }
         }
 
-        for (const auto& child : m_safeChildren)
+        for(const auto& child : m_safeChildren)
         {
-            if (child->IsActive())
+            if(child->IsActive())
             {
-                if (child->NeedAwake())
+                if(child->NeedAwake())
                 {
                     child->Awake();
                     child->shak::GameObject::Awake();
@@ -323,9 +327,9 @@ namespace shak
     void GameObject::OnCollisionInternal(const std::shared_ptr<GameObject>& other)
     {
         TrySafeCopy();
-        for (const auto& comp : m_safeComponents)
+        for(const auto& comp : m_safeComponents)
         {
-            if (comp->IsActive())
+            if(comp->IsActive())
             {
                 comp->OnCollision(other);
             }
@@ -341,18 +345,18 @@ namespace shak
     void GameObject::InternalUpdate(float dt)
     {
         TrySafeCopy();
-        for (const auto& comp : m_safeComponents)
+        for(const auto& comp : m_safeComponents)
         {
-            if (comp->IsActive())
+            if(comp->IsActive())
             {
                 comp->Update(dt);
                 comp->shak::Component::Update(dt);
             }
         }
 
-        for (const auto& child : m_safeChildren)
+        for(const auto& child : m_safeChildren)
         {
-            if (child->IsActive())
+            if(child->IsActive())
             {
                 child->Update(dt);
                 child->InternalUpdate(dt);
@@ -360,7 +364,7 @@ namespace shak
         }
 
         // Set basic shader uniforms
-        if (m_shader)
+        if(m_shader)
         {
             m_shader->setUniform("u_time", m_engine->GetTime());
             m_shader->setUniform("u_resolution", sf::Glsl::Vec2{ m_engine->GetWindowSize().x, m_engine->GetWindowSize().y });
@@ -370,18 +374,18 @@ namespace shak
     void GameObject::InternalLateUpdate(float dt)
     {
         TrySafeCopy();
-        for (const auto& comp : m_safeComponents)
+        for(const auto& comp : m_safeComponents)
         {
-            if (comp->IsActive())
+            if(comp->IsActive())
             {
                 comp->LateUpdate(dt);
                 comp->shak::Component::LateUpdate(dt);
             }
         }
 
-        for (const auto& child : m_safeChildren)
+        for(const auto& child : m_safeChildren)
         {
-            if (child->IsActive())
+            if(child->IsActive())
             {
                 child->LateUpdate(dt);
                 child->InternalLateUpdate(dt);
@@ -392,7 +396,7 @@ namespace shak
     void GameObject::InternalCleanup()
     {
         m_safeCopyDone = false;
-        for (const auto& [id, child] : m_children)
+        for(const auto& [id, child] : m_children)
         {
             child->Cleanup();
             child->InternalCleanup();
@@ -402,18 +406,18 @@ namespace shak
     void GameObject::InternalHandleInput(const sf::Event& event)
     {
         TrySafeCopy();
-        for (const auto& comp : m_safeComponents)
+        for(const auto& comp : m_safeComponents)
         {
-            if (comp->IsActive())
+            if(comp->IsActive())
             {
                 comp->HandleInput(event);
                 comp->shak::Component::HandleInput(event);
             }
         }
 
-        for (const auto& child : m_safeChildren)
+        for(const auto& child : m_safeChildren)
         {
-            if (child->IsActive())
+            if(child->IsActive())
             {
                 child->HandleInput(event);
                 child->InternalHandleInput(event);
@@ -424,18 +428,18 @@ namespace shak
     void GameObject::InternalDestroy()
     {
         TrySafeCopy();
-        for (const auto& comp : m_safeComponents)
+        for(const auto& comp : m_safeComponents)
         {
-            if (comp->IsActive())
+            if(comp->IsActive())
             {
                 comp->OnDestroy();
                 comp->shak::Component::OnDestroy();
             }
         }
 
-        for (const auto& child : m_safeChildren)
+        for(const auto& child : m_safeChildren)
         {
-            if (child->IsActive())
+            if(child->IsActive())
             {
                 child->OnDestroy();
                 child->InternalDestroy();
@@ -466,7 +470,7 @@ namespace shak
 
     void GameObject::TrySafeCopy()
     {
-        if (m_safeCopyDone) return;
+        if(m_safeCopyDone) return;
 
         m_safeChildren = GetChildren();
         m_safeComponents = GetComponents();

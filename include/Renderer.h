@@ -22,13 +22,17 @@ namespace shak
         void SetClearColor(sf::Color color) { m_clearColor = color; }
 
         void Render(const std::vector<std::shared_ptr<GameObject>>& drawables);
-    private:
-        void Draw(const std::vector<std::shared_ptr<GameObject>>& drawables);
+
+        void ToggleBlending(bool enable)
+        {
+            m_blendingEnabled = enable;
+        }
 
     private:
         bool m_isRunning;
         std::shared_ptr<sf::RenderWindow> m_window;
-        std::unordered_map<std::string, std::shared_ptr<shak::Camera>> m_cameras;
+        std::vector<std::shared_ptr<shak::Camera>> m_cameras;
         sf::Color m_clearColor;
+        bool m_blendingEnabled;
     };
 }
