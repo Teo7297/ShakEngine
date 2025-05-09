@@ -15,6 +15,7 @@ namespace shak
     void ResourceManager::Clear()
     {
         m_loadedTextures.clear();
+        m_loadedImages.clear();
         m_loadedAtlases.clear();
         m_loadedShaders.clear();
         m_loadedFonts.clear();
@@ -29,11 +30,25 @@ namespace shak
 
         auto texture = std::make_shared<sf::Texture>();
         fs::path actualPath = m_prefix / path;
-        if(!texture->loadFromFile(actualPath))
+
+        bool success = false;
+        // Check if the texture is in the embedded filesystem
+        if(m_embeddedFilesystem.exists(actualPath.string()))
+        {
+            auto file = m_embeddedFilesystem.open(actualPath.string());
+            success = texture->loadFromMemory(file.begin(), file.size());
+        }
+        else
+        {
+            success = texture->loadFromFile(actualPath);
+        }
+
+        if(!success)
         {
             std::cerr << "Failed to load texture [" << name << "] at location: " << actualPath << std::endl;
             return nullptr;
         }
+
         texture->setRepeated(repeated);
         texture->setSmooth(smooth);
 
@@ -60,9 +75,9 @@ namespace shak
             return m_loadedAtlases[name];
 
         fs::path actualPath = m_prefix / path;
-        auto atlas = std::make_shared<TextureAtlas>(actualPath);
-        m_loadedAtlases[name] = atlas;
-        return atlas;
+            auto atlas = std::make_shared<TextureAtlas>(actualPath);
+            m_loadedAtlases[name] = atlas;
+            return atlas;
     }
 
     void ResourceManager::UnloadTextureAtlas(const std::string& name)
@@ -85,7 +100,20 @@ namespace shak
 
         auto image = std::make_shared<sf::Image>();
         fs::path actualPath = m_prefix / path;
-        if(!image->loadFromFile(actualPath))
+
+        bool success = false;
+        // Check if the image is in the embedded filesystem
+        if(m_embeddedFilesystem.exists(actualPath.string()))
+        {
+            auto file = m_embeddedFilesystem.open(actualPath.string());
+            success = image->loadFromMemory(file.begin(), file.size());
+        }
+        else
+        {
+            success = image->loadFromFile(actualPath);
+        }
+
+        if(!success)
         {
             std::cerr << "Failed to load image [" << name << "] at location: " << actualPath << std::endl;
             return nullptr;
@@ -118,6 +146,7 @@ namespace shak
 
         if(vpath == "")
         {
+            // TODO: check why we are using this macro instead of the m_prefix
             std::string internalFragPath = SHADERS_PATH + fpath.filename().string();
             if(m_embeddedFilesystem.exists(internalFragPath))
             {
@@ -182,9 +211,21 @@ namespace shak
             return m_loadedFonts[name];
 
         auto font = std::make_shared<sf::Font>();
-
         fs::path actualPath = m_prefix / path;
-        if(!font->openFromFile(actualPath))
+
+        bool success = false;
+        // Check if the font is in the embedded filesystem
+        if(m_embeddedFilesystem.exists(actualPath.string()))
+        {
+            auto file = m_embeddedFilesystem.open(actualPath.string());
+            success = font->openFromMemory(file.begin(), file.size());
+        }
+        else
+        {
+            success = font->openFromFile(actualPath);
+        }
+
+        if(!success)
         {
             std::cerr << "Failed to load font [" << name << "] at location: " << actualPath << std::endl;
             return nullptr;
@@ -214,16 +255,27 @@ namespace shak
 
         fs::path actualPath = m_prefix / path;
         auto buffer = std::make_shared<sf::SoundBuffer>();
-        if(!buffer->loadFromFile(actualPath))
+
+        bool success = false;
+        // Check if the sound is in the embedded filesystem
+        if(m_embeddedFilesystem.exists(actualPath.string()))
+        {
+            auto file = m_embeddedFilesystem.open(actualPath.string());
+            success = buffer->loadFromMemory(file.begin(), file.size());
+        }
+        else
+        {
+            success = buffer->loadFromFile(actualPath);
+        }
+
+        if(!success)
         {
             std::cerr << "Failed to load sound [" << name << "] at location: " << actualPath << std::endl;
             return nullptr;
         }
 
         auto sound = std::make_shared<sf::Sound>(*buffer);
-
         m_loadedSounds[name] = { buffer, sound };
-
         return sound;
     }
 
@@ -247,7 +299,23 @@ namespace shak
 
         auto music = std::make_shared<sf::Music>();
         fs::path actualPath = m_prefix / path;
-        if(!music->openFromFile(actualPath))
+
+        bool success = false;
+        // Check if the music is in the embedded filesystem
+        if(m_embeddedFilesystem.exists(actualPath.string()))
+        {
+            auto file = m_embeddedFilesystem.open(actualPath.string());
+            // For music, we need to create a temporary file since SFML's Music can't load from memory
+            // But this is a placeholder - you might need to implement a custom solution
+            std::cerr << "Loading music from embedded resources is not implemented yet." << std::endl;
+            success = false;
+        }
+        else
+        {
+            success = music->openFromFile(actualPath);
+        }
+
+        if(!success)
         {
             std::cerr << "Failed to load music [" << name << "] at location: " << actualPath << std::endl;
             return nullptr;

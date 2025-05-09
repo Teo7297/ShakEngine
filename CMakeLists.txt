@@ -46,10 +46,35 @@ file(GLOB SHADER_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/*.vs"
     "${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/*.fs"
 )
+file(GLOB SOUND_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/sounds/*.wav"
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/sounds/*.ogg"
+)
+file(GLOB MUSIC_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/music/*.ogg"
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/music/*.wav"
+)
+file(GLOB FONT_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/*.ttf"
+)
+file(GLOB IMAGE_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/images/*.png"
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/images/*.jpg"
+)
+file(GLOB TEXTURE_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/*.png"
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/*.jpg"
+)
 cmrc_add_resource_library(shak-resources
         ALIAS shak::rc
         NAMESPACE shak
-        ${SHADER_FILES})
+        ${SHADER_FILES}
+        ${SOUND_FILES}
+        ${MUSIC_FILES}
+        ${FONT_FILES}
+        ${IMAGE_FILES}
+        ${TEXTURE_FILES}
+        )
 
 
 # Include all .cpp and .h files in src directory

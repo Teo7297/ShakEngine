@@ -134,6 +134,9 @@ public:
 
     void Init() override
     {
+        auto icon = m_engine->GetResourceManager()->LoadSFImage("assets/textures/ShakEngineLogo.png", "shakengine_logo_icon");
+        m_engine->SetIcon(*icon);
+
         auto camera1 = m_renderer->AddCamera("camera1", sf::FloatRect({ 0, 0 }, { 1920, 1080 }), shak::CameraResizeBehavior::Letterbox);
 
         auto root = m_engine->AddGameObject<LogoRoot>();
