@@ -78,14 +78,14 @@ namespace shak
         m_sceneManager->GetActiveScene()->SelectActiveUI(name);
     }
 
-    void ShakEngine::DeselectActiveUI()
+    void ShakEngine::DeselectActiveUI(const std::string& name)
     {
-        m_sceneManager->GetActiveScene()->DeselectActiveUI();
+        m_sceneManager->GetActiveScene()->DeselectActiveUI(name);
     }
 
-    std::shared_ptr<UIElement> ShakEngine::GetActiveUI() const
+    std::vector<std::shared_ptr<UIElement>> ShakEngine::GetActiveUIs() const
     {
-        return m_sceneManager->GetActiveScene()->GetActiveUI();
+        return m_sceneManager->GetActiveScene()->GetActiveUIs();
     }
 
     std::shared_ptr<ResourceManager> ShakEngine::GetResourceManager()

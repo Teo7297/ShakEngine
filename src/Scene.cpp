@@ -56,7 +56,7 @@ namespace shak
     void Scene::RemoveGameObject(int id)
     {
         bool result = m_root->RemoveChildRecursive(id);
-        if (!result)
+        if(!result)
             std::cerr << "[Scene - Destroy] GameObject with id " << id << " not found" << std::endl;
     }
 
@@ -90,14 +90,14 @@ namespace shak
         m_ui->SelectActiveUI(name);
     }
 
-    void Scene::DeselectActiveUI()
+    void Scene::DeselectActiveUI(const std::string& name)
     {
-        m_ui->DeselectActiveUI();
+        m_ui->DeselectActiveUI(name);
     }
 
-    std::shared_ptr<UIElement> Scene::GetActiveUI()
+    std::vector<std::shared_ptr<UIElement>> Scene::GetActiveUIs()
     {
-        return m_ui->GetActiveUI();
+        return m_ui->GetActiveUIs();
     }
 
     std::optional<sf::Vector2f> getRotatedRectIntersectionPoint(
@@ -125,9 +125,9 @@ namespace shak
         float t1 = maxDistance;
 
         // X-axis test
-        if (std::abs(localDirection.x) < 1e-6f)
+        if(std::abs(localDirection.x) < 1e-6f)
         {
-            if (localOrigin.x < leftEdge || localOrigin.x > rightEdge)
+            if(localOrigin.x < leftEdge || localOrigin.x > rightEdge)
                 return std::nullopt;
         }
         else
@@ -135,18 +135,18 @@ namespace shak
             float invDx = 1.f / localDirection.x;
             float tNear = (leftEdge - localOrigin.x) * invDx;
             float tFar = (rightEdge - localOrigin.x) * invDx;
-            if (tNear > tFar)
+            if(tNear > tFar)
                 std::swap(tNear, tFar);
             t0 = std::max(t0, tNear);
             t1 = std::min(t1, tFar);
-            if (t0 > t1)
+            if(t0 > t1)
                 return std::nullopt;
         }
 
         // Y-axis test
-        if (std::abs(localDirection.y) < 1e-6f)
+        if(std::abs(localDirection.y) < 1e-6f)
         {
-            if (localOrigin.y < topEdge || localOrigin.y > bottomEdge)
+            if(localOrigin.y < topEdge || localOrigin.y > bottomEdge)
                 return std::nullopt;
         }
         else
@@ -154,15 +154,15 @@ namespace shak
             float invDy = 1.f / localDirection.y;
             float tNear = (topEdge - localOrigin.y) * invDy;
             float tFar = (bottomEdge - localOrigin.y) * invDy;
-            if (tNear > tFar)
+            if(tNear > tFar)
                 std::swap(tNear, tFar);
             t0 = std::max(t0, tNear);
             t1 = std::min(t1, tFar);
-            if (t0 > t1)
+            if(t0 > t1)
                 return std::nullopt;
         }
 
-        if (t0 <= maxDistance)
+        if(t0 <= maxDistance)
         {
             // Intersection in local coordinates.
             sf::Vector2f localIntersection = localOrigin + localDirection * t0;
@@ -182,12 +182,12 @@ namespace shak
         sf::FloatRect searchArea(origin, direction * maxDistance);
         auto candidates = m_quadtree.query(searchArea);
 
-        for (const auto& obj : candidates)
+        for(const auto& obj : candidates)
         {
-            if (obj->Name == "Player")continue;
+            if(obj->Name == "Player")continue;
             const sf::FloatRect bounds({ obj->getPosition() - obj->getOrigin(), obj->GetVertexArray()->getBounds().size });
 
-            if (auto opt = getRotatedRectIntersectionPoint(origin, direction, maxDistance, bounds.getCenter(), bounds.size, obj->getRotation()))
+            if(auto opt = getRotatedRectIntersectionPoint(origin, direction, maxDistance, bounds.getCenter(), bounds.size, obj->getRotation()))
             {
                 auto hitPt = opt.value();
                 RaycastHit hitData =
@@ -207,7 +207,7 @@ namespace shak
                 return a.distance < b.distance;
             });
 
-        if (drawDebug)
+        if(drawDebug)
         {
             sf::Color lineColor = outHits.empty() ? sf::Color::Red : sf::Color::Green;
 
@@ -219,7 +219,7 @@ namespace shak
             hitLine->SetZIndex(1500);
             m_root->AddChild(hitLine);
 
-            for (const auto& hitData : outHits)
+            for(const auto& hitData : outHits)
             {
                 auto hitSquare = std::make_shared<Square>(sf::FloatRect{ hitData.hitPoint, {10.f, 10.f} }, sf::Color::Green);
                 m_root->AddChild(hitSquare);
@@ -249,7 +249,7 @@ namespace shak
         sf::Vector2f delta = localCircleCenter - closestLocalPoint;
         float distanceSquared = delta.x * delta.x + delta.y * delta.y;
 
-        if (distanceSquared <= radius * radius)
+        if(distanceSquared <= radius * radius)
         {
             // There's an intersection. Transform the contact point back to world space.
             sf::Vector2f worldIntersection = closestLocalPoint.rotatedBy(rotation) + rectCenter;
@@ -269,11 +269,11 @@ namespace shak
         sf::FloatRect searchArea(topLeftArea, sf::Vector2f(2 * radius, 2 * radius));
         auto candidates = m_quadtree.query(searchArea);
 
-        for (const auto& obj : candidates)
+        for(const auto& obj : candidates)
         {
             const sf::FloatRect bounds({ obj->getPosition() - obj->getOrigin(), obj->GetVertexArray()->getBounds().size });
 
-            if (auto opt = getRotatedRectCircleIntersectionPoint(center, radius, bounds.getCenter(), bounds.size, obj->getRotation()))
+            if(auto opt = getRotatedRectCircleIntersectionPoint(center, radius, bounds.getCenter(), bounds.size, obj->getRotation()))
             {
                 auto hitPt = opt.value();
                 RaycastHit hitData =
@@ -293,9 +293,9 @@ namespace shak
                 return a.distance < b.distance;
             });
 
-        if (drawDebug)
+        if(drawDebug)
         {
-            if (outHits.empty())
+            if(outHits.empty())
             {
                 auto hitCircle = std::make_shared<Circle>(
                     center,
@@ -306,7 +306,7 @@ namespace shak
                 m_root->AddChild(hitCircle);
             }
 
-            for (const auto& hitData : outHits)
+            for(const auto& hitData : outHits)
             {
                 auto hitCircle = std::make_shared<Circle>(
                     center,
@@ -329,17 +329,20 @@ namespace shak
 
     void Scene::TryInitActiveUI()
     {
-        const auto& activeUI = m_ui->GetActiveUI();
-        if (activeUI && !activeUI->InitDone)
+        const auto& activeUIs = m_ui->GetActiveUIs();
+        for(auto& activeUI : activeUIs)
         {
+            if(activeUI->InitDone)
+                continue;
+
             activeUI->Init();
-            activeUI->InitDone = true; //? I prefer doing it here and avoid UIElement::Init() in every UI element instance
+            activeUI->InitDone = true;
         }
     }
 
     void Scene::Update(float dt)
     {
-        if (!m_awakeDone)
+        if(!m_awakeDone)
         {
             m_root->Awake();
             m_awakeDone = true;
@@ -380,7 +383,7 @@ namespace shak
     {
         auto collisions = m_quadtree.findAllIntersections();
 
-        for (const auto& [a, b] : collisions)
+        for(const auto& [a, b] : collisions)
         {
             a->OnCollisionInternal(b);
             b->OnCollisionInternal(a);

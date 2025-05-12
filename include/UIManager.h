@@ -16,6 +16,7 @@ namespace shak
 
         void AddUIElement(const std::string& name, const std::shared_ptr<UIElement>& element)
         {
+            element->Name = name;
             m_elements[name] = element;
         }
 
@@ -31,38 +32,39 @@ namespace shak
 
         void SelectActiveUI(const std::string& name)
         {
-            m_activeUI = GetUIElement(name);
+            m_activeUIs.emplace_back(GetUIElement(name));
         }
 
-        void DeselectActiveUI()
+        void DeselectActiveUI(const std::string& name)
         {
-            m_activeUI = nullptr;
+            auto it = std::remove_if(m_activeUIs.begin(), m_activeUIs.end(),
+                [&name](const std::shared_ptr<UIElement>& ui) { return ui->Name == name; });
+            m_activeUIs.erase(it, m_activeUIs.end());
+            m_activeUIs.shrink_to_fit();
         }
 
-        std::shared_ptr<UIElement> GetActiveUI()
+        std::vector<std::shared_ptr<UIElement>> GetActiveUIs()
         {
-            return m_activeUI;
+            return m_activeUIs;
         }
 
         void UpdateUI(float dt)
         {
-            if (m_activeUI)
-            {
-                m_activeUI->Update(dt);
-            }
+            for(auto& ui : m_activeUIs)
+                if(ui->InitDone)
+                    ui->Update(dt);
         }
 
         void DrawUI()
         {
-            if (m_activeUI)
-            {
-                m_activeUI->Draw();
-            }
+            for(auto& ui : m_activeUIs)
+                if(ui->InitDone)
+                    ui->Draw();
         }
 
     private:
         // name, element
         std::unordered_map<std::string, std::shared_ptr<UIElement>> m_elements;
-        std::shared_ptr<UIElement> m_activeUI;
+        std::vector<std::shared_ptr<UIElement>> m_activeUIs;
     };
 }

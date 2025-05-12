@@ -50,8 +50,8 @@ namespace shak
         void RemoveUIElement(const std::string& name);
         std::shared_ptr<UIElement> GetUIElement(const std::string& name);
         void SelectActiveUI(const std::string& name);
-        void DeselectActiveUI();
-        std::shared_ptr<UIElement> GetActiveUI();
+        void DeselectActiveUI(const std::string& name);
+        std::vector<std::shared_ptr<UIElement>> GetActiveUIs();
 
         // CASTING
         void Raycast(const sf::Vector2f& origin, const sf::Vector2f& direction, float maxDistance, std::vector<RaycastHit>& outHits, bool drawDebug = false);

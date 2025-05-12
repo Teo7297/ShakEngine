@@ -22,5 +22,7 @@ namespace shak
         virtual void Draw() = 0;
 
         bool InitDone = false;
+
+        std::string Name = "";
     };
 }

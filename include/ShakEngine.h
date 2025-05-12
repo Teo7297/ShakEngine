@@ -59,8 +59,8 @@ namespace shak
         void RemoveUIElement(const std::string& name);
         std::shared_ptr<UIElement> FindUIElementByName(const std::string& name) const;
         void SelectActiveUI(const std::string& name);
-        void DeselectActiveUI();
-        std::shared_ptr<UIElement> GetActiveUI() const;
+        void DeselectActiveUI(const std::string& name);
+        std::vector<std::shared_ptr<UIElement>> GetActiveUIs() const;
 
         std::shared_ptr<ResourceManager> GetResourceManager();
 

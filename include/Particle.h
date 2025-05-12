@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EngineDefines.h"
+#include "Trail.h"
 
 namespace shak
 {
@@ -22,8 +23,9 @@ namespace shak
             , active(false)
             , id(0)
             , size(0.f)
+            , trail(nullptr)
         {
-            if (type == Particle::Type::Quad)
+            if(type == Particle::Type::Quad)
                 vertices.resize(6);
             else
                 vertices.resize(1);
@@ -31,43 +33,43 @@ namespace shak
 
         void SetPosition(const sf::Vector2f& pos)
         {
-            if (vertices.size() < 6)
+            if(vertices.size() < 6)
             {
                 vertices[0]->position = pos;
             }
             else
             {
                 float halfSize = size * 0.5f;
-                vertices[0]->position = { pos.x - halfSize, pos.y - halfSize};
-                vertices[1]->position = { pos.x - halfSize, pos.y + halfSize};
-                vertices[2]->position = { pos.x + halfSize, pos.y - halfSize};
-                vertices[3]->position = { pos.x + halfSize, pos.y - halfSize};
-                vertices[4]->position = { pos.x - halfSize, pos.y + halfSize};
-                vertices[5]->position = { pos.x + halfSize, pos.y + halfSize};
+                vertices[0]->position = { pos.x - halfSize, pos.y - halfSize };
+                vertices[1]->position = { pos.x - halfSize, pos.y + halfSize };
+                vertices[2]->position = { pos.x + halfSize, pos.y - halfSize };
+                vertices[3]->position = { pos.x + halfSize, pos.y - halfSize };
+                vertices[4]->position = { pos.x - halfSize, pos.y + halfSize };
+                vertices[5]->position = { pos.x + halfSize, pos.y + halfSize };
             }
         }
 
         void Move(sf::Vector2f offset)
         {
-            for (auto& v : vertices)
+            for(auto& v : vertices)
                 v->position += offset;
         }
 
         void SetColor(sf::Color color)
         {
-            for (auto& v : vertices)
+            for(auto& v : vertices)
                 v->color = color;
         }
 
         void SetAlpha(uint8_t alpha)
         {
-            for (auto& v : vertices)
+            for(auto& v : vertices)
                 v->color.a = alpha;
         }
 
         void SetTextureCoords(float x, float y)
         {
-            if (vertices.size() < 6)
+            if(vertices.size() < 6)
                 return;
 
             vertices[0]->texCoords = { 0.f, 0.f };
@@ -80,7 +82,7 @@ namespace shak
 
         void SetVertices(const std::shared_ptr<sf::VertexArray>& va, int index)
         {
-            if (vertices.size() < 6)
+            if(vertices.size() < 6)
             {
                 vertices[0] = &(*va)[index];
                 return;
@@ -97,7 +99,7 @@ namespace shak
 
         void SetSize(float psize)
         {
-            if (vertices.size() < 6)
+            if(vertices.size() < 6)
             {
                 vertices[0]->position = { 0.f, 0.f };
                 return;
@@ -114,6 +116,14 @@ namespace shak
             size = psize; // store this info
         }
 
+        sf::Vector2f GetCenter() const
+        {
+            if(vertices.size() < 6)
+                return vertices[0]->position;
+
+            return { (vertices[0]->position.x + vertices[2]->position.x) * 0.5f, (vertices[0]->position.y + vertices[1]->position.y) * 0.5f };
+        }
+
         std::vector<sf::Vertex*> vertices;
         sf::Vector2f velocity;
         float lifeTime;
@@ -122,5 +132,7 @@ namespace shak
         bool active;
         int id;
         float size;
+
+        std::shared_ptr<Trail> trail;
     };
 } // namespace shak
