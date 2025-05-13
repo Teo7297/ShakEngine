@@ -22,6 +22,11 @@ namespace shak
             m_scenes.erase(name);
         }
 
+        bool HasScene(const std::string& name)
+        {
+            return m_scenes.find(name) != m_scenes.end();
+        }
+
         std::shared_ptr<Scene> GetScene(const std::string& name)
         {
             return m_scenes[name];
@@ -30,6 +35,11 @@ namespace shak
         // Request a scene to be activated at the end of the frame.
         void QueueScene(const std::string& name)
         {
+            if(!HasScene(name))
+            {
+                std::cout << "[SceneManager] Scene " << std::quoted(name) << " does not exist." << std::endl;
+                return;
+            }
             m_sceneToActivate = name;
         }
 
@@ -66,10 +76,10 @@ namespace shak
         // It is automatically called by the engine at the end of the frame.
         void TryActivateQueuedScene()
         {
-            if (m_sceneToActivate == "")
+            if(m_sceneToActivate == "")
                 return;
 
-            if (m_activeScene)
+            if(m_activeScene)
                 m_activeScene->InternalClear();
             m_activeScene = GetScene(m_sceneToActivate);
             m_activeScene->InternalInit();
