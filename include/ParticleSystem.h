@@ -6,13 +6,6 @@
 
 namespace shak
 {
-    enum class EmitterType
-    {
-        Point,
-        Circle,
-        Line
-    };
-
     class ParticleLogic;
     class ParticleSystem : public GameObject
     {
@@ -28,6 +21,7 @@ namespace shak
         void EnableTrail(Trail::TrailType type, float widthStart, float widthEnd, float ttl, sf::Color startColor, sf::Color endColor, bool fade);
         void EnableTrail();
         void DisableTrail();
+        bool IsTrailEnabled() const { return m_trailEnabled; }
 
         //---------- Properties' setters -----------
 
@@ -41,6 +35,10 @@ namespace shak
         void SetStartColors(sf::Color startColor1, sf::Color startColor2) { m_startColor1 = startColor1; m_startColor2 = startColor2; }
         void SetEndColors(sf::Color endColor1, sf::Color endColor2) { m_endColor1 = endColor1; m_endColor2 = endColor2; }
         void SetFade(bool fade) { m_fade = fade; }
+        void SetEmitterShapePoint();
+        void SetEmitterShapeLine(const sf::Vector2f& start, const sf::Vector2f& end);
+        void SetEmitterShapeCircle(const float radius);
+        void SetEmitterShapeResolution(const int res);
 
         //---------- Properties' getters -----------
         int GetMaxParticles() const { return m_maxParticles; }
@@ -55,6 +53,7 @@ namespace shak
         float GetMaxSpeed() const { return m_maxSpeed; }
         std::pair<sf::Color, sf::Color> GetStartColors() const { return { m_startColor1, m_startColor2 }; }
         std::pair<sf::Color, sf::Color> GetEndColors() const { return { m_endColor1, m_endColor2 }; }
+        int GetEmitterShapeResolution() const { return m_emitterShapeResolution; }
 
         bool GetFade() const { return m_fade; }
         Particle::Type GetType() const { return m_type; }
@@ -73,6 +72,7 @@ namespace shak
     private:
         void InitParticle(int index);
         void InitParticlesList();
+        sf::Vector2f GetSpawnPoint();
 
     private:
         Particle::Type m_type;
@@ -88,12 +88,15 @@ namespace shak
         bool m_fade;
         bool m_spawnActive;
         std::shared_ptr<ParticleLogic> m_particleLogic;
-        
+
         bool m_trailEnabled;
         Trail::TrailType m_trailType;
         float m_trailWidthStart, m_trailWidthEnd;
         float m_trailTTL;
         sf::Color m_trailStartColor, m_trailEndColor;
         bool m_trailFade;
+        int m_emitterShapeResolution;
+        std::vector<sf::Vector2f> m_emitterShapePoints;
+        int m_emitterShapeIndex;
     };
 }

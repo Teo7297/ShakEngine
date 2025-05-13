@@ -33,6 +33,9 @@ namespace shak
         , m_trailStartColor{ sf::Color::White }
         , m_trailEndColor{ sf::Color::White }
         , m_trailFade{ false }
+        , m_emitterShapeResolution{ 10 }
+        , m_emitterShapePoints{}
+        , m_emitterShapeIndex{ 0 }
     {
         this->InitParticlesList();
     }
@@ -67,7 +70,8 @@ namespace shak
                 // Spawn a new particle (if the system is active)
                 if(m_spawnActive && m_spawnTimer >= m_spawnRate)
                 {
-                    p.SetPosition(this->getPosition());
+                    p.SetPosition(this->GetSpawnPoint());
+
                     p.velocity = p.velocity.rotatedBy(this->getRotation());
                     p.active = true;
                     m_spawnTimer -= m_spawnRate; // This allows for multiple particles to spawn in each frame!
@@ -184,6 +188,52 @@ namespace shak
         InitParticlesList();
     }
 
+    void ParticleSystem::SetEmitterShapePoint()
+    {
+        this->SetEmitterShapeResolution(1);
+        m_emitterShapeIndex = 0;
+        m_emitterShapePoints[0].x = 0.f;
+        m_emitterShapePoints[0].y = 0.f;
+    }
+
+    void ParticleSystem::SetEmitterShapeLine(const sf::Vector2f& start, const sf::Vector2f& end)
+    {
+        m_emitterShapePoints.clear();
+        m_emitterShapeIndex = 0;
+
+        auto step = (end - start).componentWiseDiv(sf::Vector2f{ (float)m_emitterShapeResolution, (float)m_emitterShapeResolution });
+        sf::Vector2f current = start;
+        for(int i = 0; i < m_emitterShapeResolution; i++)
+        {
+            m_emitterShapePoints.emplace_back(current);
+            current += step;
+        }
+    }
+
+    void ParticleSystem::SetEmitterShapeCircle(const float radius)
+    {
+        m_emitterShapePoints.clear();
+        if(m_emitterShapeResolution < 3)
+            m_emitterShapeResolution = 3; // Minimum resolution for a circle is 3 points
+        m_emitterShapeIndex = 0;
+
+        auto center = sf::Vector2f{ 0.f,0.f };
+
+        // m_emitterShapePoints.emplace_back(center + sf::Vector2f{ std::cos(0.f) * radius, std::sin(0.f) * radius });
+        for(int i = 0; i < m_emitterShapeResolution; i++)
+        {
+            const float angle = 2.f * (float)M_PI * (float)i / (float)(m_emitterShapeResolution);
+            m_emitterShapePoints.emplace_back(center + sf::Vector2f{ std::cos(angle) * radius, std::sin(angle) * radius });
+        }
+    }
+
+    void ParticleSystem::SetEmitterShapeResolution(const int res)
+    {
+        m_emitterShapeResolution = res;
+        m_emitterShapePoints.resize(res);
+        m_emitterShapeIndex = 0; // We also need to reset the index otherwise it will go out of bounds
+    }
+
     // TODO: Use better random generation with these:
     // std::random_device rd;
     // std::mt19937 gen(rd());
@@ -278,5 +328,13 @@ namespace shak
 
         if(m_trailEnabled)
             this->EnableTrail();
+    }
+
+    sf::Vector2f ParticleSystem::GetSpawnPoint()
+    {
+        auto pos = this->getPosition();
+        auto res = pos + m_emitterShapePoints[m_emitterShapeIndex];
+        m_emitterShapeIndex = (m_emitterShapeIndex + 1) % m_emitterShapePoints.size();
+        return res;
     }
 }
