@@ -18,6 +18,7 @@ namespace shak
 
         std::shared_ptr<Camera> AddCamera(const std::string& name, const sf::FloatRect& viewport, const CameraResizeBehavior& resizeBehavior);
         void RemoveCamera(const std::string& name);
+        void RemoveAllCameras();
 
         void SetClearColor(sf::Color color) { m_clearColor = color; }
 

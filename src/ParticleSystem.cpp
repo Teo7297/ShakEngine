@@ -71,10 +71,12 @@ namespace shak
                 if(m_spawnActive && m_spawnTimer >= m_spawnRate)
                 {
                     p.SetPosition(this->GetSpawnPoint());
-
                     p.velocity = p.velocity.rotatedBy(this->getRotation());
                     p.active = true;
                     m_spawnTimer -= m_spawnRate; // This allows for multiple particles to spawn in each frame!
+
+                    if(m_trailEnabled)
+                        p.trail->Clear();
                     if(m_spawnTimer >= 100000.f)
                         m_spawnTimer = 100000.f; // cap this value to avoid overflow
                     if(m_particleLogic)

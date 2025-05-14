@@ -41,6 +41,8 @@ namespace shak
         m_root = nullptr;
 
         m_quadtree.clear();
+
+        m_renderer->RemoveAllCameras();
     }
 
     void Scene::AddGameObject(const GameObjectPtr gameObject)

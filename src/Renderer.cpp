@@ -54,6 +54,12 @@ namespace shak
         }
     }
 
+    void Renderer::RemoveAllCameras()
+    {
+        m_cameras.clear();
+        m_cameras.shrink_to_fit();
+    }
+
     void Renderer::Render(const std::vector<GameObjectPtr>& drawables)
     {
         m_window->clear(m_clearColor);
@@ -67,73 +73,75 @@ namespace shak
         std::vector<std::shared_ptr<GameObject>> renderTextureDrawables;
 
         // Render scene
-        if(!m_cameras.empty())
+        if(m_cameras.empty())
         {
-            bool alreadySorted = false;
+            std::cerr << "[Renderer] No cameras available to render" << std::endl;
+            return;
+        }
 
-            for(auto& camera : m_cameras)
+        // Sort cameras by priority
+        bool alreadySorted = false;
+        for(auto& camera : m_cameras)
+        {
+            if(!alreadySorted && camera->IsPriorityChanged())
             {
-                if(!alreadySorted && camera->IsPriorityChanged())
-                {
-                    std::sort(m_cameras.begin(), m_cameras.end(), [](const std::shared_ptr<Camera>& a, const std::shared_ptr<Camera>& b) {
-                        return a->GetPriority() < b->GetPriority();
-                        });
-                    alreadySorted = true;
-                }
-
-                camera->ResetPriorityChanged();
+                std::sort(m_cameras.begin(), m_cameras.end(), [](const std::shared_ptr<Camera>& a, const std::shared_ptr<Camera>& b) {
+                    return a->GetPriority() < b->GetPriority();
+                    });
+                alreadySorted = true;
             }
 
-            for(const auto& camera : m_cameras)
+            camera->ResetPriorityChanged();
+        }
+
+        for(const auto& camera : m_cameras)
+        {
+            if(!camera->IsDrawEnabled())
+                continue;
+
+            auto renderTarget = camera->GetRenderTarget();
+
+            switch(renderTarget)
             {
-                if(!camera->IsDrawEnabled())
-                    continue;
-
-                auto renderTarget = camera->GetRenderTarget();
-
-                switch(renderTarget)
+            case CameraRenderTarget::Window:
+                m_window->setView(*camera->GetView());
+                for(const auto& drawable : drawables)
                 {
-                case CameraRenderTarget::Window:
-                    m_window->setView(*camera->GetView());
-                    for(const auto& drawable : drawables)
-                    {
-                        if(drawable->IsRenderTarget())
-                            continue;
-                        m_window->draw(*drawable);
-                    }
-                    break;
-
-                case CameraRenderTarget::RenderTexture:
-                    tmpRenderTexturePtr = camera->GetRenderTexture();
-                    for(const auto& drawable : drawables)
-                    {
-                        if(drawable->IsRenderTarget())
-                        {
-                            renderTextureDrawables.emplace_back(drawable);
-                            continue;
-                        }
-                        else
-                            tmpRenderTexturePtr->draw(*drawable);
-                    }
-                    tmpRenderTexturePtr->display();
-                    m_window->setView(*camera->GetView());
-
-                    for(const auto& drawable : renderTextureDrawables)
-                        m_window->draw(*drawable);
-
-                    renderTextureDrawables.clear();
-                    break;
-
-                default:
-                    break;
+                    if(drawable->IsRenderTarget())
+                        continue;
+                    m_window->draw(*drawable);
                 }
+                break;
+
+            case CameraRenderTarget::RenderTexture:
+                tmpRenderTexturePtr = camera->GetRenderTexture();
+                for(const auto& drawable : drawables)
+                {
+                    if(drawable->IsRenderTarget())
+                    {
+                        renderTextureDrawables.emplace_back(drawable);
+                        continue;
+                    }
+                    else
+                        tmpRenderTexturePtr->draw(*drawable);
+                }
+                tmpRenderTexturePtr->display();
+                m_window->setView(*camera->GetView());
+
+                for(const auto& drawable : renderTextureDrawables)
+                    m_window->draw(*drawable);
+
+                renderTextureDrawables.clear();
+                break;
+
+            default:
+                break;
             }
         }
-        else
-            std::cerr << "[Renderer] No cameras available to render" << std::endl;
+        
 
-        // Render GUI
-        ImGui::SFML::Render(*m_window);
+            // Render GUI
+            ImGui::SFML::Render(*m_window);
 
         // Draw on screen the rendered frame
         m_window->display();
