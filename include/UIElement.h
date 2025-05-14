@@ -1,6 +1,8 @@
 #pragma once
 
-#include "imgui.h" //? This will be inherited so we dont have to include it in every UIElement..
+//? These will be inherited so we dont have to include it in every UIElement..
+#include "imgui.h"
+#include "EngineDefines.h"
 
 namespace shak
 {
