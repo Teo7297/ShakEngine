@@ -1,4 +1,4 @@
-#include "Trail.h";
+#include "Trail.h"
 #include "MathExtensions.h"
 
 namespace shak
