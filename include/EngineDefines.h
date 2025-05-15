@@ -9,6 +9,7 @@
 // SFML wrappers/utilities
 #include <glad/gl.h>
 #include <SFML/OpenGL.hpp>
+#include "glCheck.h" //! This is a copy of glCheck.hpp from the SFML.
 
 // STL
 #include <iostream>
