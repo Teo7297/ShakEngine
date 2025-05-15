@@ -22,6 +22,8 @@ namespace shak
         , m_maxSpeed{ 200.f }
         , m_startColor1{ sf::Color::White }
         , m_startColor2{ sf::Color::White }
+        , m_endColor1{ sf::Color::White }
+        , m_endColor2{ sf::Color::White }
         , m_fade{ false }
         , m_spawnActive{ true }
         , m_particleLogic{ nullptr }
@@ -292,7 +294,7 @@ namespace shak
         p.startColor = shak::lerp(m_startColor1, m_startColor2, static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
 
         p.endColor = shak::lerp(m_endColor1, m_endColor2, static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
-
+        
         p.SetAlpha(0);
 
         p.active = false;
