@@ -6,7 +6,8 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 
-// SFML wrappers/utilities 
+// SFML wrappers/utilities
+#include <glad/gl.h>
 #include <SFML/OpenGL.hpp>
 
 // STL

@@ -83,6 +83,7 @@ file(GLOB_RECURSE SOURCES src/*.cpp)
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
+target_include_directories(${PROJECT_NAME} PUBLIC "${SFML_SOURCE_DIR}/extlibs/headers/glad/include") # INFO: Check out other libraries in this directory if needed, like stbimage
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
     SFML::Graphics
