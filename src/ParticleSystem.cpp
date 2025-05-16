@@ -16,6 +16,7 @@ namespace shak
         , m_maxLifeTime{ 3.f }
         , m_minSize{ 2.f }
         , m_maxSize{ 15.f }
+        , m_pointSize{ 1.f }
         , m_minDir{ 0.f, 0.f }
         , m_maxDir{ 0.f, 0.f }
         , m_minSpeed{ 50.f }
@@ -122,9 +123,19 @@ namespace shak
     {
         sf::RenderStates ds = sf::RenderStates::Default;
 
-        ds.texture = m_texture.get();
-        ds.shader = m_shader.get();
-        target.draw(*m_vertices, ds);
+        if(m_type == Particle::Type::Quad)
+        {
+            ds.texture = m_texture.get();
+            ds.shader = m_shader.get();
+            target.draw(*m_vertices, ds);
+        }
+        else // Point
+        {
+            glCheck(glPointSize(m_pointSize));
+            target.draw(*m_vertices, ds);
+            glCheck(glPointSize(1.f));
+        }
+
 
         if(m_trailEnabled)
             for(const auto& p : m_particles)
@@ -186,6 +197,14 @@ namespace shak
         }
     }
 
+    void ParticleSystem::SetParticleType(Particle::Type type)
+    {
+        m_type = type;
+        m_vertices->clear();
+        m_particles.clear();
+        InitParticlesList();
+    }
+
     void ParticleSystem::SetMaxParticles(int maxParticles)
     {
         m_maxParticles = maxParticles;
@@ -212,6 +231,7 @@ namespace shak
             m_emitterShapePoints.emplace_back(current);
             current += step;
         }
+        std::shuffle(m_emitterShapePoints.begin(), m_emitterShapePoints.end(), std::default_random_engine(std::random_device{}()));
     }
 
     void ParticleSystem::SetEmitterShapeCircle(const float radius)
@@ -229,6 +249,7 @@ namespace shak
             const float angle = 2.f * (float)M_PI * (float)i / (float)(m_emitterShapeResolution);
             m_emitterShapePoints.emplace_back(center + sf::Vector2f{ std::cos(angle) * radius, std::sin(angle) * radius });
         }
+        std::shuffle(m_emitterShapePoints.begin(), m_emitterShapePoints.end(), std::default_random_engine(std::random_device{}()));
     }
 
     void ParticleSystem::SetEmitterShapeResolution(const int res)
@@ -294,7 +315,7 @@ namespace shak
         p.startColor = shak::lerp(m_startColor1, m_startColor2, static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
 
         p.endColor = shak::lerp(m_endColor1, m_endColor2, static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
-        
+
         p.SetAlpha(0);
 
         p.active = false;

@@ -26,10 +26,13 @@ namespace shak
         //---------- Properties' setters -----------
 
         // This requires a reallocation of the vertex array and the particles list
+        void SetParticleType(Particle::Type type);
+        // This requires a reallocation of the vertex array and the particles list
         void SetMaxParticles(int maxParticles);
         void SetSpawnRate(float particlesPerSecond) { m_spawnRate = 1.f / particlesPerSecond; }
         void SetLifeTimes(float minLifeTime, float maxLifeTime) { m_minLifeTime = minLifeTime; m_maxLifeTime = maxLifeTime; }
         void SetSizes(float minSize, float maxSize) { m_minSize = minSize; m_maxSize = maxSize; }
+        void SetPointSize(float size) { m_pointSize = size; }
         void SetDirections(sf::Vector2f minDir, sf::Vector2f maxDir) { m_minDir = minDir; m_maxDir = maxDir; }
         void SetSpeeds(float minSpeed, float maxSpeed) { m_minSpeed = minSpeed; m_maxSpeed = maxSpeed; }
         void SetStartColors(sf::Color startColor1, sf::Color startColor2) { m_startColor1 = startColor1; m_startColor2 = startColor2; }
@@ -41,12 +44,14 @@ namespace shak
         void SetEmitterShapeResolution(const int res);
 
         //---------- Properties' getters -----------
+        Particle::Type GetParticleType() const { return m_type; }
         int GetMaxParticles() const { return m_maxParticles; }
         float GetSpawnRate() const { return 1.f / m_spawnRate; }
         float GetMinLifeTime() const { return m_minLifeTime; }
         float GetMaxLifeTime() const { return m_maxLifeTime; }
         float GetMinSize() const { return m_minSize; }
         float GetMaxSize() const { return m_maxSize; }
+        float GetPointSize() const { return m_pointSize; }
         sf::Vector2f GetMinDir() const { return m_minDir; }
         sf::Vector2f GetMaxDir() const { return m_maxDir; }
         float GetMinSpeed() const { return m_minSpeed; }
@@ -81,7 +86,7 @@ namespace shak
         float m_spawnRate;
         float m_spawnTimer;
         float m_minLifeTime, m_maxLifeTime;
-        float m_minSize, m_maxSize;
+        float m_minSize, m_maxSize, m_pointSize;
         sf::Vector2f m_minDir, m_maxDir;
         float m_minSpeed, m_maxSpeed;
         sf::Color m_startColor1, m_startColor2, m_endColor1, m_endColor2;
