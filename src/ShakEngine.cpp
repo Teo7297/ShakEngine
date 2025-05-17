@@ -5,6 +5,8 @@
 #include "imgui-SFML.h"
 #include "Camera.h"
 
+#include "ShakUI/Logger_UI.h"
+
 namespace shak
 {
 
@@ -91,6 +93,17 @@ namespace shak
     std::shared_ptr<ResourceManager> ShakEngine::GetResourceManager()
     {
         return m_resourceManager;
+    }
+
+    std::shared_ptr<Logger_UI> ShakEngine::GetLogger()
+    {
+        if(!FindUIElementByName("Logger_UI"))
+        {
+            this->AddUIElement<shak::Logger_UI>("Logger_UI");
+            this->SelectActiveUI("Logger_UI");
+        }
+
+        return std::static_pointer_cast<Logger_UI>(FindUIElementByName("Logger_UI"));
     }
 
     sf::Vector2i ShakEngine::GetPointInScreenCoords(const sf::Vector2f& worldPos) const

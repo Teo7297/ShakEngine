@@ -10,6 +10,7 @@ namespace shak
 {
     class Camera;
     enum class CameraResizeBehavior;
+    class Logger_UI;
     class ShakEngine
     {
     public:
@@ -50,6 +51,7 @@ namespace shak
         std::shared_ptr<shak::Camera> AddCamera(const std::string& name, const sf::FloatRect& viewport, const CameraResizeBehavior& resizeBehavior);
         void RemoveCamera(const std::string& name);
 
+        // TODO: Return a ptr to the element
         template <typename T>
         void AddUIElement(const std::string& name)
         {
@@ -66,6 +68,8 @@ namespace shak
 
         std::shared_ptr<SceneManager> GetSceneManager() const { return m_sceneManager; }
         std::shared_ptr<Scene> GetScene() const { return m_sceneManager->GetActiveScene(); }
+
+        std::shared_ptr<Logger_UI> GetLogger();
 
         sf::Vector2i GetPointInScreenCoords(const sf::Vector2f& worldPos) const;
         sf::Vector2f GetMousePixelPos() const;
@@ -92,6 +96,7 @@ namespace shak
         void Start();
 
         float GetTime();
+
 
     public:
         //EVENTS
