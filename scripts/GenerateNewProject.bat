@@ -4,8 +4,32 @@ REM Ask user for project name
 set /p projectName="Enter project name: "
 echo Creating project: %projectName%
 
+REM Create temp VBScript to show folder selection dialog
+echo Creating folder selection dialog...
+echo Set objShell = CreateObject("Shell.Application") > "%temp%\folderdialog.vbs"
+echo Set objFolder = objShell.BrowseForFolder(0, "Select location to create the project:", 0, 0) >> "%temp%\folderdialog.vbs"
+echo If objFolder Is Nothing Then >> "%temp%\folderdialog.vbs"
+echo     WScript.Echo "CANCELLED" >> "%temp%\folderdialog.vbs"
+echo Else >> "%temp%\folderdialog.vbs"
+echo     WScript.Echo objFolder.Self.Path >> "%temp%\folderdialog.vbs"
+echo End If >> "%temp%\folderdialog.vbs"
+
+REM Run the script and get the selected folder
+for /f "delims=" %%a in ('cscript //nologo "%temp%\folderdialog.vbs"') do set "selectedFolder=%%a"
+
+REM Delete the temporary VBScript
+del "%temp%\folderdialog.vbs"
+
+REM Check if the user cancelled the dialog
+if "%selectedFolder%"=="CANCELLED" (
+    echo Project creation cancelled by user.
+    exit /b 1
+)
+
 REM Generate project folder
-set projectPath=..\..\%projectName%
+set projectPath=%selectedFolder%\%projectName%
+echo Creating project at: %projectPath%
+
 mkdir "%projectPath%"
 if %errorlevel% neq 0 (
     echo Failed to create project directory
@@ -84,7 +108,7 @@ echo             "type": "shell",
 echo             "command": "cmd.exe",
 echo             "args": [
 echo                 "/c",
-echo                 "call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 && cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config Release --target all -j 14 --"
+echo                 "call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 && cmake --build \"%projectPath%/build\" --config Release --target all -j 14 --"
 echo             ],
 echo             "group": "build",
 echo             "problemMatcher": []
@@ -95,7 +119,7 @@ echo             "type": "shell",
 echo             "command": "cmd.exe",
 echo             "args": [
 echo                 "/c",
-echo                 "call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 && cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config RelWithDebInfo --target all -j 14 --"
+echo                 "call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 && cmake --build \"%projectPath%/build\" --config RelWithDebInfo --target all -j 14 --"
 echo             ],
 echo             "group": "build",
 echo             "problemMatcher": []
@@ -106,7 +130,7 @@ echo             "type": "shell",
 echo             "command": "cmd.exe",
 echo             "args": [
 echo                 "/c",
-echo                 "call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 && cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config Debug --target all -j 14 --"
+echo                 "call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 && cmake --build \"%projectPath%/build\" --config Debug --target all -j 14 --"
 echo             ],
 echo             "group": "build",
 echo             "problemMatcher": []
@@ -117,7 +141,7 @@ echo             "type": "shell",
 echo             "command": "cmd.exe",
 echo             "args": [
 echo                 "/c",
-echo                 "cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config Debug --target clean -- && call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 && cmake --build c:/Users/teoca/Desktop/ShakEngine/%projectName%/build --config Debug --target all -j 14 --"
+echo                 "cmake --build \"%projectPath%/build\" --config Debug --target clean -- && call \\\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat\\\" x64 && cmake --build \"%projectPath%/build\" --config Debug --target all -j 14 --"
 echo             ],
 echo             "group": "build",
 echo             "problemMatcher": []
