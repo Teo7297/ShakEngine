@@ -104,8 +104,9 @@ namespace shak
 
     void Logger_UI::DrawMessages()
     {
-        for(auto& msg : m_activeMessages)
+        for(int i = m_activeMessages.size() - 1; i >= 0; i--)
         {
+            const auto& msg = m_activeMessages[i];
             if(msg.ttl <= 0.f)
                 continue;
             ImGui::SetWindowFontScale(msg.scale);

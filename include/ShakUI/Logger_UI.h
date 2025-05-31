@@ -32,6 +32,8 @@ namespace shak
 
     private:
         void UpdateMessages(float dt);
+
+        // Messages are drawn in reverse order, so we can have the new message pop on top
         void DrawMessages();
 
     private:
