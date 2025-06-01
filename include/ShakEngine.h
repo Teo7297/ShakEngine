@@ -42,7 +42,7 @@ namespace shak
         GameObjectPtr FindGameObjectByName(const std::string& name) const;
 
         template <typename T>
-        std::vector<GameObjectPtr> FindGameObjectsByType() const
+        std::vector<std::shared_ptr<T>> FindGameObjectsByType() const
         {
             static_assert(std::is_base_of<GameObject, T>::value, "T must be a GameObject");
             return m_sceneManager->GetActiveScene()->FindGameObjectsByType<T>();

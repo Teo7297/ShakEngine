@@ -70,13 +70,14 @@ namespace shak
         void GetDrawables(std::vector<std::shared_ptr<GameObject>>& drawables) const;
 
         template<typename T>
-        std::vector<std::shared_ptr<GameObject>> FindChildrenByTypeRecursive() const
+        std::vector<std::shared_ptr<T>> FindChildrenByTypeRecursive() const
         {
-            std::vector<std::shared_ptr<GameObject>> result;
+            std::vector<std::shared_ptr<T>> result;
             for(const auto& [id, child] : m_children)
             {
-                if(std::dynamic_pointer_cast<T>(child))
-                    result.push_back(child);
+                std::shared_ptr<T> TChild = std::dynamic_pointer_cast<T>(child);
+                if(TChild)
+                    result.push_back(TChild);
                 auto found = child->FindChildrenByTypeRecursive<T>();
                 result.insert(result.end(), found.begin(), found.end());
             }

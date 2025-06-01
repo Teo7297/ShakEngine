@@ -17,6 +17,15 @@ namespace shak
         }
         ~Line() override = default;
 
+        void SetStart(const sf::Vector2f& start)
+        {
+            (*m_vertices)[0].position = start;
+        }
+
+        void SetEnd(const sf::Vector2f& end)
+        {
+            (*m_vertices)[1].position = end;
+        }
 
     private:
     };
