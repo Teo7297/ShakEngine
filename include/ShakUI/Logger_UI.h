@@ -26,6 +26,7 @@ namespace shak
 
         void LogMessage(const std::string& msg, sf::Color color = sf::Color::Green, float ttl = 3.f, float scale = 1.f);
         int LogPermanentMessage(const std::string& msg, sf::Color color = sf::Color::Green, float scale = 1.f);
+        void LogErrorMessage(const std::string& msg);
         void UpdatePermanentMessage(int id, const std::string& msg, sf::Color color = sf::Color::Green, float scale = 1.f);
         void RemovePermanentMessage(int id);
         void ClearLogs();

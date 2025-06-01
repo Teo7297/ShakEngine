@@ -142,7 +142,7 @@ public:
         auto root = m_engine->AddGameObject<LogoRoot>();
         root->Name = "logoroot";
 
-        auto quad = std::make_shared<shak::Square>(sf::FloatRect({ 0, 0 }, { 1920, 1080 }), sf::Color::White, shak::Square::Type::Filled);
+        auto quad = std::make_shared<shak::Square>(sf::Vector2f({ 1920, 1080 }), sf::Color::White, shak::Square::Type::Filled, true);
         quad->Name = "logo";
         quad->move(sf::Vector2f{ 1920 / 2, 1080 / 2 });
         quad->SetShader(m_engine->GetResourceManager()->LoadShader("", "shaders/logo.fs", "logo"));

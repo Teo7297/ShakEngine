@@ -223,7 +223,8 @@ namespace shak
 
             for(const auto& hitData : outHits)
             {
-                auto hitSquare = std::make_shared<Square>(sf::FloatRect{ hitData.hitPoint, {10.f, 10.f} }, sf::Color::Green);
+                auto hitSquare = std::make_shared<Square>(sf::Vector2f{ 10.f, 10.f }, sf::Color::Green, Square::Type::Filled, true);
+                hitSquare->setPosition(hitData.hitPoint);
                 m_root->AddChild(hitSquare);
                 hitSquare->SetZIndex(1500);
             }
@@ -318,7 +319,8 @@ namespace shak
                 );
                 m_root->AddChild(hitCircle);
 
-                auto hitSquare = std::make_shared<Square>(sf::FloatRect{ hitData.hitPoint, {10.f, 10.f} }, sf::Color::Green);
+                auto hitSquare = std::make_shared<Square>(sf::Vector2f{ 10.f, 10.f }, sf::Color::Green, Square::Type::Filled, true);
+                hitSquare->setPosition(hitData.hitPoint);
                 m_root->AddChild(hitSquare);
             }
         }

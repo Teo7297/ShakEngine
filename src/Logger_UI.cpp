@@ -52,6 +52,14 @@ namespace shak
         return m_activeMessages.size() - 1;
     }
 
+
+    void Logger_UI::LogErrorMessage(const std::string& msg)
+    {
+        auto errmsg = "[ERROR] " + msg;
+        this->LogMessage(errmsg, sf::Color::Red, 10.f);
+        std::cerr << errmsg << std::endl;
+    }
+
     void Logger_UI::UpdatePermanentMessage(int id, const std::string& msg, sf::Color color, float scale)
     {
         if(id < 0 || id >= m_activeMessages.size())
