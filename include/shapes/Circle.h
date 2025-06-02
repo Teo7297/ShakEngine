@@ -14,8 +14,9 @@ namespace shak
         };
 
         Circle(const sf::Vector2f& center, float radius, const sf::Color& color = sf::Color::White, const Type& type = Type::Filled)
+            : m_radius{ radius }
         {
-            if (type == Type::Filled)
+            if(type == Type::Filled)
             {
                 m_vertices = std::make_shared<sf::VertexArray>(sf::PrimitiveType::TriangleFan, m_verticesCount);
             }
@@ -26,7 +27,7 @@ namespace shak
 
             (*m_vertices)[0].position = center + sf::Vector2f{ std::cos(0.f) * radius, std::sin(0.f) * radius };
             (*m_vertices)[0].color = color;
-            for (int i = 1; i < m_verticesCount - 1; i++)
+            for(int i = 1; i < m_verticesCount - 1; i++)
             {
                 const float angle = 2.f * (float)M_PI * (float)i / (float)(m_verticesCount - 1);
                 (*m_vertices)[i].position = center + sf::Vector2f{ std::cos(angle) * radius, std::sin(angle) * radius };
@@ -38,7 +39,8 @@ namespace shak
         ~Circle() override = default;
 
 
-    private:
+    protected:
         const int m_verticesCount = 257;
+        float m_radius;
     };
 }
